@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+/*
+  Design system: "the annotated textbook".
+  Ivory paper, charcoal type, one oxblood accent used only for actions and annotations.
+  Serif (Newsreader) for headings and quotes; grotesk (Schibsted Grotesk) for UI and body.
+*/
+@theme {
+  --color-paper: #f4f3ef;      /* page background */
+  --color-card: #faf9f6;       /* raised surface: forms, panels */
+  --color-stone: #e6e2da;      /* quiet fill: featured program, image placeholders */
+  --color-ink: #1d1c1a;        /* primary text, dark sections */
+  --color-ink-soft: #5e5b55;   /* secondary text */
+  --color-line: #d6d2c9;       /* hairlines and borders */
+  --color-brand: #6e1e2b;      /* oxblood accent */
+  --color-brand-deep: #521520;
+  --color-brand-soft: #efe3e2;
+  --color-bull: #2f6b4f;       /* success */
+  --color-bear: #a33a2c;       /* error */
+
+  --font-display: "Newsreader", Georgia, serif;
+  --font-sans: "Schibsted Grotesk", system-ui, sans-serif;
+
+  /* type scale, ~1.25 ratio */
+  --text-xs: 0.8125rem;   /* 13 */
+  --text-sm: 0.9375rem;   /* 15 */
+  --text-base: 1.0625rem; /* 17 */
+  --text-lg: 1.3125rem;   /* 21 */
+  --text-xl: 1.75rem;     /* 28 */
+  --text-2xl: 2.25rem;    /* 36 */
+  --text-3xl: 3rem;       /* 48 */
+  --text-4xl: 4rem;       /* 64 */
+  --text-5xl: 5.25rem;    /* 84 */
+
+  --ease-editorial: cubic-bezier(0.2, 0.7, 0.1, 1);
+}
+
+@layer base {
+  html { background: var(--color-paper); color: var(--color-ink); }
+  body { font-family: var(--font-sans); font-size: var(--text-base); line-height: 1.6; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.015em; line-height: 1.1; text-wrap: balance; }
+  p { text-wrap: pretty; }
+  :focus-visible { outline: 2px solid var(--color-brand); outline-offset: 3px; }
+  ::selection { background: var(--color-brand); color: var(--color-paper); }
+}
+
+/* Layout: 12-column editorial grid with a 3-column margin for section labels. */
+@utility wrap { @apply mx-auto w-full max-w-[84rem] px-5 sm:px-8 lg:px-12; }
+@utility grid-editorial { @apply grid grid-cols-4 gap-x-5 sm:grid-cols-8 sm:gap-x-8 lg:grid-cols-12; }
+
+/* Buttons: small radius, no icons, no arrows. */
+@utility btn { @apply inline-flex items-center justify-center gap-2 rounded-[2px] px-5 py-3 text-sm font-medium tracking-[0.01em] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed; }
+@utility btn-primary { @apply btn bg-ink text-paper hover:bg-brand; }
+@utility btn-brand { @apply btn bg-brand text-paper hover:bg-brand-deep; }
+@utility btn-ghost { @apply btn border border-ink/25 hover:border-ink; }
+@utility btn-light { @apply btn bg-paper text-ink hover:bg-white; }
+
+/* Text link with an underline that draws in from the left on hover. */
+@utility link-line {
+  @apply bg-no-repeat pb-0.5 font-medium transition-[background-size] duration-300;
+  background-image: linear-gradient(currentColor, currentColor), linear-gradient(color-mix(in srgb, currentColor 30%, transparent), color-mix(in srgb, currentColor 30%, transparent));
+  background-size: 0% 1px, 100% 1px;
+  background-position: 0 100%, 0 100%;
+  &:hover { background-size: 100% 1px, 100% 1px; }
+}
+
+@utility field { @apply w-full rounded-[2px] border border-line bg-white px-3 py-2.5 text-ink placeholder:text-ink-soft/60 focus:border-ink focus:outline-none; }
+@utility label { @apply mb-1.5 block text-sm font-medium text-ink-soft; }
+
+/* ---------- Motion: one load sequence in the hero, gentle reveals for images. ---------- */
+
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes draw { from { clip-path: inset(-20% 100% -20% 0); } to { clip-path: inset(-20% 0 -20% 0); } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+
+.hero-rise { animation: rise 0.9s var(--ease-editorial) both; }
+/* the price line draws left to right once, like a pen across the page */
+.line-draw { animation: draw 2s cubic-bezier(0.45, 0.05, 0.25, 1) 0.4s both; }
+.note-fade { animation: fade 0.6s ease both; }
+
+.reveal { clip-path: inset(0 0 100% 0); transition: clip-path 1.1s var(--ease-editorial); }
+/* the observer watches the unclipped parent: a fully clipped element never reports as intersecting */
+.is-visible > .reveal { clip-path: inset(0 0 0 0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-rise, .line-draw, .note-fade { animation: none; }
+  .reveal { clip-path: none; transition: none; }
+}
+
+/* Certificate "Download as PDF" uses the browser's print-to-PDF: print only the certificate. */
+@media print {
+  @page { size: A4 landscape; margin: 0; }
+  body * { visibility: hidden; }
+  .certificate, .certificate * { visibility: visible; }
+  .certificate { position: fixed; inset: 0; border-radius: 0; }
+}
