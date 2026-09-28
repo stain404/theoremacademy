@@ -1,0 +1,16 @@
+# Netlify reads this file automatically, so these settings win over the dashboard.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  # Vite 8 needs Node 20.19 or newer
+  NODE_VERSION = "22"
+
+# Single-page app: every URL (/programs, /portal, ...) is served index.html
+# and React Router shows the right page. Real files in dist are still served as-is.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
