@@ -20,7 +20,7 @@ function load() {
   }
 }
 function empty() {
-  return { users: [], session: null, orders: [], enrollments: [], progress: [], quizResults: [], tickets: [] }
+  return { users: [], session: null, orders: [], enrollments: [], progress: [], quizResults: [], tickets: [], enquiries: [] }
 }
 function save(db) {
   localStorage.setItem(KEY, JSON.stringify(db))
@@ -170,4 +170,17 @@ export async function createTicket(userId, { topic, message }) {
 export async function getTickets(userId) {
   await delay(150)
   return load().tickets.filter((t) => t.userId === userId).reverse()
+}
+
+// ---------- Enquiries (contact page) ----------
+// In production, store these and notify the admissions team (email or WhatsApp).
+
+export async function createEnquiry(enquiry) {
+  await delay()
+  const db = load()
+  db.enquiries = db.enquiries || []
+  const saved = { id: 'E-' + uid(), ...enquiry, createdAt: Date.now() }
+  db.enquiries.push(saved)
+  save(db)
+  return saved
 }

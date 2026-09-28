@@ -13,7 +13,7 @@ export default function Modal({ open, onClose, children, labelledBy }) {
       ref={ref}
       aria-labelledby={labelledBy}
       onClose={onClose}
-      className="m-auto w-[min(26rem,calc(100%-2rem))] rounded-xl bg-card p-0 text-ink shadow-2xl backdrop:bg-ink/50"
+      className="m-auto w-[min(27rem,calc(100%-2rem))] rounded-[3px] bg-paper p-0 text-ink shadow-[0_24px_60px_-20px_rgb(0_0_0/0.45)] backdrop:bg-board/70"
     >
       {open && children}
     </dialog>

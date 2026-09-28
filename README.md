@@ -12,7 +12,12 @@ npm run build
 
 | Section | Route | Notes |
 | --- | --- | --- |
-| Landing page | `/` | Hero with enroll CTA, programs (Forex Basic/Advanced, Crypto, Equity), mentors (Farhan, Sohail), Dubai / India / Online locations |
+| Home | `/` | Hero, programs overview, teaching method, mentors preview, a student story, call to action |
+| Programs | `/programs` | All four programs plus a side-by-side comparison table |
+| Program page | `/programs/:programId` | Who it is for, outcomes, module-by-module curriculum (from `curriculum.js`), fees, mentor, apply |
+| About | `/about` | Teaching method, classroom story, photo gallery, what students leave with |
+| Mentors | `/mentors` | Full mentor profiles; `/mentors#farhan` links to one |
+| Contact | `/contact` | Dubai / India / Online locations and hours, direct contacts, enquiry form (`?program=crypto` preselects) |
 | Registration + onboarding | `/register` | Account → program, attendance mode, experience → payment. `?program=crypto` preselects a program |
 | Login | `/login` | Redirects back to the page you came from |
 | Payment | `/checkout/:programId` | INR or AED, card / UPI / Apple Pay, success and failed popups |

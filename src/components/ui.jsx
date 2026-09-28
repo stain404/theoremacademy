@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { formatINR } from '../config/site'
+import { formatINR, programs as allPrograms } from '../config/site'
 
 // Adds .is-visible once the element scrolls into view (used for image reveals only).
 export function useReveal() {
@@ -25,34 +25,27 @@ export function useReveal() {
 }
 
 /*
-  Section: label in the left margin column, heading and intro in the main column.
-  The margin label is the site's recurring device — a teacher's note beside the text.
+  Section: heading on the left, intro on the right aligned to the heading's baseline.
+  The asymmetric split is the site's standard section opening.
 */
-export function Section({ id, label, title, intro, children, className = '', headClassName = '' }) {
+export function Section({ id, title, intro, action, children, className = '' }) {
   return (
-    <section id={id} className={`scroll-mt-16 py-16 sm:py-28 lg:py-36 ${className}`}>
+    <section id={id} className={`scroll-mt-20 py-16 sm:py-24 lg:py-32 ${className}`}>
       <div className="wrap">
-        {(label || title) && (
-          <header className={`grid-editorial mb-10 sm:mb-16 ${headClassName}`}>
-            {label && <SectionLabel className="col-span-4 sm:col-span-8 lg:col-span-3">{label}</SectionLabel>}
-            <div className="col-span-4 sm:col-span-7 lg:col-span-8">
-              {title && <h2 className="text-[2.1rem] sm:text-3xl lg:text-4xl">{title}</h2>}
-              {intro && <p className="mt-5 max-w-[34rem] text-ink-soft">{intro}</p>}
-            </div>
+        {title && (
+          <header className="grid-12 mb-10 gap-y-5 sm:mb-14">
+            <h2 className="col-span-4 text-[2.75rem] sm:col-span-8 sm:text-[3.5rem] lg:col-span-7 lg:text-4xl">{title}</h2>
+            {(intro || action) && (
+              <div className="col-span-4 sm:col-span-6 lg:col-span-4 lg:col-start-9 lg:self-end">
+                {intro && <p className="text-ink-soft">{intro}</p>}
+                {action && <div className="mt-4 text-sm">{action}</div>}
+              </div>
+            )}
           </header>
         )}
         {children}
       </div>
     </section>
-  )
-}
-
-export function SectionLabel({ children, className = '' }) {
-  return (
-    <p className={`mb-4 flex items-center gap-3 self-start text-sm text-brand lg:mb-0 lg:pt-3 ${className}`}>
-      <span className="h-px w-6 bg-current" aria-hidden="true" />
-      {children}
-    </p>
   )
 }
 
@@ -68,9 +61,9 @@ export function ImageBlock({ src, alt = '', ratio = '3/2', caption, shotNote, cl
         {src ? (
           <img src={src} alt={alt} className="h-full w-full object-cover" loading="lazy" />
         ) : (
-          <div className="absolute inset-3 flex flex-col justify-end border border-ink/10 p-4 sm:p-5" role="img" aria-label={`Photo placeholder: ${shotNote || caption}`}>
-            <p className="max-w-[26ch] font-display text-sm italic leading-snug text-ink-soft sm:text-base">{shotNote}</p>
-            <p className="mt-1 text-xs text-ink-soft/70">Photograph to come, {ratio.replace('/', ':')}</p>
+          <div className="absolute inset-0 flex flex-col justify-end p-4 sm:p-5" role="img" aria-label={`Photo placeholder: ${shotNote || caption}`}>
+            <p className="max-w-[28ch] text-sm leading-snug text-ink-soft">{shotNote}</p>
+            <p className="mt-1 text-xs text-ink-soft/70">Photo to come, {ratio.replace('/', ':')}</p>
           </div>
         )}
       </div>
@@ -79,90 +72,103 @@ export function ImageBlock({ src, alt = '', ratio = '3/2', caption, shotNote, cl
   )
 }
 
-function Meta({ items, className = '' }) {
+// Dark panel for anything transactional: fees, order summaries. Same surface as the board.
+export function Ticket({ children, className = '' }) {
+  return <div className={`bg-board p-6 text-white sm:p-8 ${className}`}>{children}</div>
+}
+
+/*
+  Programs as a board of rows, echoing the market board: comparable attributes line up
+  in columns, and each row opens the program page.
+*/
+export function ProgramBoard({ programs = allPrograms, detailed = false }) {
   return (
-    <dl className={`flex flex-wrap gap-x-6 gap-y-1 text-sm ${className}`}>
-      {items.map(([k, v]) => (
-        <div key={k} className="flex gap-1.5">
-          <dt className="text-ink-soft">{k}</dt>
-          <dd>{v}</dd>
-        </div>
+    <div role="table" aria-label="Programs" className="border-t-2 border-ink">
+      <div role="row" className="hidden grid-cols-[minmax(0,1fr)_7rem_7rem_6rem_7rem] gap-6 border-b border-line py-3 text-xs text-ink-soft lg:grid">
+        <span role="columnheader">Program</span>
+        <span role="columnheader">Market</span>
+        <span role="columnheader">Level</span>
+        <span role="columnheader">Duration</span>
+        <span role="columnheader" className="text-right">Fee in India</span>
+      </div>
+      {programs.map((p) => (
+        <Link
+          key={p.id}
+          to={`/programs/${p.id}`}
+          role="row"
+          className="group relative grid gap-x-6 gap-y-2 border-b border-line py-6 transition-colors hover:bg-card lg:grid-cols-[minmax(0,1fr)_7rem_7rem_6rem_7rem] lg:items-baseline lg:py-7"
+        >
+          <span aria-hidden="true" className="absolute inset-y-0 -left-5 w-1 origin-top scale-y-0 bg-signal transition-transform duration-200 group-hover:scale-y-100 sm:-left-8 lg:-left-12" />
+          <span role="cell" className="min-w-0">
+            <span className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+              <span className="font-display text-[2.4rem] leading-none font-extrabold sm:text-[3rem]">{p.title}</span>
+              {p.featured && <span className="bg-signal px-2 py-0.5 text-xs font-semibold text-ink">Start here</span>}
+            </span>
+            {detailed && <span className="mt-3 block max-w-[40rem] text-ink-soft">{p.summary}</span>}
+          </span>
+          <span role="cell" className="text-sm text-ink-soft lg:text-base lg:text-ink">
+            <span className="lg:hidden">{p.market}, {p.level.toLowerCase()}, {p.duration}</span>
+            <span className="hidden lg:inline">{p.market}</span>
+          </span>
+          <span role="cell" className="hidden lg:block">{p.level}</span>
+          <span role="cell" className="hidden lg:block">{p.duration}</span>
+          <span role="cell" className="text-sm font-semibold tabular-nums lg:text-right lg:text-base">{formatINR(p.price)}</span>
+        </Link>
       ))}
-    </dl>
+    </div>
   )
 }
 
-export function ProgramFeature({ program }) {
-  return (
-    <article className="flex flex-col bg-stone p-7 sm:p-10 lg:p-12">
-      <p className="text-sm text-brand">Where most students begin</p>
-      <h3 className="mt-3 text-3xl sm:text-4xl">{program.title}</h3>
-      <p className="mt-5 max-w-[38rem] font-display text-lg leading-relaxed">{program.summary}</p>
+// The four teaching stages. They happen in order, so they are numbered, on board tiles.
+export const STAGES = [
+  ['Learn it in class', 'Live sessions with a mentor, in person or online, where you can stop the lesson and ask.'],
+  ['Practise on a demo account', 'Apply each lesson on a simulated account until the process feels routine.'],
+  ['Trade small, with review', 'Move to a small live account. Your mentor reviews every trade you log.'],
+  ['Keep the journal', 'Each trade goes in your journal. A weekly review finds the patterns in your mistakes.'],
+]
 
-      <dl className="mt-10 grid grid-cols-3 border-t border-ink/15 pt-5 text-sm">
-        {[['Duration', program.duration], ['Level', program.level], ['Format', program.format]].map(([k, v]) => (
-          <div key={k}>
-            <dt className="text-ink-soft">{k}</dt>
-            <dd className="mt-1 font-medium">{v}</dd>
+export function MethodTrack() {
+  return (
+    <ol className="grid gap-y-10 sm:grid-cols-2 sm:gap-x-8 lg:grid-cols-4 lg:gap-x-0">
+      {STAGES.map(([title, body], i) => (
+        <li key={title} className="relative lg:pr-10">
+          <div className="flex items-center gap-3">
+            <span className="flap flap-amber [--flap-w:1.6rem]" aria-hidden="true">{i + 1}</span>
+            {/* the track joining one stage to the next */}
+            {i < STAGES.length - 1 && <span aria-hidden="true" className="hidden h-0.5 flex-1 bg-ink lg:block" />}
           </div>
-        ))}
-      </dl>
-
-      <div className="mt-10">
-        <h4 className="font-sans text-sm text-ink-soft">What you will learn</h4>
-        <ul className="mt-3 grid gap-x-8 sm:grid-cols-2">
-          {program.outcomes.map((o) => (
-            <li key={o} className="border-b border-ink/10 py-2.5">{o}</li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-4">
-        <Link to={`/register?program=${program.id}`} className="btn-brand">Apply for {program.title}</Link>
-        <p className="text-sm text-ink-soft">
-          {formatINR(program.price)} or AED {program.priceAed.toLocaleString('en-AE')}
-        </p>
-      </div>
-    </article>
-  )
-}
-
-export function ProgramItem({ program }) {
-  return (
-    <article className="py-8 first:pt-0 lg:first:pt-2">
-      <p className="text-sm text-ink-soft">{program.market}</p>
-      <h3 className="mt-1 text-2xl">{program.title}</h3>
-      <p className="mt-3 max-w-[32rem] text-ink-soft">{program.summary}</p>
-      <Meta className="mt-4" items={[['Duration', program.duration], ['Level', program.level]]} />
-      <div className="mt-5 flex items-baseline gap-6">
-        <Link to={`/register?program=${program.id}`} className="link-line text-sm text-brand">Apply for {program.title}</Link>
-        <span className="text-sm text-ink-soft">{formatINR(program.price)}</span>
-      </div>
-    </article>
+          <h3 className="mt-5 text-xl">{title}</h3>
+          <p className="mt-2 max-w-[20rem] text-ink-soft">{body}</p>
+        </li>
+      ))}
+    </ol>
   )
 }
 
 export function FacultyProfile({ person, reverse = false }) {
+  const teaches = allPrograms.filter((p) => person.teaches.includes(p.title))
   return (
-    <article className="grid-editorial items-end gap-y-8">
+    <article id={person.name.toLowerCase()} className="grid-12 scroll-mt-24 items-end gap-y-8">
       <ImageBlock
         src={person.photo}
         alt={`Portrait of ${person.name}`}
         ratio="4/5"
         shotNote={`Portrait of ${person.name}, natural light, in the classroom`}
-        className={`col-span-3 sm:col-span-4 lg:col-span-4 ${reverse ? 'lg:col-start-9 lg:row-start-1' : ''}`}
+        className={`col-span-3 sm:col-span-4 lg:col-span-5 ${reverse ? 'lg:col-start-8 lg:row-start-1' : ''}`}
       />
-      <div className={`col-span-4 sm:col-span-7 lg:col-span-6 lg:pb-4 ${reverse ? 'lg:col-start-2 lg:row-start-1' : 'lg:col-start-6'}`}>
-        <p className="text-sm text-brand">{person.role}</p>
-        <h3 className="mt-2 text-3xl sm:text-4xl">{person.name}</h3>
-        <p className="mt-5 max-w-[34rem] font-display text-lg leading-relaxed">{person.bio}</p>
-        <dl className="mt-8 grid gap-4 border-t border-line pt-5 text-sm sm:grid-cols-2">
+      <div className={`col-span-4 sm:col-span-7 lg:col-span-6 ${reverse ? 'lg:col-start-1 lg:row-start-1' : 'lg:col-start-7'}`}>
+        <p className="text-sm font-semibold text-brand">{person.role}</p>
+        <h2 className="mt-2 text-5xl sm:text-6xl">{person.name}</h2>
+        <p className="mt-6 max-w-[36rem] text-lg leading-relaxed">{person.bio}</p>
+        <dl className="mt-8 grid gap-5 border-t-2 border-ink pt-5 sm:grid-cols-2">
           <div>
-            <dt className="text-ink-soft">Teaches</dt>
-            <dd className="mt-1">{person.teaches.join(' and ')}</dd>
+            <dt className="text-sm text-ink-soft">Teaches</dt>
+            <dd className="mt-1 flex flex-col items-start gap-1">
+              {teaches.map((p) => <Link key={p.id} to={`/programs/${p.id}`} className="link-line">{p.title}</Link>)}
+            </dd>
           </div>
           <div>
-            <dt className="text-ink-soft">Focus</dt>
+            <dt className="text-sm text-ink-soft">Focus</dt>
             <dd className="mt-1">{person.focus}</dd>
           </div>
         </dl>
@@ -174,20 +180,29 @@ export function FacultyProfile({ person, reverse = false }) {
 export function Testimonial({ story, size = 'large' }) {
   const large = size === 'large'
   return (
-    <figure className={large ? 'relative' : 'border-t border-line pt-6'}>
-      {large && (
-        <span aria-hidden="true" className="absolute -top-6 -left-1 font-display text-[5rem] leading-none text-brand lg:-left-14 lg:top-[-0.4rem]">
-          &ldquo;
-        </span>
-      )}
-      <blockquote className={large ? 'pt-10 font-display text-[1.6rem] leading-[1.35] sm:text-[2rem] lg:pt-0 lg:text-[2.35rem]' : 'font-display text-lg leading-relaxed'}>
+    <figure className={`border-l-4 border-signal ${large ? 'pl-6 sm:pl-10' : 'pl-5'}`}>
+      <blockquote className={large ? 'text-[1.6rem] leading-[1.3] font-light sm:text-[2.1rem]' : 'text-lg leading-relaxed'}>
         <p>{story.quote}</p>
       </blockquote>
-      <figcaption className={`${large ? 'mt-8' : 'mt-5'} text-sm`}>
-        <span className="font-medium">{story.name}</span>
+      <figcaption className={`${large ? 'mt-8' : 'mt-4'} text-sm`}>
+        <span className="font-semibold">{story.name}</span>
         <span className="text-ink-soft">, {story.program}</span>
         {story.outcome && <span className="mt-1 block text-ink-soft">{story.outcome}</span>}
       </figcaption>
     </figure>
+  )
+}
+
+// Segmented choice: a row of square buttons, one selected.
+export function Segmented({ name, options, value, onChange }) {
+  return (
+    <div className="flex flex-wrap border border-ink/25" role="radiogroup" aria-label={name}>
+      {options.map(([val, label]) => (
+        <label key={val} className={`flex-1 cursor-pointer px-4 py-2.5 text-center text-sm font-semibold whitespace-nowrap transition-colors ${value === val ? 'bg-ink text-white' : 'bg-white text-ink hover:bg-card'}`}>
+          <input type="radio" name={name} className="sr-only" checked={value === val} onChange={() => onChange(val)} />
+          {label}
+        </label>
+      ))}
+    </div>
   )
 }

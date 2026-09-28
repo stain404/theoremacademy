@@ -62,6 +62,7 @@ export const teachers = [
 export const programs = [
   {
     id: 'forex-basic',
+    audience: 'People who have never traded, or who have traded from tips and signals and want to understand what they are doing. No prior knowledge needed.', // placeholder copy: confirm with the academy
     title: 'Forex Basic',
     market: 'Forex',
     level: 'Beginner',
@@ -75,6 +76,7 @@ export const programs = [
   },
   {
     id: 'forex-advanced',
+    audience: 'Traders who already know the basics (or have finished Forex Basic) and want a repeatable, reviewed process. You should be able to place and size a trade on your own.', // placeholder copy: confirm with the academy
     title: 'Forex Advanced',
     market: 'Forex',
     level: 'Advanced',
@@ -87,6 +89,7 @@ export const programs = [
   },
   {
     id: 'crypto',
+    audience: 'Anyone who holds or wants to trade crypto and wants to do it safely, from first-time buyers to people already trading futures without a plan.', // placeholder copy: confirm with the academy
     title: 'Crypto Trading',
     market: 'Crypto',
     level: 'All levels',
@@ -99,6 +102,7 @@ export const programs = [
   },
   {
     id: 'equity',
+    audience: 'Working professionals and beginners who want to trade or invest in Indian and US stocks with a clear method rather than tips.', // placeholder copy: confirm with the academy
     title: 'Equity Course',
     market: 'Equity',
     level: 'Beginner',
