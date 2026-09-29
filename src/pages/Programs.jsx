@@ -158,7 +158,7 @@ export function ProgramDetail() {
               ))}
             </dl>
             <Link to={`/register?program=${program.id}`} className="btn-brand mt-6 w-full py-3.5">Apply for {program.title}</Link>
-            <Link to={`/contact?program=${program.id}`} className="btn mt-3 w-full border border-white/25 py-3.5 text-white hover:border-white">Ask a question first</Link>
+            <Link to={`/contact?program=${program.id}`} className="btn-outline-light mt-3 w-full py-3.5">Ask a question first</Link>
             {mentor && (
               <p className="mt-6 text-sm text-white/65">
                 Taught by <Link to={`/mentors#${mentor.name.toLowerCase()}`} className="link-line text-white">{mentor.name}</Link>, {mentor.role.toLowerCase()}.

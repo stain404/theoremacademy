@@ -1,23 +1,45 @@
 import { Link } from 'react-router-dom'
 import SessionBoard from '../components/Board'
-import { Approach, FactsStrip, FinalCta, Stories, usePageTitle } from '../components/sections'
+import { Approach, FactsStrip, Faq, FinalCta, Offer, Paths, Stories, usePageTitle } from '../components/sections'
 import { ImageBlock, ProgramBoard, Section } from '../components/ui'
-import { teachers } from '../config/site'
+import { formatINR, lowestPrice, offer, teachers } from '../config/site'
 
+/*
+  Hero, and the site's one orchestrated load sequence (see index.css):
+  headline lines rise from a mask, then copy and CTAs, then the board lights and flips.
+  Everything is clickable from the first frame; the animation only affects appearance.
+*/
 function Hero() {
+  const lines = ['Trading is a skill.', 'We teach it like one.']
   return (
-    <section className="pt-12 pb-12 sm:pt-16 sm:pb-16 lg:pt-20">
-      <div className="wrap grid-12 gap-y-8">
-        <h1 className="hero-rise col-span-4 text-[3.9rem] leading-[0.88] sm:col-span-8 sm:text-[6rem] lg:col-span-10 lg:text-6xl">
-          <span className="block">Trading is a skill.</span>
-          <span className="block">We teach it like one.</span>
-        </h1>
-        <p className="hero-rise col-span-4 max-w-[34rem] text-lg leading-relaxed sm:col-span-6 lg:col-span-5" style={{ animationDelay: '90ms' }}>
-          A trading academy in Dubai, India and online. Forex, crypto and equity for beginners and working professionals, taught live in small batches, with a mentor reviewing the trades you place.
+    <section id="hero" className="bg-board text-white">
+      <div className="wrap pt-12 pb-10 sm:pt-16 sm:pb-14 lg:pt-24 lg:pb-16">
+        <p className="hero-rise text-sm text-white/65" style={{ animationDelay: '50ms' }}>
+          A trading academy in Dubai, India and online
         </p>
-        <div className="hero-rise col-span-4 flex flex-wrap items-center gap-x-7 gap-y-4 sm:col-span-8 lg:col-span-5 lg:col-start-8 lg:self-end lg:justify-end" style={{ animationDelay: '180ms' }}>
-          <Link to="/register" className="btn-brand px-6 py-3.5 text-base">Apply now</Link>
-          <Link to="/contact" className="link-line">Book a consultation</Link>
+        <h1 className="mt-4 text-[3.5rem] leading-[0.9] sm:text-[5.25rem] lg:text-7xl">
+          {lines.map((line, i) => (
+            <span key={line} className="line-mask">
+              <span className="line-in" style={{ animationDelay: `${120 + i * 110}ms` }}>{line}</span>
+            </span>
+          ))}
+        </h1>
+
+        <p className="hero-rise mt-7 max-w-[34rem] text-lg leading-relaxed text-white/80 sm:text-xl sm:leading-relaxed" style={{ animationDelay: '380ms' }}>
+          Live forex, crypto and equity programs for beginners and working professionals. Small batches, and a mentor who reviews the trades you place.
+        </p>
+        <div className="hero-rise mt-9 flex flex-col gap-x-8 gap-y-4 sm:flex-row sm:items-center" style={{ animationDelay: '480ms' }}>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Link to="/register" className="btn-brand btn-lg">Apply now</Link>
+            <Link to="/contact" className="btn-outline-light btn-lg">Book a consultation</Link>
+          </div>
+          <p className="text-sm leading-snug text-white/65 sm:max-w-[13rem]">
+            Programs from {formatINR(lowestPrice())}. Full refund within {offer.refundDays} days.
+          </p>
+        </div>
+
+        <div className="hero-rise mt-12 sm:mt-16" style={{ animationDelay: '560ms' }}>
+          <SessionBoard startDelay={700} />
         </div>
       </div>
     </section>
@@ -32,16 +54,19 @@ function MentorsPreview() {
       intro="Each program is led by one mentor, from your first class to your last trade review."
       action={<Link to="/mentors" className="link-line">Meet the mentors</Link>}
     >
-      <div className="grid-12 gap-y-14">
-        {teachers.map((t, i) => (
-          <article key={t.name} className={`col-span-4 sm:col-span-4 lg:col-span-4 ${i === 1 ? 'lg:col-start-8 lg:mt-28' : 'lg:col-start-2'}`}>
-            <ImageBlock src={t.photo} alt={`Portrait of ${t.name}`} ratio="4/5" shotNote={`Portrait of ${t.name}, natural light`} />
-            <div className="mt-5 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-              <h3 className="font-display text-5xl leading-none font-extrabold">{t.name}</h3>
-              <p className="text-sm font-semibold text-brand">{t.role}</p>
-            </div>
-            <p className="mt-3 text-ink-soft">{t.focus}.</p>
-            <Link to={`/mentors#${t.name.toLowerCase()}`} className="link-line mt-4 inline-block text-sm">Read {t.name}'s profile</Link>
+      <div className="grid gap-x-8 gap-y-12 md:grid-cols-2 lg:gap-x-16">
+        {teachers.map((t) => (
+          <article key={t.name} className="group border-t-2 border-ink pt-6">
+            <Link to={`/mentors#${t.name.toLowerCase()}`} className="grid grid-cols-[minmax(0,2fr)_minmax(0,3fr)] items-end gap-5 sm:gap-7">
+              <ImageBlock src={t.photo} alt={`Portrait of ${t.name}`} ratio="4/5" shotNote={`Portrait of ${t.name}, natural light`} />
+              <div className="pb-1">
+                <p className="text-sm font-semibold text-brand">{t.role}</p>
+                <h3 className="mt-1 font-display text-[2.75rem] leading-none font-bold transition-colors group-hover:text-brand sm:text-5xl">{t.name}</h3>
+                <p className="mt-3 text-ink-soft">{t.focus}.</p>
+                <p className="mt-2 text-sm text-ink-soft">Teaches {t.teaches.join(' and ')}</p>
+                <span className="link-line mt-5 inline-block text-sm">Read {t.name}'s profile</span>
+              </div>
+            </Link>
           </article>
         ))}
       </div>
@@ -54,18 +79,31 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <SessionBoard />
       <FactsStrip />
+      <Paths />
       <Section
-        title="Four programs. Most students begin with Forex Basic."
+        title="Four programs, side by side."
+        intro="Each one is live, mentor-led and taught in Dubai, India and online. Open a program to see its full curriculum."
         action={<Link to="/programs" className="link-line">Compare all programs</Link>}
-        className="pt-8 sm:pt-12 lg:pt-16"
+        className="bg-card"
       >
         <ProgramBoard />
+        {/* decision point: the visitor has just compared every program */}
+        <div className="mt-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <p className="max-w-[34rem] text-lg">
+            Not sure which one fits? Tell an advisor what you trade now and they will recommend a program and a batch.
+          </p>
+          <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
+            <Link to="/contact" className="btn-primary">Book a consultation</Link>
+            <Link to="/register" className="btn-ghost">Apply now</Link>
+          </div>
+        </div>
       </Section>
-      <Approach className="bg-card" action={<Link to="/about" className="link-line">More about how we teach</Link>} />
+      <Approach dark action={<Link to="/programs/forex-basic" className="link-line">See the Forex Basic curriculum</Link>} />
       <MentorsPreview />
       <Stories limit={1} />
+      <Offer className="border-t border-line" />
+      <Faq className="bg-card" />
       <FinalCta />
     </>
   )

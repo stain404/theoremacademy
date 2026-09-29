@@ -7,8 +7,8 @@ import { useAuth } from '../lib/auth'
 export function Wordmark({ className = '', onClick }) {
   return (
     <Link to="/" onClick={onClick} className={`flex items-center gap-2.5 ${className}`}>
-      <span className="flap flap-amber [--flap-w:1.15rem]" aria-hidden="true">P</span>
-      <span className="font-display text-[1.7rem] leading-none font-extrabold">{site.name}</span>
+      <span className="flap flap-amber mark-in [--flap-w:1.15rem]" aria-hidden="true">P</span>
+      <span className="font-display text-[1.7rem] leading-none font-bold">{site.name}</span>
     </Link>
   )
 }
@@ -21,10 +21,46 @@ const NAV = [
 ]
 
 // Current page: an amber bar along the bottom edge of the header, like a selected tab.
+// Hovering another link previews a faint bar in the same place.
 const desktopLink = ({ isActive }) =>
-  `relative flex h-full items-center transition-colors after:absolute after:inset-x-0 after:bottom-0 after:h-[3px] after:bg-signal after:transition-transform after:duration-200 ${
-    isActive ? 'text-ink after:scale-x-100' : 'text-ink-soft hover:text-ink after:scale-x-0'
+  `relative flex h-full items-center transition-colors after:absolute after:inset-x-0 after:bottom-0 after:h-[3px] after:origin-left after:transition-transform after:duration-300 after:ease-out ${
+    isActive ? 'text-ink after:scale-x-100 after:bg-signal' : 'text-ink-soft hover:text-ink after:scale-x-0 after:bg-ink/15 hover:after:scale-x-100'
   }`
+
+// Pages where the sticky mobile call-to-action makes sense (not forms, not the portal).
+const MARKETING = /^\/($|programs|about|mentors|contact)/
+
+/*
+  Mobile action bar: once the visitor has scrolled past the first screen, Apply and
+  WhatsApp stay within thumb reach. Hidden on desktop, where the header CTA is always visible.
+*/
+function MobileCtaBar() {
+  const { pathname } = useLocation()
+  const [shown, setShown] = useState(false)
+  const enabled = MARKETING.test(pathname)
+
+  useEffect(() => {
+    if (!enabled) return
+    const onScroll = () => setShown(window.scrollY > window.innerHeight * 0.8)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [enabled])
+
+  if (!enabled) return null
+  return (
+    <>
+      <div className={`cta-bar fixed inset-x-0 bottom-0 z-30 border-t border-line bg-paper/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur lg:hidden ${shown ? 'is-shown' : ''}`} aria-hidden={!shown}>
+        <div className="flex gap-3">
+          <Link to="/register" tabIndex={shown ? 0 : -1} className="btn-brand flex-1 py-3.5">Apply now</Link>
+          <a href={site.whatsappLink} tabIndex={shown ? 0 : -1} className="btn-ghost flex-1 py-3.5">WhatsApp us</a>
+        </div>
+      </div>
+      {/* keeps the footer's last lines clear of the bar */}
+      <div className="h-20 bg-board lg:hidden" aria-hidden="true" />
+    </>
+  )
+}
 
 export function Nav() {
   const { user } = useAuth()
@@ -90,7 +126,7 @@ function FooterColumn({ title, children }) {
 
 export function Footer() {
   return (
-    <footer className="bg-board text-white">
+    <footer className="border-t border-board-line bg-board text-white">
       <div className="wrap grid-12 gap-y-12 py-16 lg:py-20">
         <div className="col-span-4 sm:col-span-8 lg:col-span-4">
           <Wordmark />
@@ -149,6 +185,7 @@ export default function SiteLayout() {
       <Nav />
       <main key={pageKey} className="page-enter flex-1"><Outlet /></main>
       <Footer />
+      <MobileCtaBar />
     </div>
   )
 }

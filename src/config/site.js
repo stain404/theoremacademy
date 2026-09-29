@@ -139,4 +139,31 @@ export const stories = [
   },
 ]
 
+// The offer: what every program fee includes, and the refund terms.
+// placeholder: confirm every line with the academy before launch; these are promises to students.
+export const offer = {
+  includes: [
+    'Live classes with your mentor, in Dubai, India or online',
+    'Recordings of every class in your student portal',
+    'Module notes to download',
+    'A mentor review of the trades you log during the program',
+    'Module quizzes and a certificate on completion',
+    'Help and support on WhatsApp for the length of the program',
+  ],
+  refundDays: 7,
+  refundTerms: 'Full refund if you cancel within 7 days of enrolling and before attending more than two classes.',
+}
+
+// Questions people ask before enrolling. Shown on the homepage.
+// placeholder: confirm the answers with the academy.
+export const faqs = [
+  ['Do I need any trading experience?', 'No. Forex Basic starts from zero: what a currency pair is, how a broker works, and how to place and size a trade. If you already trade, an advisor can check whether Forex Advanced fits better.'],
+  ['What if I miss a live class?', 'Every class is recorded and added to your student portal, usually within 24 hours. You can bring questions about it to the next class.'],
+  ['Will this make me money?', 'No course can promise that, and you should be wary of any that does. We teach a method, risk management and the habit of reviewing your own trades. Trading carries real risk of loss.'],
+  ['Can I study online from anywhere?', 'Yes. Online batches are live, at weekday evening and weekend times, with the same mentors, notes and certificate as the classroom batches.'],
+  ['What if the program is not right for me?', 'You get a full refund if you cancel within 7 days of enrolling and before attending more than two classes.'],
+  ['How do I pay?', 'Online by card or UPI in rupees, or by card or Apple Pay in dirhams. Your seat is confirmed as soon as the payment goes through.'],
+]
+
 export const formatINR = (n) => '₹' + n.toLocaleString('en-IN')
+export const lowestPrice = () => Math.min(...programs.map((p) => p.price))

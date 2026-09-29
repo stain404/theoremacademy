@@ -1,65 +1,95 @@
 @import "tailwindcss";
 
 /*
-  Design system: "the market board".
-  White paper and ink. The split-flap board (and anything transactional: tickets, footer)
-  is the only dark surface. Amber, the colour of flap characters, is the one accent.
-  One type family at two widths: Sofia Sans Extra Condensed for display, Sofia Sans for reading.
+  Design system: "the board room".
+  Primary: petrol, the colour of a split-flap board's housing. Used for the hero, the board,
+  the method band, tickets and the footer.
+  Accent: honey amber, the colour of the flap characters. Reserved for the primary call to
+  action, "open" states and progress, so it always means "this is the next thing".
+  Everything else is white paper, a cool mist, and petrol-tinted ink.
+  Type: Sofia Sans at two widths (Extra Condensed for display, regular for reading).
 */
 @theme {
-  --color-paper: #ffffff;       /* page */
-  --color-card: #f4f4f1;        /* quiet surface: page headers, panels */
-  --color-stone: #e7e7e2;       /* image placeholders */
-  --color-ink: #131517;         /* text */
-  --color-ink-soft: #5c6066;    /* secondary text */
-  --color-line: #dcddd8;        /* rules and borders */
-  --color-board: #1b1e21;       /* flap tiles, tickets, footer */
-  --color-board-edge: #2a2e32;
-  --color-signal: #f2a900;      /* amber: primary actions, open status, progress */
-  --color-signal-hover: #ffbc1c;
-  --color-brand: #8a5a00;       /* amber ink: accent text on white (AA contrast) */
-  --color-brand-deep: #6b4600;
-  --color-brand-soft: #fff4d6;  /* notices */
-  --color-bull: #1f7a4d;        /* success */
-  --color-bear: #b3261e;        /* error */
+  /* neutrals */
+  --color-paper: #ffffff;       /* page background */
+  --color-card: #eef3f2;        /* mist: quiet bands and panels */
+  --color-stone: #dfe8e6;       /* image placeholders */
+  --color-ink: #0b2427;         /* primary text (16:1 on white) */
+  --color-ink-soft: #4a5e60;    /* secondary text (6.6:1 on white, 6:1 on mist) */
+  --color-line: #d2dddb;        /* borders and dividers */
+
+  /* primary: petrol */
+  --color-board: #0c2e31;       /* dark surfaces */
+  --color-board-deep: #082326;  /* the board housing, set into the dark hero */
+  --color-board-edge: #164247;  /* raised petrol: panels on petrol, hover */
+  --color-board-line: #285459;  /* dividers on petrol */
+
+  /* accent: honey amber */
+  --color-signal: #f2b134;      /* CTA fill, open status, progress (9.6:1 with ink) */
+  --color-signal-hover: #f7c460;
+  --color-brand: #855a00;       /* accent text on white (6:1) */
+  --color-brand-deep: #664400;
+  --color-brand-soft: #fdf3dc;  /* notices */
+
+  /* status */
+  --color-bull: #1f7a4d;
+  --color-bear: #b3261e;
 
   --font-display: "Sofia Sans Extra Condensed", "Arial Narrow", sans-serif;
   --font-cond: "Sofia Sans Condensed", "Arial Narrow", sans-serif;
   --font-sans: "Sofia Sans", system-ui, sans-serif;
 
+  /* type scale */
   --text-xs: 0.8125rem;   /* 13 */
   --text-sm: 0.9375rem;   /* 15 */
   --text-base: 1.0625rem; /* 17 */
-  --text-lg: 1.25rem;     /* 20 */
-  --text-xl: 1.625rem;    /* 26 */
-  --text-2xl: 2.25rem;    /* 36 */
-  --text-3xl: 3rem;       /* 48 */
-  --text-4xl: 4.25rem;    /* 68 */
-  --text-5xl: 6rem;       /* 96 */
-  --text-6xl: 8.25rem;    /* 132 */
+  --text-lg: 1.1875rem;   /* 19 */
+  --text-xl: 1.5rem;      /* 24 */
+  --text-2xl: 2rem;       /* 32 */
+  --text-3xl: 2.625rem;   /* 42 */
+  --text-4xl: 3.25rem;    /* 52: section headings */
+  --text-5xl: 4.5rem;     /* 72 */
+  --text-6xl: 5.5rem;     /* 88: page titles */
+  --text-7xl: 6.75rem;    /* 108: home hero only */
+
+  /* one radius system: controls, panels */
+  --radius-ctl: 6px;
+  --radius-panel: 10px;
+
+  /* one shadow, petrol-tinted, only for surfaces that lift */
+  --shadow-lift: 0 1px 2px rgb(11 36 39 / 0.06), 0 14px 30px -14px rgb(11 36 39 / 0.30);
 
   --ease-out: cubic-bezier(0.2, 0.7, 0.1, 1);
 }
 
 @layer base {
   html { background: var(--color-paper); color: var(--color-ink); }
-  body { font-family: var(--font-sans); font-size: var(--text-base); line-height: 1.55; -webkit-font-smoothing: antialiased; }
-  /* display headings: extra condensed, heavy, tight; sentence case */
-  h1, h2 { font-family: var(--font-display); font-weight: 800; line-height: 0.92; letter-spacing: -0.005em; text-wrap: balance; }
-  h3, h4 { font-family: var(--font-cond); font-weight: 700; line-height: 1.15; letter-spacing: -0.005em; }
+  body { font-family: var(--font-sans); font-size: var(--text-base); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  h1, h2 { font-family: var(--font-display); font-weight: 750; line-height: 0.95; letter-spacing: -0.003em; text-wrap: balance; }
+  h3, h4 { font-family: var(--font-cond); font-weight: 700; line-height: 1.2; }
   p { text-wrap: pretty; }
-  :focus-visible { outline: 2px solid var(--color-ink); outline-offset: 3px; box-shadow: 0 0 0 5px var(--color-signal); }
+  :focus-visible { outline: 2px solid var(--color-signal); outline-offset: 3px; border-radius: 2px; }
   ::selection { background: var(--color-signal); color: var(--color-ink); }
 }
 
-@utility wrap { @apply mx-auto w-full max-w-[84rem] px-5 sm:px-8 lg:px-12; }
+@utility wrap { @apply mx-auto w-full max-w-[80rem] px-5 sm:px-8 lg:px-12; }
 @utility grid-12 { @apply grid grid-cols-4 gap-x-5 sm:grid-cols-8 sm:gap-x-8 lg:grid-cols-12; }
 
-@utility btn { @apply inline-flex items-center justify-center gap-2 rounded-[2px] px-5 py-3 text-sm font-semibold transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50; }
+/*
+  Buttons. Amber is the one primary action; petrol and outline are secondary.
+  Hover lifts 1px with the shared shadow; press settles back down.
+*/
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-[var(--radius-ctl)] px-5 py-3 text-sm font-semibold transition-[background-color,border-color,color,transform,box-shadow] duration-200 ease-out disabled:cursor-not-allowed disabled:opacity-50;
+  &:not(:disabled):hover { transform: translateY(-1px); box-shadow: var(--shadow-lift); }
+  &:not(:disabled):active { transform: translateY(0); box-shadow: none; }
+}
 @utility btn-brand { @apply btn bg-signal text-ink hover:bg-signal-hover; }
-@utility btn-primary { @apply btn bg-ink text-white hover:bg-board-edge; }
-@utility btn-ghost { @apply btn border border-ink/25 text-ink hover:border-ink; }
+@utility btn-primary { @apply btn bg-board text-white hover:bg-board-edge; }
+@utility btn-ghost { @apply btn border border-ink/20 bg-white text-ink hover:border-ink/60; }
 @utility btn-light { @apply btn bg-white text-ink hover:bg-card; }
+@utility btn-outline-light { @apply btn border border-white/30 text-white hover:border-white hover:bg-white/5; }
+@utility btn-lg { @apply px-7 py-4 text-base; }
 
 /* text link: underline thickens on hover */
 @utility link-line {
@@ -68,10 +98,11 @@
   &:hover { text-decoration-color: currentColor; text-decoration-thickness: 2px; }
 }
 
-@utility field { @apply w-full rounded-[2px] border border-ink/20 bg-white px-3 py-2.5 text-ink placeholder:text-ink-soft/60 focus:border-ink focus:outline-none; }
+@utility field { @apply w-full rounded-[var(--radius-ctl)] border border-line bg-white px-3.5 py-3 text-ink transition-colors placeholder:text-ink-soft/60 hover:border-ink/35 focus:border-board focus:ring-2 focus:ring-signal/40 focus:outline-none; }
 @utility label { @apply mb-1.5 block text-sm font-semibold text-ink; }
+@utility panel { @apply rounded-[var(--radius-panel)]; }
 
-/* ---------- Split-flap tiles ---------- */
+/* ---------- Split-flap tiles (petrol) ---------- */
 
 .flap {
   position: relative;
@@ -79,36 +110,76 @@
   place-items: center;
   width: var(--flap-w, 1.5rem);
   height: calc(var(--flap-w, 1.5rem) * 1.45);
-  border-radius: 2px;
-  background: linear-gradient(to bottom, #2b2f33 0 50%, #212427 50% 100%);
-  color: #f3f1ea;
+  border-radius: 3px;
+  background: linear-gradient(to bottom, #1c4a4f 0 50%, #163f43 50% 100%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06), 0 1px 0 rgb(0 0 0 / 0.25);
+  color: #f3efe4;
   font-family: var(--font-cond);
   font-weight: 800;
   font-size: calc(var(--flap-w, 1.5rem) * 1.18);
   line-height: 1;
 }
 /* the hinge line across the middle of each tile */
-.flap::after { content: ""; position: absolute; inset: 50% 0 auto; height: 1px; background: #0c0d0e; }
+.flap::after { content: ""; position: absolute; inset: 50% 0 auto; height: 1px; background: #061d20; }
 .flap-amber { color: var(--color-signal); }
-.flap-dim { color: #8b9096; }
+.flap-dim { color: #8aa5a6; }
 .flap.is-flipping { animation: flap-tick 90ms linear infinite; }
 @keyframes flap-tick { 50% { transform: scaleY(0.82); filter: brightness(0.8); } }
 
-/* ---------- Motion: one board flip on load; images reveal once; pages fade in ---------- */
+/* ---------- Load sequence (home hero, ~1.6s, never blocks input) ---------- */
 
-@keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+/* 1. the logo tile flips over once */
+@keyframes mark-flip { from { transform: perspective(200px) rotateX(-90deg); } to { transform: none; } }
+.mark-in { animation: mark-flip 0.6s var(--ease-out) both; transform-origin: 50% 50%; }
+
+/* 2. headline lines rise from behind a mask */
+.line-mask { display: block; overflow: hidden; padding-bottom: 0.06em; margin-bottom: -0.06em; }
+@keyframes line-up { from { transform: translateY(105%); } to { transform: none; } }
+.line-in { display: block; animation: line-up 0.8s var(--ease-out) both; }
+
+/* 3. supporting content fades up */
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 .hero-rise { animation: rise 0.7s var(--ease-out) both; }
+
+/* 4. the board's light passes across once, like the hall lights coming on */
+@keyframes sweep { from { transform: translateX(-100%); opacity: 0; } 20% { opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+.board-sweep { pointer-events: none; position: absolute; inset: 0; overflow: hidden; border-radius: inherit; }
+.board-sweep::before {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(100deg, transparent 30%, rgb(242 177 52 / 0.10) 50%, transparent 70%);
+  animation: sweep 1.4s ease-in-out 0.9s both;
+}
+
+/* ---------- Scroll reveals: images, and staggered items where order matters ---------- */
 
 .reveal { clip-path: inset(0 0 100% 0); transition: clip-path 1s var(--ease-out); }
 /* the observer watches the unclipped parent: a fully clipped element never reports as intersecting */
 .is-visible > .reveal { clip-path: inset(0 0 0 0); }
 
+.stagger > * { opacity: 0; transform: translateY(16px); transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out); }
+.stagger.is-visible > * { opacity: 1; transform: none; }
+.stagger.is-visible > *:nth-child(2) { transition-delay: 80ms; }
+.stagger.is-visible > *:nth-child(3) { transition-delay: 160ms; }
+.stagger.is-visible > *:nth-child(4) { transition-delay: 240ms; }
+
 @keyframes page-in { from { opacity: 0; } to { opacity: 1; } }
 .page-enter { animation: page-in 0.3s ease-out both; }
 
+/* FAQ answers open smoothly where the browser supports animating to auto height */
+:root { interpolate-size: allow-keywords; }
+details.faq::details-content { block-size: 0; overflow: hidden; transition: block-size 0.3s var(--ease-out), content-visibility 0.3s allow-discrete; }
+details.faq[open]::details-content { block-size: auto; }
+
+/* mobile action bar slides up once the hero is out of view */
+.cta-bar { transform: translateY(110%); transition: transform 0.35s var(--ease-out); }
+.cta-bar.is-shown { transform: none; }
+
 @media (prefers-reduced-motion: reduce) {
-  .hero-rise, .page-enter, .flap.is-flipping { animation: none; }
-  .reveal { clip-path: none; transition: none; }
+  .hero-rise, .page-enter, .line-in, .mark-in, .flap.is-flipping, .board-sweep::before { animation: none; }
+  .reveal, .stagger > *, .cta-bar, details.faq::details-content { transition: none; }
+  .reveal { clip-path: none; }
+  .stagger > * { opacity: 1; transform: none; }
+  .btn:hover { transform: none; }
 }
 
 /* Certificate "Download as PDF" uses the browser's print-to-PDF: print only the certificate. */

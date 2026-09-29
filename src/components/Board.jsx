@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 const CHARS = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:-'
+const TICK = 34 // ms per flap step
 const prefersReducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 
 /*
@@ -19,7 +20,7 @@ export function FlapText({ text, length, tone = '', delay = 0 }) {
     // with reduced motion the tiles render the target directly (see below), no cycling
     if (reduced) return
     // stagger the start of each tile slightly so the row ripples left to right
-    const startAt = [...target].map((_, i) => Math.floor(delay / 45) + i + Math.floor(Math.random() * 3))
+    const startAt = [...target].map((_, i) => Math.floor(delay / TICK) + i + Math.floor(Math.random() * 3))
     let tick = 0
     const id = setInterval(() => {
       tick++
@@ -34,7 +35,7 @@ export function FlapText({ text, length, tone = '', delay = 0 }) {
       shownRef.current = next
       setShown(next)
       if (next === target) clearInterval(id)
-    }, 45)
+    }, TICK)
     return () => clearInterval(id)
   }, [target, delay, reduced])
 
@@ -131,39 +132,53 @@ const COLS = [
   { key: 'dubai', label: 'Hours in Dubai', len: 11, className: 'hidden sm:block' },
   { key: 'india', label: 'Hours in India', len: 11, className: 'hidden lg:block' },
   { key: 'status', label: 'Status', len: 6, className: '' },
-  { key: 'change', label: 'Opens or closes in', len: 5, className: '' },
+  // label wraps on phones so it never makes its column wider than the tiles
+  { key: 'change', label: 'Opens or closes in', len: 5, className: 'max-w-[calc((var(--flap-w)+3px)*5)] sm:max-w-none' },
 ]
 
-export default function SessionBoard() {
+/*
+  The board as a lit panel. It sits inside the petrol hero; a faint light falls from the top
+  (the one decorative gradient on the site) and sweeps across once on load.
+  `startDelay` holds the tiles back until the headline has settled.
+*/
+export default function SessionBoard({ startDelay = 700 }) {
   const now = useNow()
   const data = rows(now)
   const openNow = data.filter((r) => r.open).map((r) => r.city)
+  const d = (ms) => startDelay + ms
 
   return (
-    <div className="bg-board text-white">
-      <div className="wrap py-8 sm:py-10">
-        <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2">
-          <h2 className="font-cond text-lg font-bold">Forex sessions right now</h2>
+    <div className="panel relative border border-board-line bg-board-deep bg-[radial-gradient(120%_80%_at_50%_-20%,rgb(255_255_255/0.07),transparent_60%)] p-5 text-white max-sm:p-4 sm:p-7 lg:p-8">
+      <div className="board-sweep" aria-hidden="true" />
+      <div className="relative">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-1">
+          <h2 className="flex items-center gap-2.5 font-cond text-lg font-bold">
+            <span className="relative flex size-2" aria-hidden="true">
+              <span className="absolute inline-flex size-full rounded-full bg-signal opacity-60 motion-safe:animate-ping" />
+              <span className="relative inline-flex size-2 rounded-full bg-signal" />
+            </span>
+            Forex sessions right now
+          </h2>
           <p className="text-sm text-white/60 tabular-nums">
             Dubai {localTime(now, DUBAI)}, India {localTime(now, INDIA)}
           </p>
         </div>
 
         {/* the board: a grid so column labels line up with the tiles */}
-        <div className="mt-6 overflow-hidden [--flap-w:0.8rem] sm:[--flap-w:1.08rem] lg:[--flap-w:1.45rem]">
+        <div className="mt-6 overflow-hidden [--flap-w:min(0.74rem,3vw)] sm:[--flap-w:1.08rem] lg:[--flap-w:1.35rem]">
           <div className="grid w-max grid-cols-[repeat(3,max-content)] sm:grid-cols-[repeat(4,max-content)] lg:grid-cols-[repeat(5,max-content)] gap-x-[calc(var(--flap-w)*0.9)] gap-y-[5px]" role="table" aria-label="Forex sessions">
             <div role="row" className="contents">
               {COLS.map((c) => (
-                <span key={c.key} role="columnheader" className={`pb-2 text-xs text-white/55 ${c.className}`}>{c.label}</span>
+                <span key={c.key} role="columnheader" className={`self-end pb-2 text-xs leading-tight text-white/55 ${c.className}`}>{c.label}</span>
               ))}
             </div>
             {data.map((r, ri) => (
               <div role="row" key={r.city} className="contents">
-                <span role="cell" className={COLS[0].className}><span className="sr-only">{r.city}</span><FlapText text={r.city} length={8} delay={ri * 160} /></span>
-                <span role="cell" className={COLS[1].className}><span className="sr-only">Dubai {r.dubai}</span><FlapText text={r.dubai} length={11} tone="flap-dim" delay={ri * 160 + 250} /></span>
-                <span role="cell" className={COLS[2].className}><span className="sr-only">India {r.india}</span><FlapText text={r.india} length={11} tone="flap-dim" delay={ri * 160 + 400} /></span>
-                <span role="cell"><span className="sr-only">{r.open ? 'Open' : 'Closed'}</span><FlapText text={r.open ? 'Open' : 'Closed'} length={6} tone={r.open ? 'flap-amber' : 'flap-dim'} delay={ri * 160 + 550} /></span>
-                <span role="cell"><span className="sr-only">{r.open ? 'closes' : 'opens'} in {r.change}</span><FlapText text={r.change} length={5} tone={r.open ? 'flap-amber' : ''} delay={ri * 160 + 650} /></span>
+                <span role="cell" className={COLS[0].className}><span className="sr-only">{r.city}</span><FlapText text={r.city} length={8} delay={d(ri * 140)} /></span>
+                <span role="cell" className={COLS[1].className}><span className="sr-only">Dubai {r.dubai}</span><FlapText text={r.dubai} length={11} tone="flap-dim" delay={d(ri * 140 + 200)} /></span>
+                <span role="cell" className={COLS[2].className}><span className="sr-only">India {r.india}</span><FlapText text={r.india} length={11} tone="flap-dim" delay={d(ri * 140 + 320)} /></span>
+                <span role="cell"><span className="sr-only">{r.open ? 'Open' : 'Closed'}</span><FlapText text={r.open ? 'Open' : 'Closed'} length={6} tone={r.open ? 'flap-amber' : 'flap-dim'} delay={d(ri * 140 + 440)} /></span>
+                <span role="cell"><span className="sr-only">{r.open ? 'closes' : 'opens'} in {r.change}</span><FlapText text={r.change} length={5} tone={r.open ? 'flap-amber' : ''} delay={d(ri * 140 + 520)} /></span>
               </div>
             ))}
           </div>

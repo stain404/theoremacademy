@@ -1,8 +1,8 @@
 // Page sections shared by more than one page. Each page composes these in its own order.
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { site, stories } from '../config/site'
-import { ImageBlock, MethodTrack, Section, Testimonial } from './ui'
+import { faqs, formatINR, offer, programs, site, stories } from '../config/site'
+import { ImageBlock, MethodTrack, Section, Testimonial, Ticket, useReveal } from './ui'
 
 export function usePageTitle(title) {
   useEffect(() => {
@@ -21,7 +21,7 @@ export function PageHeader({ back, title, intro, children }) {
           </Link>
         )}
         <div className="grid-12 gap-y-6">
-          <h1 className="hero-rise col-span-4 text-[3.4rem] sm:col-span-8 sm:text-5xl lg:col-span-8 lg:text-6xl">{title}</h1>
+          <h1 className="hero-rise col-span-4 text-[3.1rem] sm:col-span-8 sm:text-[4rem] lg:col-span-8 lg:text-6xl">{title}</h1>
           {(intro || children) && (
             <div className="hero-rise col-span-4 sm:col-span-6 lg:col-span-4 lg:col-start-9 lg:self-end" style={{ animationDelay: '90ms' }}>
               {intro && <p className="text-lg leading-relaxed text-ink-soft">{intro}</p>}
@@ -34,20 +34,21 @@ export function PageHeader({ back, title, intro, children }) {
   )
 }
 
-const FACTS = [
-  ['In person', 'Classrooms in Dubai and India'],
-  ['Online', 'Live batches, every class recorded'],
-  ['Reviewed', 'Small batches, every logged trade checked'],
-  ['Three markets', 'Forex, crypto and equity'],
+// Reasons to trust the academy, stated plainly. No numbers until real ones exist.
+const TRUST = [
+  ['Real classrooms', 'In Dubai and India. Visit before you enrol.'],
+  ['Every class recorded', 'Watch any lesson again in your portal.'],
+  ['Your trades reviewed', 'Feedback on your own decisions, not signals.'],
+  [`${offer.refundDays}-day refund`, 'If the program is not right for you.'],
 ]
 
 export function FactsStrip() {
   return (
-    <div className="wrap">
-      <dl className="grid grid-cols-2 gap-x-5 gap-y-8 py-10 sm:py-12 lg:grid-cols-4 lg:gap-x-8">
-        {FACTS.map(([k, v]) => (
-          <div key={k} className="border-t-2 border-ink pt-4">
-            <dt className="font-cond text-xl font-bold">{k}</dt>
+    <div className="border-b border-line">
+      <dl className="wrap grid grid-cols-2 lg:grid-cols-4">
+        {TRUST.map(([k, v], i) => (
+          <div key={k} className={`border-line py-6 pr-4 sm:py-8 ${i % 2 ? 'border-l pl-5 sm:pl-8' : ''} ${i > 0 ? 'lg:pl-8' : ''} ${i === 2 ? 'lg:border-l' : ''} ${i < 2 ? 'border-b lg:border-b-0' : ''}`}>
+            <dt className="font-cond text-lg font-bold sm:text-xl">{k}</dt>
             <dd className="mt-1 text-sm text-ink-soft">{v}</dd>
           </div>
         ))}
@@ -56,15 +57,120 @@ export function FactsStrip() {
   )
 }
 
-export function Approach({ action, className = '' }) {
+/*
+  "Where do you start?" Three honest situations, each pointing at the right program.
+  These are choices, so they are the one place on the homepage that uses cards.
+*/
+const PATHS = [
+  { situation: 'I have never traded.', body: 'Start from zero: charts, brokers, and sizing a trade so one loss never hurts.', programs: ['forex-basic'] },
+  { situation: 'I trade, but without a plan.', body: 'Market structure, multi-timeframe entries, and a weekly review of your live trades.', programs: ['forex-advanced'] },
+  { situation: 'I want crypto or stocks.', body: 'Exchanges and wallet safety, or Indian and US equities with a swing trading method.', programs: ['crypto', 'equity'] },
+]
+
+export function Paths() {
+  const ref = useReveal()
+  return (
+    <Section title="Where do you start?" intro="Pick the line that sounds most like you. If none fit, an advisor will help you choose.">
+      <div ref={ref} className="stagger grid gap-4 md:grid-cols-3 md:gap-6">
+        {PATHS.map((path) => {
+          const list = path.programs.map((id) => programs.find((p) => p.id === id))
+          return (
+            <article key={path.situation} className="panel group relative flex flex-col border border-line bg-white p-6 transition-[box-shadow,transform,border-color] duration-300 ease-out hover:-translate-y-1 hover:border-transparent hover:shadow-[var(--shadow-lift)] sm:p-7">
+              <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 rounded-t-[var(--radius-panel)] bg-signal transition-transform duration-300 group-hover:scale-x-100" />
+              <h3 className="font-display text-[2.1rem] leading-none font-bold">{path.situation}</h3>
+              <p className="mt-4 text-ink-soft">{path.body}</p>
+              <div className="mt-auto pt-6">
+                <p className="text-xs text-ink-soft">Recommended</p>
+                <ul className="mt-1 space-y-1.5">
+                  {list.map((p) => (
+                    <li key={p.id} className="flex items-baseline justify-between gap-3">
+                      <Link to={`/programs/${p.id}`} className="link-line">{p.title}</Link>
+                      <span className="text-sm tabular-nums text-ink-soft">{formatINR(p.price)}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </article>
+          )
+        })}
+      </div>
+      <p className="mt-8 text-ink-soft">
+        Still not sure? <Link to="/contact" className="link-line text-ink">Book a consultation</Link> and an advisor will recommend a program.
+      </p>
+    </Section>
+  )
+}
+
+// The offer: what the fee buys, the lowest price, and the refund terms, beside the main CTA.
+export function Offer({ className = 'bg-card' }) {
+  const cheapest = programs.reduce((a, b) => (a.price <= b.price ? a : b))
+  return (
+    <Section className={className}>
+      <div className="grid-12 gap-y-12">
+        <div className="col-span-4 sm:col-span-8 lg:col-span-6">
+          <h2 className="text-[2.5rem] sm:text-[2.9rem] lg:text-4xl">Everything is in one fee.</h2>
+          <p className="mt-5 max-w-[32rem] text-lg text-ink-soft">No upsells, no signal subscriptions. Every program includes:</p>
+          <ul className="mt-8 space-y-3.5">
+            {offer.includes.map((item) => (
+              <li key={item} className="flex gap-3.5">
+                <span aria-hidden="true" className="mt-1 grid size-5 shrink-0 place-items-center rounded-[4px] bg-board text-[0.7rem] font-bold text-signal">✓</span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="col-span-4 sm:col-span-8 lg:col-span-5 lg:col-start-8 lg:self-center">
+          <Ticket>
+            <p className="text-sm text-white/65">Programs from</p>
+            <p className="mt-2 font-display text-[4.25rem] leading-none font-bold text-signal tabular-nums">{formatINR(cheapest.price)}</p>
+            <p className="mt-2 text-white/70">or AED {Math.min(...programs.map((p) => p.priceAed)).toLocaleString('en-AE')} in the UAE. Pay by card, UPI or Apple Pay.</p>
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+              <Link to="/register" className="btn-brand btn-lg flex-1">Apply now</Link>
+              <Link to="/programs" className="btn-outline-light btn-lg flex-1">Compare programs</Link>
+            </div>
+            <p className="mt-6 border-t border-board-line pt-5 text-sm text-white/65">{offer.refundTerms}</p>
+          </Ticket>
+        </div>
+      </div>
+    </Section>
+  )
+}
+
+export function Faq({ className = '' }) {
+  return (
+    <Section className={className}>
+      <div className="grid-12 gap-y-10">
+        <div className="col-span-4 sm:col-span-8 lg:col-span-4">
+          <h2 className="text-[2.5rem] sm:text-[2.9rem] lg:text-4xl">Questions before you enrol.</h2>
+          <p className="mt-5 text-lg text-ink-soft">Anything else, ask an advisor. Most replies come the same day on WhatsApp.</p>
+          <a href={site.whatsappLink} className="btn-primary mt-7">Ask on WhatsApp</a>
+        </div>
+        <div className="col-span-4 border-t border-ink sm:col-span-8 lg:col-span-7 lg:col-start-6">
+          {faqs.map(([q, a]) => (
+            <details key={q} className="faq group border-b border-line">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 text-lg font-semibold transition-colors marker:hidden hover:text-brand">
+                {q}
+                <span className="grid size-7 shrink-0 place-items-center rounded-full border border-line text-lg leading-none text-ink transition-[transform,background-color,border-color] duration-300 group-open:rotate-45 group-open:border-board group-open:bg-board group-open:text-white" aria-hidden="true">+</span>
+              </summary>
+              <p className="max-w-[40rem] pb-6 text-ink-soft">{a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </Section>
+  )
+}
+
+export function Approach({ action, dark = false, className = '' }) {
   return (
     <Section
       title="Nobody learns to trade from videos alone."
       intro="Every program moves through the same four stages. You go on to the next one when your mentor is satisfied with the last."
       action={action}
+      dark={dark}
       className={className}
     >
-      <MethodTrack />
+      <MethodTrack dark={dark} />
     </Section>
   )
 }
@@ -166,20 +272,22 @@ export function Stories({ limit }) {
   )
 }
 
+// Final conversion band. Navy, so it reads as the close of the page and flows into the footer.
 export function FinalCta({ title = 'Start with a conversation.', body = 'Tell us what you trade now, or that you have never traded. We will recommend a program and a batch in Dubai, India or online.' }) {
   return (
-    <section className="py-16 sm:py-24 lg:py-32">
-      <div className="wrap">
-      <div className="grid-12 gap-y-8 border-t-2 border-ink pt-10 sm:pt-14">
-        <h2 className="col-span-4 text-[3.4rem] sm:col-span-8 sm:text-5xl lg:col-span-7 lg:text-6xl">{title}</h2>
+    <section className="bg-board text-white">
+      <div className="wrap grid-12 gap-y-8 py-16 sm:py-24 lg:py-28">
+        <h2 className="col-span-4 text-[3rem] sm:col-span-8 sm:text-5xl lg:col-span-7 lg:text-6xl">{title}</h2>
         <div className="col-span-4 sm:col-span-6 lg:col-span-4 lg:col-start-9 lg:self-end">
-          <p className="text-lg leading-relaxed text-ink-soft">{body}</p>
-          <div className="mt-7 flex flex-wrap items-center gap-x-7 gap-y-4">
-            <Link to="/register" className="btn-brand">Apply now</Link>
-            <Link to="/contact" className="link-line text-sm">Talk to an advisor</Link>
+          <p className="text-lg leading-relaxed text-white/75">{body}</p>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Link to="/register" className="btn-brand btn-lg">Apply now</Link>
+            <a href={site.whatsappLink} className="btn-outline-light btn-lg">Chat on WhatsApp</a>
           </div>
+          <p className="mt-5 text-sm text-white/60">
+            Prefer email? <Link to="/contact" className="link-line text-white">Send an enquiry</Link>
+          </p>
         </div>
-      </div>
       </div>
     </section>
   )

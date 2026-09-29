@@ -105,7 +105,7 @@ export default function Contact() {
             <EnquiryForm />
           </div>
           <aside className="col-span-4 sm:col-span-8 lg:col-span-4 lg:col-start-9">
-            <div className="bg-card p-6 sm:p-8">
+            <div className="panel bg-card p-6 sm:p-8">
               <h2 className="font-cond text-xl font-bold">Contact us directly</h2>
               <dl className="mt-5 space-y-4">
                 <div>

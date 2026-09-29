@@ -27,17 +27,18 @@ export function useReveal() {
 /*
   Section: heading on the left, intro on the right aligned to the heading's baseline.
   The asymmetric split is the site's standard section opening.
+  `dark` sets the section on petrol, for the one mid-page band that breaks the light rhythm.
 */
-export function Section({ id, title, intro, action, children, className = '' }) {
+export function Section({ id, title, intro, action, children, dark = false, className = '' }) {
   return (
-    <section id={id} className={`scroll-mt-20 py-16 sm:py-24 lg:py-32 ${className}`}>
+    <section id={id} className={`scroll-mt-20 py-16 sm:py-24 lg:py-32 ${dark ? 'bg-board text-white' : ''} ${className}`}>
       <div className="wrap">
         {title && (
           <header className="grid-12 mb-10 gap-y-5 sm:mb-14">
-            <h2 className="col-span-4 text-[2.75rem] sm:col-span-8 sm:text-[3.5rem] lg:col-span-7 lg:text-4xl">{title}</h2>
+            <h2 className="col-span-4 text-[2.5rem] sm:col-span-8 sm:text-[2.9rem] lg:col-span-7 lg:text-4xl">{title}</h2>
             {(intro || action) && (
               <div className="col-span-4 sm:col-span-6 lg:col-span-4 lg:col-start-9 lg:self-end">
-                {intro && <p className="text-ink-soft">{intro}</p>}
+                {intro && <p className={`text-lg ${dark ? 'text-white/70' : 'text-ink-soft'}`}>{intro}</p>}
                 {action && <div className="mt-4 text-sm">{action}</div>}
               </div>
             )}
@@ -57,7 +58,7 @@ export function ImageBlock({ src, alt = '', ratio = '3/2', caption, shotNote, cl
   const ref = useReveal()
   return (
     <figure ref={ref} className={className}>
-      <div className="reveal relative overflow-hidden bg-stone" style={{ aspectRatio: ratio }}>
+      <div className="reveal panel relative overflow-hidden bg-stone" style={{ aspectRatio: ratio }}>
         {src ? (
           <img src={src} alt={alt} className="h-full w-full object-cover" loading="lazy" />
         ) : (
@@ -74,7 +75,7 @@ export function ImageBlock({ src, alt = '', ratio = '3/2', caption, shotNote, cl
 
 // Dark panel for anything transactional: fees, order summaries. Same surface as the board.
 export function Ticket({ children, className = '' }) {
-  return <div className={`bg-board p-6 text-white sm:p-8 ${className}`}>{children}</div>
+  return <div className={`panel bg-board p-6 text-white shadow-[var(--shadow-lift)] sm:p-8 ${className}`}>{children}</div>
 }
 
 /*
@@ -96,13 +97,13 @@ export function ProgramBoard({ programs = allPrograms, detailed = false }) {
           key={p.id}
           to={`/programs/${p.id}`}
           role="row"
-          className="group relative grid gap-x-6 gap-y-2 border-b border-line py-6 transition-colors hover:bg-card lg:grid-cols-[minmax(0,1fr)_7rem_7rem_6rem_7rem] lg:items-baseline lg:py-7"
+          className="group relative grid gap-x-6 gap-y-2 border-b border-line py-6 transition-colors hover:bg-signal/[0.06] lg:grid-cols-[minmax(0,1fr)_7rem_7rem_6rem_7rem] lg:items-baseline lg:py-7"
         >
           <span aria-hidden="true" className="absolute inset-y-0 -left-5 w-1 origin-top scale-y-0 bg-signal transition-transform duration-200 group-hover:scale-y-100 sm:-left-8 lg:-left-12" />
           <span role="cell" className="min-w-0">
             <span className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-              <span className="font-display text-[2.4rem] leading-none font-extrabold sm:text-[3rem]">{p.title}</span>
-              {p.featured && <span className="bg-signal px-2 py-0.5 text-xs font-semibold text-ink">Start here</span>}
+              <span className="font-display text-[2.3rem] leading-none font-bold transition-transform duration-300 ease-out group-hover:translate-x-1.5 sm:text-[2.75rem]">{p.title}</span>
+              {p.featured && <span className="rounded-[4px] bg-signal px-2 py-0.5 text-xs font-semibold text-ink">Start here</span>}
             </span>
             {detailed && <span className="mt-3 block max-w-[40rem] text-ink-soft">{p.summary}</span>}
           </span>
@@ -127,18 +128,19 @@ export const STAGES = [
   ['Keep the journal', 'Each trade goes in your journal. A weekly review finds the patterns in your mistakes.'],
 ]
 
-export function MethodTrack() {
+export function MethodTrack({ dark = false }) {
+  const ref = useReveal()
   return (
-    <ol className="grid gap-y-10 sm:grid-cols-2 sm:gap-x-8 lg:grid-cols-4 lg:gap-x-0">
+    <ol ref={ref} className="stagger grid gap-y-10 sm:grid-cols-2 sm:gap-x-8 lg:grid-cols-4 lg:gap-x-0">
       {STAGES.map(([title, body], i) => (
         <li key={title} className="relative lg:pr-10">
           <div className="flex items-center gap-3">
             <span className="flap flap-amber [--flap-w:1.6rem]" aria-hidden="true">{i + 1}</span>
             {/* the track joining one stage to the next */}
-            {i < STAGES.length - 1 && <span aria-hidden="true" className="hidden h-0.5 flex-1 bg-ink lg:block" />}
+            {i < STAGES.length - 1 && <span aria-hidden="true" className={`hidden h-px flex-1 lg:block ${dark ? 'bg-white/25' : 'bg-ink'}`} />}
           </div>
           <h3 className="mt-5 text-xl">{title}</h3>
-          <p className="mt-2 max-w-[20rem] text-ink-soft">{body}</p>
+          <p className={`mt-2 max-w-[20rem] ${dark ? 'text-white/65' : 'text-ink-soft'}`}>{body}</p>
         </li>
       ))}
     </ol>
@@ -158,7 +160,7 @@ export function FacultyProfile({ person, reverse = false }) {
       />
       <div className={`col-span-4 sm:col-span-7 lg:col-span-6 ${reverse ? 'lg:col-start-1 lg:row-start-1' : 'lg:col-start-7'}`}>
         <p className="text-sm font-semibold text-brand">{person.role}</p>
-        <h2 className="mt-2 text-5xl sm:text-6xl">{person.name}</h2>
+        <h2 className="mt-2 text-5xl lg:text-6xl">{person.name}</h2>
         <p className="mt-6 max-w-[36rem] text-lg leading-relaxed">{person.bio}</p>
         <dl className="mt-8 grid gap-5 border-t-2 border-ink pt-5 sm:grid-cols-2">
           <div>
@@ -196,7 +198,7 @@ export function Testimonial({ story, size = 'large' }) {
 // Segmented choice: a row of square buttons, one selected.
 export function Segmented({ name, options, value, onChange }) {
   return (
-    <div className="flex flex-wrap border border-ink/25" role="radiogroup" aria-label={name}>
+    <div className="flex flex-wrap overflow-hidden rounded-[var(--radius-ctl)] border border-line bg-white" role="radiogroup" aria-label={name}>
       {options.map(([val, label]) => (
         <label key={val} className={`flex-1 cursor-pointer px-4 py-2.5 text-center text-sm font-semibold whitespace-nowrap transition-colors ${value === val ? 'bg-ink text-white' : 'bg-white text-ink hover:bg-card'}`}>
           <input type="radio" name={name} className="sr-only" checked={value === val} onChange={() => onChange(val)} />
