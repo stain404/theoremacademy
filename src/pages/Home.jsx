@@ -4,16 +4,45 @@ import { Approach, FactsStrip, Faq, FinalCta, Offer, Paths, Stories, usePageTitl
 import { ImageBlock, ProgramBoard, Section } from '../components/ui'
 import { formatINR, lowestPrice, offer, teachers } from '../config/site'
 
+const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+
+/*
+  Background film behind the headline: candlesticks drifting across a dark screen.
+  An 8-second forward-then-reverse loop (public/hero/), so the loop has no visible seam.
+  Phones get a 960px file. With reduced motion only the still poster is shown.
+  Petrol overlays keep the headline legible and fade the film out before the board.
+*/
+function HeroFilm() {
+  return (
+    <div className="hero-film absolute inset-0 overflow-hidden" aria-hidden="true">
+      {reducedMotion() ? (
+        <img src="/hero/hero-poster.jpg" alt="" className="h-full w-full object-cover" />
+      ) : (
+        <video className="h-full w-full object-cover" autoPlay muted loop playsInline preload="auto" poster="/hero/hero-poster.jpg">
+          <source src="/hero/hero-mobile.mp4" type="video/mp4" media="(max-width: 767px)" />
+          <source src="/hero/hero.mp4" type="video/mp4" />
+        </video>
+      )}
+      {/* legibility: solid behind the text column, opening up to the right */}
+      <div className="absolute inset-0 bg-board/75 md:bg-transparent md:bg-[linear-gradient(90deg,var(--color-board)_12%,rgb(12_46_49/0.78)_48%,rgb(12_46_49/0.4))]" />
+      {/* the film fades into solid petrol before the board starts */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_35%,var(--color-board)_78%)]" />
+    </div>
+  )
+}
+
 /*
   Hero, and the site's one orchestrated load sequence (see index.css):
-  headline lines rise from a mask, then copy and CTAs, then the board lights and flips.
-  Everything is clickable from the first frame; the animation only affects appearance.
+  the film fades up, headline lines rise from a mask, then copy and CTAs, then the board
+  lights and flips. Everything is clickable from the first frame; the animation only
+  affects appearance.
 */
 function Hero() {
   const lines = ['Trading is a skill.', 'We teach it like one.']
   return (
-    <section id="hero" className="bg-board text-white">
-      <div className="wrap pt-12 pb-10 sm:pt-16 sm:pb-14 lg:pt-24 lg:pb-16">
+    <section id="hero" className="relative isolate overflow-hidden bg-board text-white">
+      <HeroFilm />
+      <div className="wrap relative pt-12 pb-10 sm:pt-16 sm:pb-14 lg:pt-28 lg:pb-16">
         <p className="hero-rise text-sm text-white/65" style={{ animationDelay: '50ms' }}>
           A trading academy in Dubai, India and online
         </p>
