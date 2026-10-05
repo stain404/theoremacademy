@@ -148,28 +148,28 @@ export default function SessionBoard({ startDelay = 700 }) {
   const d = (ms) => startDelay + ms
 
   return (
-    <div className="panel relative border border-board-line bg-board-deep bg-[radial-gradient(120%_80%_at_50%_-20%,rgb(255_255_255/0.07),transparent_60%)] p-5 text-white max-sm:p-4 sm:p-7 lg:p-8">
+    <div className="panel relative border border-board-line bg-board-deep bg-[radial-gradient(120%_80%_at_50%_-20%,rgb(255_255_255/0.07),transparent_60%)] p-4 text-white sm:p-5 lg:p-6 shadow-md">
       <div className="board-sweep" aria-hidden="true" />
       <div className="relative">
-        <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-1">
-          <h2 className="flex items-center gap-2.5 font-cond text-lg font-bold">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+          <h2 className="flex items-center gap-2 font-cond text-sm sm:text-base font-bold text-white">
             <span className="relative flex size-2" aria-hidden="true">
               <span className="absolute inline-flex size-full rounded-full bg-signal opacity-60 motion-safe:animate-ping" />
               <span className="relative inline-flex size-2 rounded-full bg-signal" />
             </span>
-            Forex sessions right now
+            Active Market Hours Right Now
           </h2>
-          <p className="text-sm text-white/60 tabular-nums">
-            Dubai {localTime(now, DUBAI)}, India {localTime(now, INDIA)}
+          <p className="text-xs text-white/60 tabular-nums">
+            Dubai {localTime(now, DUBAI)} • India {localTime(now, INDIA)}
           </p>
         </div>
 
         {/* the board: a grid so column labels line up with the tiles */}
-        <div className="mt-6 overflow-hidden [--flap-w:min(0.74rem,3vw)] sm:[--flap-w:1.08rem] lg:[--flap-w:1.35rem]">
-          <div className="grid w-max grid-cols-[repeat(3,max-content)] sm:grid-cols-[repeat(4,max-content)] lg:grid-cols-[repeat(5,max-content)] gap-x-[calc(var(--flap-w)*0.9)] gap-y-[5px]" role="table" aria-label="Forex sessions">
+        <div className="mt-4 overflow-hidden [--flap-w:min(0.72rem,2.8vw)] sm:[--flap-w:0.95rem] lg:[--flap-w:1.15rem]">
+          <div className="grid w-max grid-cols-[repeat(3,max-content)] sm:grid-cols-[repeat(4,max-content)] lg:grid-cols-[repeat(5,max-content)] gap-x-[calc(var(--flap-w)*0.85)] gap-y-[4px]" role="table" aria-label="Forex sessions">
             <div role="row" className="contents">
               {COLS.map((c) => (
-                <span key={c.key} role="columnheader" className={`self-end pb-2 text-xs leading-tight text-white/55 ${c.className}`}>{c.label}</span>
+                <span key={c.key} role="columnheader" className={`self-end pb-1.5 text-[0.65rem] sm:text-xs leading-tight text-white/55 ${c.className}`}>{c.label}</span>
               ))}
             </div>
             {data.map((r, ri) => (
@@ -184,9 +184,9 @@ export default function SessionBoard({ startDelay = 700 }) {
           </div>
         </div>
 
-        <p className="mt-6 max-w-[46rem] text-sm leading-relaxed text-white/60">
-          {openNow.length ? `${openNow.join(' and ')} ${openNow.length > 1 ? 'are' : 'is'} open. ` : 'All four sessions are closed. '}
-          Sessions run 08:00 to 17:00 in each city, Monday to Friday. The board updates on its own.
+        <p className="mt-3.5 max-w-3xl text-xs leading-relaxed text-white/60">
+          {openNow.length ? `${openNow.join(' and ')} ${openNow.length > 1 ? 'are' : 'is'} active. ` : 'All major sessions are currently closed. '}
+          Peak volatility occurs during London & New York session overlaps. The board updates automatically.
         </p>
       </div>
     </div>

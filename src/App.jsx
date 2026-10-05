@@ -10,6 +10,7 @@ import Home from './pages/Home'
 import Mentors from './pages/Mentors'
 import NotFound from './pages/NotFound'
 import { ProgramDetail, Programs } from './pages/Programs'
+import Technology from './pages/Technology'
 import Certificates from './pages/portal/Certificates'
 import Course from './pages/portal/Course'
 import { Dashboard, PortalLayout } from './pages/portal/Portal'
@@ -34,6 +35,9 @@ export default function App() {
             <Route index element={<Home />} />
             <Route path="programs" element={<Programs />} />
             <Route path="programs/:programId" element={<ProgramDetail />} />
+            <Route path="technology" element={<Technology />} />
+            <Route path="technology/tools" element={<Technology />} />
+            <Route path="tools" element={<Technology />} />
             <Route path="about" element={<About />} />
             <Route path="mentors" element={<Mentors />} />
             <Route path="contact" element={<Contact />} />

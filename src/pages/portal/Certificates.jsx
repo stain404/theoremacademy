@@ -8,33 +8,33 @@ import { ProgressBar, useMyCourses } from './Portal'
 function Certificate({ name, program, date, id }) {
   const mentor = teachers.find((t) => t.teaches.includes(program.title)) || teachers[0]
   return (
-    <div className="certificate grid aspect-[1.414] w-full grid-cols-[27%_1fr] border border-ink/15 bg-white [container-type:inline-size]">
+    <div className="certificate grid aspect-[1.414] w-full grid-cols-[27%_1fr] border border-white/20 bg-white text-black [container-type:inline-size] shadow-xl rounded-lg overflow-hidden">
       <div className="flex flex-col justify-between bg-board p-[4cqw] text-white">
         <div className="flex items-center gap-[1.2cqw]">
-          <span className="flap flap-amber [--flap-w:2.6cqw]" aria-hidden="true">P</span>
+          <span className="flap flap-amber [--flap-w:2.6cqw]" aria-hidden="true">T</span>
           <span className="font-display text-[2.6cqw] leading-none font-extrabold">{site.name}</span>
         </div>
         <div>
-          <p className="font-display text-[4.6cqw] leading-[0.95] font-extrabold">Certificate of completion</p>
+          <p className="font-display text-[4.6cqw] leading-[0.95] font-extrabold text-white">Certificate of completion</p>
           <p className="mt-[2cqw] text-[1.3cqw] text-white/60">Certificate {id}</p>
         </div>
       </div>
-      <div className="flex flex-col justify-between p-[5cqw]">
+      <div className="flex flex-col justify-between bg-white p-[5cqw] text-black">
         <div>
-          <p className="text-[1.6cqw] text-ink-soft">This certifies that</p>
-          <p className="mt-[1.5cqw] font-display text-[8.5cqw] leading-[0.9] font-extrabold">{name}</p>
-          <p className="mt-[3cqw] text-[1.6cqw] text-ink-soft">has completed every lesson and assessment of</p>
-          <p className="mt-[0.8cqw] font-display text-[4.4cqw] leading-none font-extrabold">{program.title}</p>
+          <p className="text-[1.6cqw] text-neutral-600 font-medium">This certifies that</p>
+          <p className="mt-[1.5cqw] font-display text-[8.5cqw] leading-[0.9] font-extrabold text-black">{name}</p>
+          <p className="mt-[3cqw] text-[1.6cqw] text-neutral-600 font-medium">has completed every lesson and assessment of</p>
+          <p className="mt-[0.8cqw] font-display text-[4.4cqw] leading-none font-extrabold text-black">{program.title}</p>
           <div className="mt-[1.6cqw] h-[0.5cqw] w-[10cqw] bg-signal" aria-hidden="true" />
         </div>
         <div className="grid grid-cols-2 gap-[4cqw] text-[1.4cqw]">
-          <div className="border-t-[0.2cqw] border-ink pt-[1cqw]">
-            <p className="font-semibold">{mentor.name}</p>
-            <p className="text-ink-soft">{mentor.role}</p>
+          <div className="border-t-[0.2cqw] border-black/30 pt-[1cqw]">
+            <p className="font-bold text-black">{mentor.name}</p>
+            <p className="text-neutral-600">{mentor.role}</p>
           </div>
-          <div className="border-t-[0.2cqw] border-ink pt-[1cqw]">
-            <p className="font-semibold">{new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-            <p className="text-ink-soft">Date completed</p>
+          <div className="border-t-[0.2cqw] border-black/30 pt-[1cqw]">
+            <p className="font-bold text-black">{new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+            <p className="text-neutral-600">Date completed</p>
           </div>
         </div>
       </div>

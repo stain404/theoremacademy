@@ -2,20 +2,23 @@ import { useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { usePageTitle } from '../components/sections'
 import { Segmented, Ticket } from '../components/ui'
-import { formatINR, programs } from '../config/site'
+import { bundlePackage, formatINR, programs } from '../config/site'
 import { updateProfile } from '../lib/api'
 import { useAuth } from '../lib/auth'
 
+const ALL_OFFERINGS = [...programs, bundlePackage]
+
 function AuthShell({ title, intro, children, aside }) {
   return (
-    <section className="py-12 sm:py-16 lg:py-20">
-      <div className="wrap grid-12 gap-y-12">
+    <section className="py-8 sm:py-12 lg:py-14">
+      <div className="wrap grid-12 gap-y-8 lg:gap-x-10">
         <div className="col-span-4 sm:col-span-8 lg:col-span-6">
-          <h1 className="text-[3.2rem] sm:text-5xl">{title}</h1>
-          {intro && <p className="mt-4 max-w-[30rem] text-lg text-ink-soft">{intro}</p>}
-          <div className="mt-10">{children}</div>
+          <span className="badge-signal text-[0.65rem] font-bold uppercase tracking-wider py-0.5 px-2">Theorem Portal</span>
+          <h1 className="mt-2 font-display text-3xl sm:text-4xl font-extrabold text-white leading-tight">{title}</h1>
+          {intro && <p className="mt-2 max-w-[30rem] text-xs sm:text-sm text-white/70 leading-relaxed">{intro}</p>}
+          <div className="mt-6">{children}</div>
         </div>
-        {aside && <div className="col-span-4 sm:col-span-8 lg:col-span-4 lg:col-start-9">{aside}</div>}
+        {aside && <div className="col-span-4 sm:col-span-8 lg:col-span-5 lg:col-start-8">{aside}</div>}
       </div>
     </section>
   )
@@ -23,7 +26,7 @@ function AuthShell({ title, intro, children, aside }) {
 
 function ErrorText({ children }) {
   if (!children) return null
-  return <p role="alert" className="border-l-4 border-bear bg-bear/5 px-4 py-3 text-sm text-bear">{children}</p>
+  return <p role="alert" className="border-l-4 border-bear bg-bear/10 px-4 py-3 text-xs sm:text-sm text-bear rounded-r-lg">{children}</p>
 }
 
 // ---------- Login ----------
@@ -53,18 +56,18 @@ export function Login() {
 
   return (
     <AuthShell title="Log in" intro="Continue your course where you left off.">
-      <form onSubmit={submit} className="max-w-[28rem] space-y-5">
+      <form onSubmit={submit} className="max-w-[28rem] space-y-4 card-rich text-white p-5 sm:p-6">
         <div>
-          <label className="label" htmlFor="email">Email</label>
-          <input id="email" type="email" required autoComplete="email" className="field" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+          <label className="label text-xs font-bold text-white/90" htmlFor="email">Email</label>
+          <input id="email" type="email" required autoComplete="email" className="field py-2 text-xs sm:text-sm" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
         </div>
         <div>
-          <label className="label" htmlFor="password">Password</label>
-          <input id="password" type="password" required autoComplete="current-password" className="field" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
+          <label className="label text-xs font-bold text-white/90" htmlFor="password">Password</label>
+          <input id="password" type="password" required autoComplete="current-password" className="field py-2 text-xs sm:text-sm" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
         </div>
         <ErrorText>{error}</ErrorText>
-        <button className="btn-brand w-full py-3.5" disabled={busy}>{busy ? 'Logging in…' : 'Log in'}</button>
-        <p className="text-sm text-ink-soft">New here? <Link to="/register" className="link-line text-ink">Create an account</Link></p>
+        <button className="btn-brand w-full py-2.5 text-xs sm:text-sm font-bold shadow-md" disabled={busy}>{busy ? 'Logging in…' : 'Log in'}</button>
+        <p className="text-xs text-white/60 text-center pt-2">New here? <Link to="/register" className="link-line text-signal font-bold">Create an account</Link></p>
       </form>
     </AuthShell>
   )
@@ -77,11 +80,11 @@ const STEPS = ['Your account', 'Your program', 'Payment']
 // The three steps really happen in order, so they are numbered on board tiles.
 function Stepper({ current }) {
   return (
-    <ol className="mb-10 flex flex-wrap gap-x-6 gap-y-3">
+    <ol className="mb-6 flex flex-wrap gap-x-5 gap-y-2">
       {STEPS.map((s, i) => (
-        <li key={s} className="flex items-center gap-2.5" aria-current={i === current ? 'step' : undefined}>
-          <span className={`flap [--flap-w:1.2rem] ${i === current ? 'flap-amber' : i < current ? '' : 'flap-dim'}`} aria-hidden="true">{i < current ? '✓' : i + 1}</span>
-          <span className={`text-sm ${i === current ? 'font-semibold' : 'text-ink-soft'}`}>{s}</span>
+        <li key={s} className="flex items-center gap-2" aria-current={i === current ? 'step' : undefined}>
+          <span className={`flap [--flap-w:1.15rem] ${i === current ? 'flap-amber' : i < current ? '' : 'flap-dim'}`} aria-hidden="true">{i < current ? '✓' : i + 1}</span>
+          <span className={`text-xs ${i === current ? 'font-bold text-white' : 'text-white/50'}`}>{s}</span>
         </li>
       ))}
     </ol>
@@ -126,22 +129,39 @@ export function Register() {
     navigate(`/checkout/${prefs.programId}`)
   }
 
-  const program = programs.find((p) => p.id === prefs.programId)
+  const program = ALL_OFFERINGS.find((p) => p.id === prefs.programId) || programs[0]
 
   return (
     <AuthShell
       title={step === 0 ? 'Create your account' : 'Choose your program'}
-      intro={step === 0 ? 'Takes a minute. You will pick a program next.' : 'You can change your batch later by contacting support.'}
+      intro={step === 0 ? 'Takes 60 seconds. You will select your program and cohort next.' : 'Select your batch format. You can change your batch later via support.'}
       aside={step === 1 && program && (
-        <Ticket className="lg:sticky lg:top-24 lg:mt-40">
-          <p className="text-xs text-white/55">{program.market}, {program.level.toLowerCase()}</p>
-          <h2 className="mt-1 text-[2.6rem] leading-none">{program.title}</h2>
-          <ul className="mt-5 space-y-2 border-t border-white/15 pt-5 text-sm text-white/80">
-            {program.outcomes.map((o) => <li key={o}>{o}</li>)}
+        <Ticket className="lg:sticky lg:top-24 p-5 sm:p-6">
+          <div className="flex items-center justify-between">
+            <span className="badge-signal text-[0.65rem] font-bold uppercase tracking-wider py-0.5 px-2">{program.market}</span>
+            {program.discountPercent && (
+              <span className="rounded-full bg-signal text-black font-bold text-[0.65rem] px-2 py-0.5">
+                SAVE {program.discountPercent}%
+              </span>
+            )}
+          </div>
+          <h2 className="mt-2 font-display text-xl sm:text-2xl font-extrabold text-white">{program.title}</h2>
+          <ul className="mt-4 space-y-2 border-t border-white/15 pt-4 text-xs sm:text-sm text-white/80">
+            {program.outcomes.map((o) => (
+              <li key={o} className="flex items-center gap-1.5">
+                <span className="text-signal font-bold">✓</span>
+                <span>{o}</span>
+              </li>
+            ))}
           </ul>
-          <div className="mt-6 flex items-baseline justify-between border-t border-white/15 pt-5">
-            <span className="text-sm text-white/55">{program.duration}</span>
-            <span className="font-display text-[2.4rem] leading-none font-extrabold text-signal tabular-nums">{formatINR(program.price)}</span>
+          <div className="mt-5 flex items-baseline justify-between border-t border-white/15 pt-4">
+            <span className="text-xs text-white/60">{program.duration}</span>
+            <div className="text-right">
+              {program.originalPrice && (
+                <span className="text-xs line-through text-white/50 block">{formatINR(program.originalPrice)}</span>
+              )}
+              <span className="font-display text-2xl sm:text-3xl leading-none font-extrabold gold-foil-text tabular-nums">{formatINR(program.price)}</span>
+            </div>
           </div>
         </Ticket>
       )}
@@ -149,69 +169,94 @@ export function Register() {
       <Stepper current={step} />
 
       {step === 0 && (
-        <form onSubmit={createAccount} className="space-y-5">
+        <form onSubmit={createAccount} className="space-y-4 card-rich text-white p-5 sm:p-6">
           <div>
-            <label className="label" htmlFor="name">Full name</label>
-            <input id="name" required autoComplete="name" className="field" value={account.name} onChange={(e) => setAccount({ ...account, name: e.target.value })} />
-            <p className="mt-1.5 text-xs text-ink-soft">As you want it printed on your certificate.</p>
+            <label className="label text-xs font-bold text-white/90" htmlFor="name">Full name</label>
+            <input id="name" required autoComplete="name" className="field py-2 text-xs sm:text-sm" value={account.name} onChange={(e) => setAccount({ ...account, name: e.target.value })} />
+            <p className="mt-1 text-[0.7rem] text-white/50">As you want it printed on your certificate.</p>
           </div>
-          <div className="grid gap-5 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="label" htmlFor="email">Email</label>
-              <input id="email" type="email" required autoComplete="email" className="field" value={account.email} onChange={(e) => setAccount({ ...account, email: e.target.value })} />
+              <label className="label text-xs font-bold text-white/90" htmlFor="email">Email</label>
+              <input id="email" type="email" required autoComplete="email" className="field py-2 text-xs sm:text-sm" value={account.email} onChange={(e) => setAccount({ ...account, email: e.target.value })} />
             </div>
             <div>
-              <label className="label" htmlFor="phone">WhatsApp number</label>
-              <input id="phone" type="tel" required autoComplete="tel" placeholder="+91 or +971" className="field" value={account.phone} onChange={(e) => setAccount({ ...account, phone: e.target.value })} />
+              <label className="label text-xs font-bold text-white/90" htmlFor="phone">WhatsApp number</label>
+              <input id="phone" type="tel" required autoComplete="tel" placeholder="+91 or +971" className="field py-2 text-xs sm:text-sm" value={account.phone} onChange={(e) => setAccount({ ...account, phone: e.target.value })} />
             </div>
           </div>
           <div>
-            <label className="label" htmlFor="password">Password</label>
-            <input id="password" type="password" required minLength={8} autoComplete="new-password" className="field" value={account.password} onChange={(e) => setAccount({ ...account, password: e.target.value })} />
-            <p className="mt-1.5 text-xs text-ink-soft">At least 8 characters.</p>
+            <label className="label text-xs font-bold text-white/90" htmlFor="password">Password</label>
+            <input id="password" type="password" required minLength={8} autoComplete="new-password" className="field py-2 text-xs sm:text-sm" value={account.password} onChange={(e) => setAccount({ ...account, password: e.target.value })} />
+            <p className="mt-1 text-[0.7rem] text-white/50">At least 8 characters.</p>
           </div>
           <ErrorText>{error}</ErrorText>
-          <button className="btn-brand w-full py-3.5" disabled={busy}>{busy ? 'Creating account…' : 'Create account'}</button>
-          <p className="text-sm text-ink-soft">Already have an account? <Link to="/login" className="link-line text-ink">Log in</Link></p>
+          <button className="btn-brand w-full py-2.5 text-xs sm:text-sm font-bold shadow-md" disabled={busy}>{busy ? 'Creating account…' : 'Create account'}</button>
+          <p className="text-xs text-white/60 text-center pt-1">Already have an account? <Link to="/login" className="link-line text-signal font-bold">Log in</Link></p>
         </form>
       )}
 
       {step === 1 && (
-        <form onSubmit={savePrefs} className="space-y-8">
+        <form onSubmit={savePrefs} className="space-y-6 card-rich text-white p-5 sm:p-6">
           <fieldset>
-            <legend className="label">Program</legend>
-            <div className="border-t-2 border-ink">
-              {programs.map((p) => (
-                <label key={p.id} className={`flex cursor-pointer items-baseline justify-between gap-4 border-b border-line py-4 pr-2 pl-4 transition-colors ${prefs.programId === p.id ? 'border-l-4 border-l-signal bg-card' : 'border-l-4 border-l-transparent hover:bg-card'}`}>
-                  <input type="radio" name="program" className="sr-only" checked={prefs.programId === p.id} onChange={() => setPrefs({ ...prefs, programId: p.id })} />
-                  <span>
-                    <span className="block font-display text-[1.9rem] leading-none font-extrabold">{p.title}</span>
-                    <span className="mt-1 block text-sm text-ink-soft">{p.level}, {p.duration}</span>
-                  </span>
-                  <span className="text-sm font-semibold tabular-nums">{formatINR(p.price)}</span>
+            <legend className="label text-xs font-bold text-white/90 mb-2">Select Program or Package</legend>
+            <div className="divide-y divide-white/10 rounded-lg border border-white/10 bg-[#0c0c0e] overflow-hidden">
+              {ALL_OFFERINGS.map((p) => (
+                <label
+                  key={p.id}
+                  className={`flex cursor-pointer items-center justify-between gap-3 p-3.5 transition-colors ${
+                    prefs.programId === p.id ? 'bg-signal/15 border-l-4 border-l-brand' : 'hover:bg-white/5'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="program"
+                    className="sr-only"
+                    checked={prefs.programId === p.id}
+                    onChange={() => setPrefs({ ...prefs, programId: p.id })}
+                  />
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="block font-display text-base sm:text-lg leading-tight font-extrabold text-white">
+                        {p.title}
+                      </span>
+                      {p.discountPercent && (
+                        <span className="rounded bg-signal px-1.5 py-0.2 text-[0.65rem] font-bold text-ink">
+                          10% OFF
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-xs text-white/60">{p.level}, {p.duration}</span>
+                  </div>
+                  <div className="text-right">
+                    {p.originalPrice && (
+                      <span className="text-[0.7rem] line-through text-white/50 block leading-none">{formatINR(p.originalPrice)}</span>
+                    )}
+                    <span className="text-xs sm:text-sm font-bold tabular-nums text-signal">{formatINR(p.price)}</span>
+                  </div>
                 </label>
               ))}
             </div>
           </fieldset>
           <fieldset>
-            <legend className="label">How will you attend?</legend>
+            <legend className="label text-xs font-bold text-white/90 mb-2">Attendance Format</legend>
             <Segmented
               name="Attendance"
-              options={[['Online', 'Online'], ['Dubai', 'In Dubai'], ['India', 'In India']]}
+              options={[['Online', 'Online (Zoom)'], ['Dubai', 'Dubai Campus'], ['India', 'India Campus']]}
               value={prefs.mode}
               onChange={(mode) => setPrefs({ ...prefs, mode })}
             />
           </fieldset>
           <div>
-            <label className="label" htmlFor="exp">Trading experience</label>
-            <select id="exp" className="field" value={prefs.experience} onChange={(e) => setPrefs({ ...prefs, experience: e.target.value })}>
+            <label className="label text-xs font-bold text-white/90" htmlFor="exp">Trading experience</label>
+            <select id="exp" className="field py-2 text-xs sm:text-sm" value={prefs.experience} onChange={(e) => setPrefs({ ...prefs, experience: e.target.value })}>
               <option>Never traded</option>
               <option>Less than 1 year</option>
               <option>1–3 years</option>
               <option>More than 3 years</option>
             </select>
           </div>
-          <button className="btn-brand w-full py-3.5" disabled={busy}>Continue to payment</button>
+          <button className="btn-brand w-full py-2.5 text-xs sm:text-sm font-bold shadow-md" disabled={busy}>Continue to payment</button>
         </form>
       )}
     </AuthShell>

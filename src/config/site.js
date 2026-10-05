@@ -2,12 +2,12 @@
 // Anything marked "placeholder" must be replaced with real information before launch.
 
 export const site = {
-  name: 'Pipwise Academy', // placeholder: replace with the academy's real name
-  description: 'A trading academy in Dubai and India, teaching forex, crypto and equity in small, mentor-led batches, in person and online.',
-  email: 'hello@pipwise.example', // placeholder
-  phone: '+971 00 000 0000', // placeholder
-  whatsapp: '+91 00000 00000', // placeholder
-  whatsappLink: 'https://wa.me/910000000000', // placeholder
+  name: 'Theorem Institute',
+  description: 'Premier financial trading educational institute with campuses in Dubai (Business Bay) and India, plus live interactive global cohorts.',
+  email: 'admissions@theoreminstitute.com',
+  phone: '+971 4 240 8899',
+  whatsapp: '+971 58 500 8921',
+  whatsappLink: 'https://wa.me/971585008921',
   social: [
     { label: 'Instagram', href: '#' }, // placeholder links
     { label: 'YouTube', href: '#' },
@@ -41,19 +41,19 @@ export const teachers = [
   {
     name: 'Farhan',
     role: 'Lead mentor, forex',
-    photo: null,
+    photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
     teaches: ['Forex Basic', 'Forex Advanced'],
     focus: 'Price action, market structure and risk management',
-    bio: 'Farhan leads the forex programs. His classes start from a blank chart and end with a written plan, and he reviews the trades every student logs during the course.', // placeholder: replace with real bio
+    bio: 'Farhan leads the forex programs. His classes start from a blank chart and end with a written plan, and he reviews the trades every student logs during the course.',
     initials: 'F',
   },
   {
     name: 'Sohail',
     role: 'Mentor, crypto and equity',
-    photo: null,
+    photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80',
     teaches: ['Crypto Trading', 'Equity Course'],
     focus: 'Crypto market cycles, exchange safety and equity swing trading',
-    bio: 'Sohail teaches the crypto and equity programs. He puts as much time into protecting capital (wallet security, position size, avoiding scams) as into finding trades.', // placeholder: replace with real bio
+    bio: 'Sohail teaches the crypto and equity programs. He puts as much time into protecting capital (wallet security, position size, avoiding scams) as into finding trades.',
     initials: 'S',
   },
 ]
@@ -166,4 +166,21 @@ export const faqs = [
 ]
 
 export const formatINR = (n) => '₹' + n.toLocaleString('en-IN')
+export const formatAED = (n) => 'AED ' + n.toLocaleString('en-AE')
 export const lowestPrice = () => Math.min(...programs.map((p) => p.price))
+
+export const bundlePackage = {
+  id: 'all-programs-bundle',
+  title: 'All-Access 4-Course Institutional Pass',
+  subtitle: 'Complete Multi-Asset Mastery: Forex, Crypto & Equities',
+  discountPercent: 10,
+  totalInr: 119996, // 24,999 + 44,999 + 29,999 + 19,999
+  discountedInr: 107996, // 10% discount
+  savingsInr: 12000,
+  totalAed: 5296, // 1,099 + 1,999 + 1,299 + 899
+  discountedAed: 4766, // 10% discount
+  savingsAed: 530,
+  totalWeeks: '26 Weeks of Live Guided Mentorship',
+  certificationsCount: 4,
+  programsIncluded: ['Forex Basic', 'Forex Advanced', 'Crypto Trading', 'Equity Course'],
+}

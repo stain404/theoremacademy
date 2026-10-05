@@ -1,99 +1,153 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import SessionBoard from '../components/Board'
-import { Approach, FactsStrip, Faq, FinalCta, Offer, Paths, Stories, usePageTitle } from '../components/sections'
-import { ImageBlock, ProgramBoard, Section } from '../components/ui'
-import { formatINR, lowestPrice, offer, teachers } from '../config/site'
+import HeroVisualBackground from '../components/HeroVisualBackground'
+import DubaiCampusShowcase from '../components/DubaiCampusShowcase'
+import {
+  Approach,
+  FactsStrip,
+  Faq,
+  FinalCta,
+  HybridExperience,
+  Stories,
+  usePageTitle,
+} from '../components/sections'
+import { ImageBlock, Section } from '../components/ui'
+import { site, teachers } from '../config/site'
 
-const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+const SCENE_ROTATION = ['dubai', 'online', 'india']
 
-/*
-  Background film behind the headline: candlesticks drifting across a dark screen.
-  An 8-second forward-then-reverse loop (public/hero/), so the loop has no visible seam.
-  Phones get a 960px file. With reduced motion only the still poster is shown.
-  Petrol overlays keep the headline legible and fade the film out before the board.
-*/
-function HeroFilm() {
-  return (
-    <div className="hero-film absolute inset-0 overflow-hidden" aria-hidden="true">
-      {reducedMotion() ? (
-        <img src="/hero/hero-poster.jpg" alt="" className="h-full w-full object-cover" />
-      ) : (
-        <video className="h-full w-full object-cover" autoPlay muted loop playsInline preload="auto" poster="/hero/hero-poster.jpg">
-          <source src="/hero/hero-mobile.mp4" type="video/mp4" media="(max-width: 767px)" />
-          <source src="/hero/hero.mp4" type="video/mp4" />
-        </video>
-      )}
-      {/* legibility: solid behind the text column, opening up to the right */}
-      <div className="absolute inset-0 bg-board/75 md:bg-transparent md:bg-[linear-gradient(90deg,var(--color-board)_12%,rgb(12_46_49/0.78)_48%,rgb(12_46_49/0.4))]" />
-      {/* the film fades into solid petrol before the board starts */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_35%,var(--color-board)_78%)]" />
-    </div>
-  )
-}
-
-/*
-  Hero, and the site's one orchestrated load sequence (see index.css):
-  the film fades up, headline lines rise from a mask, then copy and CTAs, then the board
-  lights and flips. Everything is clickable from the first frame; the animation only
-  affects appearance.
-*/
 function Hero() {
-  const lines = ['Trading is a skill.', 'We teach it like one.']
+  const [activeScene, setActiveScene] = useState('dubai')
+
+  // Auto-rotate background scenes every 5 seconds (Dubai -> Live Online -> India -> Dubai)
+  useEffect(() => {
+    const rotationTimer = setInterval(() => {
+      setActiveScene((current) => {
+        const nextIndex = (SCENE_ROTATION.indexOf(current) + 1) % SCENE_ROTATION.length
+        return SCENE_ROTATION[nextIndex]
+      })
+    }, 5000)
+    return () => clearInterval(rotationTimer)
+  }, [])
+
   return (
-    <section id="hero" className="relative isolate overflow-hidden bg-board text-white">
-      <HeroFilm />
-      <div className="wrap relative pt-12 pb-10 sm:pt-16 sm:pb-14 lg:pt-28 lg:pb-16">
-        <p className="hero-rise text-sm text-white/65" style={{ animationDelay: '50ms' }}>
-          A trading academy in Dubai, India and online
-        </p>
-        <h1 className="mt-4 text-[3.5rem] leading-[0.9] sm:text-[5.25rem] lg:text-7xl">
-          {lines.map((line, i) => (
-            <span key={line} className="line-mask">
-              <span className="line-in" style={{ animationDelay: `${120 + i * 110}ms` }}>{line}</span>
-            </span>
-          ))}
-        </h1>
+    <section id="hero" className="relative min-h-[76vh] lg:min-h-[80vh] flex flex-col justify-start overflow-hidden bg-[#07070a] text-white border-b border-board-line">
+      {/* 1. Atmospheric Ambient Background */}
+      <HeroVisualBackground activeScene={activeScene} />
 
-        <p className="hero-rise mt-7 max-w-[34rem] text-lg leading-relaxed text-white/80 sm:text-xl sm:leading-relaxed" style={{ animationDelay: '380ms' }}>
-          Live forex, crypto and equity programs for beginners and working professionals. Small batches, and a mentor who reviews the trades you place.
-        </p>
-        <div className="hero-rise mt-9 flex flex-col gap-x-8 gap-y-4 sm:flex-row sm:items-center" style={{ animationDelay: '480ms' }}>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Link to="/register" className="btn-brand btn-lg">Apply now</Link>
-            <Link to="/contact" className="btn-outline-light btn-lg">Book a consultation</Link>
+      <div className="wrap relative z-10 pt-6 sm:pt-8 lg:pt-10 pb-12 sm:pb-14 lg:pb-16">
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+          
+          {/* Left Column: Authoritative Value Proposition & Direct CTAs */}
+          <div className="lg:col-span-7 space-y-5 sm:space-y-6 self-start">
+            
+            {/* Campus Presence Badge */}
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="inline-flex items-center gap-2 rounded-full border border-signal/40 bg-[#121218]/90 px-3.5 py-1.5 text-xs font-semibold text-white/95 backdrop-blur-md shadow-sm">
+                <span className="size-2 rounded-full bg-signal animate-pulse" />
+                <span>🇦🇪 Dubai Campus • 🇮🇳 India Hub • 🌐 Live Online</span>
+              </div>
+            </div>
+
+            {/* Main Headline */}
+            <div className="space-y-3 sm:space-y-3.5">
+              <h1 className="font-display text-4xl sm:text-5xl lg:text-[4rem] font-extrabold tracking-tight leading-[1.02]">
+                <span className="text-white drop-shadow-[0_0_24px_rgba(255,255,255,0.4)]">Master </span>
+                <span className="gold-bright-text">Institutional Trading.</span>
+              </h1>
+
+              {/* Concise Asset Focus */}
+              <div className="space-y-0.5 pt-0.5">
+                <span className="text-sm sm:text-base font-semibold text-white/80 block">Learn</span>
+                <p className="font-display text-xl sm:text-2xl lg:text-[1.85rem] font-extrabold tracking-wide text-signal drop-shadow-[0_0_16px_rgba(255,215,0,0.4)]">
+                  Forex <span className="text-white/40 font-normal mx-1.5">|</span> Crypto <span className="text-white/40 font-normal mx-1.5">|</span> Equity
+                </p>
+              </div>
+            </div>
+
+            {/* Direct Action CTAs */}
+            <div className="flex flex-wrap items-center gap-3.5 pt-1">
+              <Link
+                to="/programs"
+                className="btn-brand shimmer-button px-7 py-3.5 text-xs sm:text-sm font-bold shadow-[0_0_24px_rgba(255,215,0,0.35)]"
+              >
+                Explore Programs →
+              </Link>
+              <Link
+                to="/contact"
+                className="btn-outline-light px-6 py-3.5 text-xs sm:text-sm font-semibold backdrop-blur-md bg-white/5 hover:bg-white/10"
+              >
+                Book Advisor Call
+              </Link>
+            </div>
+
+            {/* Clean Trust & Metric Strip */}
+            <div className="pt-4 border-t border-white/10">
+              <div className="grid grid-cols-3 gap-3 sm:gap-6 max-w-lg">
+                <div>
+                  <div className="font-display text-2xl sm:text-3xl font-extrabold gold-foil-text tabular-nums leading-none">
+                    4.9 <span className="text-sm font-sans text-signal">★</span>
+                  </div>
+                  <div className="mt-1.5 text-xs text-white/70 font-medium leading-tight">
+                    Verified Rating
+                  </div>
+                </div>
+                <div>
+                  <div className="font-display text-2xl sm:text-3xl font-extrabold gold-foil-text tabular-nums leading-none">
+                    1,850+
+                  </div>
+                  <div className="mt-1.5 text-xs text-white/70 font-medium leading-tight">
+                    Students Enrolled
+                  </div>
+                </div>
+                <div>
+                  <div className="font-display text-2xl sm:text-3xl font-extrabold gold-foil-text tabular-nums leading-none">
+                    &lt;15
+                  </div>
+                  <div className="mt-1.5 text-xs text-white/70 font-medium leading-tight">
+                    Traders / Cohort
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
-          <p className="text-sm leading-snug text-white/65 sm:max-w-[13rem]">
-            Programs from {formatINR(lowestPrice())}. Full refund within {offer.refundDays} days.
-          </p>
-        </div>
 
-        <div className="hero-rise mt-12 sm:mt-16" style={{ animationDelay: '560ms' }}>
-          <SessionBoard startDelay={700} />
+          {/* Right Column: Interactive Campus Showcase Card */}
+          <div className="lg:col-span-5 relative self-start">
+            <DubaiCampusShowcase activeId={activeScene} onSelect={setActiveScene} />
+          </div>
+
         </div>
       </div>
     </section>
   )
 }
 
-// A short introduction to each mentor; the full profiles live on /mentors.
+// Compact mentor preview cards for the homepage
 function MentorsPreview() {
   return (
     <Section
-      title="The people teaching you."
-      intro="Each program is led by one mentor, from your first class to your last trade review."
-      action={<Link to="/mentors" className="link-line">Meet the mentors</Link>}
+      tight
+      title="The mentors who guide your trades."
+      intro="Each cohort is led by one dedicated mentor from day one to graduation. No recorded bots or revolving instructors."
+      action={<Link to="/mentors" className="link-line">Meet full faculty →</Link>}
     >
-      <div className="grid gap-x-8 gap-y-12 md:grid-cols-2 lg:gap-x-16">
+      <div className="grid gap-5 sm:gap-6 md:grid-cols-2">
         {teachers.map((t) => (
-          <article key={t.name} className="group border-t-2 border-ink pt-6">
-            <Link to={`/mentors#${t.name.toLowerCase()}`} className="grid grid-cols-[minmax(0,2fr)_minmax(0,3fr)] items-end gap-5 sm:gap-7">
-              <ImageBlock src={t.photo} alt={`Portrait of ${t.name}`} ratio="4/5" shotNote={`Portrait of ${t.name}, natural light`} />
-              <div className="pb-1">
-                <p className="text-sm font-semibold text-brand">{t.role}</p>
-                <h3 className="mt-1 font-display text-[2.75rem] leading-none font-bold transition-colors group-hover:text-brand sm:text-5xl">{t.name}</h3>
-                <p className="mt-3 text-ink-soft">{t.focus}.</p>
-                <p className="mt-2 text-sm text-ink-soft">Teaches {t.teaches.join(' and ')}</p>
-                <span className="link-line mt-5 inline-block text-sm">Read {t.name}'s profile</span>
+          <article key={t.name} className="card-hover-glow panel group text-white p-5 sm:p-6">
+            <Link to={`/mentors#${t.name.toLowerCase()}`} className="grid grid-cols-[minmax(0,1.3fr)_minmax(0,3fr)] items-center gap-4 sm:gap-5">
+              <ImageBlock src={t.photo} alt={`Portrait of ${t.name}`} ratio="4/5" shotNote={`Portrait of ${t.name}`} />
+              <div>
+                <span className="badge-signal text-xs py-0.5 px-2.5 uppercase tracking-wider">{t.role}</span>
+                <h3 className="mt-2.5 font-display text-2xl font-extrabold text-white transition-colors group-hover:text-signal sm:text-3xl leading-none">
+                  {t.name}
+                </h3>
+                <p className="mt-2 text-xs sm:text-sm text-white/75 leading-relaxed line-clamp-2">{t.focus}.</p>
+                <div className="mt-3 text-xs sm:text-sm font-medium text-white/80">
+                  Teaches: <span className="font-bold text-white">{t.teaches.join(' & ')}</span>
+                </div>
+                <span className="link-line mt-3.5 inline-block text-xs sm:text-sm font-bold text-signal">View Profile →</span>
               </div>
             </Link>
           </article>
@@ -107,33 +161,35 @@ export default function Home() {
   usePageTitle(null)
   return (
     <>
+      {/* 1. Dubai Executive Hero with Famous Skyline Visuals & Campus Showcase */}
       <Hero />
+
+      {/* 2. Core Trust Stats Bar */}
       <FactsStrip />
-      <Paths />
-      <Section
-        title="Four programs, side by side."
-        intro="Each one is live, mentor-led and taught in Dubai, India and online. Open a program to see its full curriculum."
-        action={<Link to="/programs" className="link-line">Compare all programs</Link>}
-        className="bg-card"
-      >
-        <ProgramBoard />
-        {/* decision point: the visitor has just compared every program */}
-        <div className="mt-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-          <p className="max-w-[34rem] text-lg">
-            Not sure which one fits? Tell an advisor what you trade now and they will recommend a program and a batch.
-          </p>
-          <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
-            <Link to="/contact" className="btn-primary">Book a consultation</Link>
-            <Link to="/register" className="btn-ghost">Apply now</Link>
-          </div>
-        </div>
-      </Section>
-      <Approach dark action={<Link to="/programs/forex-basic" className="link-line">See the Forex Basic curriculum</Link>} />
+
+      {/* 3. Why Theorem Institute: 3 Clear Pillars (Clean Fundfloat-style simplicity) */}
+      <HybridExperience />
+
+      {/* 4. The 4-Stage Teaching Method */}
+      <Approach
+        dark
+        action={<Link to="/about" className="link-line text-white">Our teaching philosophy →</Link>}
+      />
+
+      {/* 6. Lead Mentors Spotlight */}
       <MentorsPreview />
+
+      {/* 7. Verified Student Stories */}
       <Stories limit={1} />
-      <Offer className="border-t border-line" />
+
+      {/* 8. Frequently Asked Questions */}
       <Faq className="bg-card" />
-      <FinalCta />
+
+      {/* 9. Closing Conversion Banner */}
+      <FinalCta
+        title="Start trading with a proven, reviewed plan."
+        body="Tell us what you trade now, or start from scratch. Join our next cohort in Dubai, India, or live online."
+      />
     </>
   )
 }
