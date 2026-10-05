@@ -24,9 +24,9 @@ function HeroFilm() {
         </video>
       )}
       {/* legibility: solid behind the text column, opening up to the right */}
-      <div className="absolute inset-0 bg-board/75 md:bg-transparent md:bg-[linear-gradient(90deg,var(--color-board)_12%,rgb(12_46_49/0.78)_48%,rgb(12_46_49/0.4))]" />
+      <div className="absolute inset-0 bg-board/55 md:bg-transparent md:bg-[linear-gradient(90deg,rgb(12_46_49/0.85),rgb(12_46_49/0.55)_42%,rgb(12_46_49/0.12))]" />
       {/* the film fades into solid petrol before the board starts */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_35%,var(--color-board)_78%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_45%,var(--color-board)_86%)]" />
     </div>
   )
 }

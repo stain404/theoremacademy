@@ -130,7 +130,7 @@
 
 /* 0. the background film fades up out of the petrol, slightly desaturated so it sits in the palette */
 @keyframes film-in { from { opacity: 0; transform: scale(1.04); } to { opacity: 1; transform: none; } }
-.hero-film video, .hero-film img { filter: saturate(0.6) brightness(0.85); animation: film-in 1.6s var(--ease-out) both; }
+.hero-film video, .hero-film img { filter: saturate(0.75) brightness(0.95); animation: film-in 1.6s var(--ease-out) both; }
 
 /* 1. the logo tile flips over once */
 @keyframes mark-flip { from { transform: perspective(200px) rotateX(-90deg); } to { transform: none; } }
