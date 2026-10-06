@@ -4,11 +4,22 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Premier financial trading educational institute with physical campuses in Dubai and India, plus live online interactive cohorts." />
+    <meta name="theme-color" content="#f7f3ea" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f1714" media="(prefers-color-scheme: dark)" />
+    <!-- Theme before first paint: the saved choice, else the system setting. Runs before CSS so dark visitors never see a white flash. -->
+    <script>
+      (function () {
+        var saved = null
+        try { saved = localStorage.getItem('theme') } catch (e) {}
+        var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light'
+      })()
+    </script>
+    <meta name="description" content="Forex, crypto and equity trading courses in Dubai, India and live online, taught in small cohorts by mentors who review your trades." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400..800;1,400..700&family=Sofia+Sans+Condensed:wght@600..800&family=Sofia+Sans+Extra+Condensed:wght@700..900&display=swap" rel="stylesheet" />
-    <title>Theorem Institute | Institutional Trading Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wdth,wght@75..100,400..700&display=swap" rel="stylesheet" />
+    <title>Theorem Institute</title>
   </head>
   <body>
     <div id="root"></div>

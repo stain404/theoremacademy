@@ -1,6 +1,6 @@
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { FinalCta, Offer, PageHeader, usePageTitle } from '../components/sections'
-import { ProgramBoard, ProgramCards, Section, Ticket } from '../components/ui'
+import { MarketDot, MarketTag, ProgramBoard, ProgramCards, Section, Ticket } from '../components/ui'
 import { curriculum } from '../config/curriculum'
 import { formatINR, programs, teachers } from '../config/site'
 
@@ -18,32 +18,32 @@ function CompareTable() {
     ['Fee in the UAE', (p) => formatAED(p.priceAed)],
   ]
   return (
-    <Section tight title="Side by side." intro="The same key details for every program, in one structured comparison table." className="bg-[#09090b] border-t border-white/10">
+    <Section tight title="Side by side." intro="The same key details for every program, in one structured comparison table." className="bg-surface border-t border-line">
       {/* scrolls inside its own box on narrow screens; the page itself never scrolls sideways */}
       <div className="-mx-5 overflow-x-auto px-5 sm:mx-0 sm:px-0">
         <table className="w-full min-w-[46rem] border-collapse text-left">
           <thead>
-            <tr className="border-b-2 border-white/20">
+            <tr className="border-b-2 border-line">
               <th scope="col" className="w-[17%] py-3.5 pr-4"><span className="sr-only">Detail</span></th>
               {programs.map((p) => (
                 <th key={p.id} scope="col" className="py-3.5 pr-4 align-bottom">
-                  <Link to={`/programs/${p.id}`} className="font-display text-lg sm:text-xl font-extrabold text-white hover:text-signal transition-colors block">{p.title}</Link>
+                  <Link to={`/programs/${p.id}`} className="flex items-center gap-2 font-display text-lg sm:text-xl font-semibold text-ink hover:text-brand transition-colors"><MarketDot market={p.market} />{p.title}</Link>
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
             {rows.map(([label, get]) => (
-              <tr key={label} className="border-b border-white/10">
-                <th scope="row" className="py-3 pr-4 text-xs font-bold text-white/60">{label}</th>
-                {programs.map((p) => <td key={p.id} className="py-3 pr-4 text-xs sm:text-sm tabular-nums text-white/90">{get(p)}</td>)}
+              <tr key={label} className="border-b border-line">
+                <th scope="row" className="py-3 pr-4 text-xs font-bold text-ink-soft">{label}</th>
+                {programs.map((p) => <td key={p.id} className="py-3 pr-4 text-sm tabular-nums text-ink">{get(p)}</td>)}
               </tr>
             ))}
             <tr>
               <td />
               {programs.map((p) => (
                 <td key={p.id} className="pt-4 pr-4">
-                  <Link to={`/programs/${p.id}`} className="link-line text-xs font-bold text-signal">View Syllabus →</Link>
+                  <Link to={`/programs/${p.id}`} className="link-line text-xs font-bold text-brand">See syllabus</Link>
                 </td>
               ))}
             </tr>
@@ -66,7 +66,7 @@ export function Programs() {
         <ProgramCards />
       </Section>
       <CompareTable />
-      <Offer className="border-t border-white/10" />
+      <Offer className="border-t border-line" />
       <FinalCta title="Not sure which program fits your schedule?" body="Tell us what you trade now, or that you have never traded. An advisor will recommend a program and a batch in Dubai, India or online." />
     </>
   )
@@ -91,53 +91,50 @@ export function ProgramDetail() {
 
   return (
     <>
-      <PageHeader back={{ to: '/programs', label: 'All programs' }} title={program.title} intro={program.summary} />
+      <PageHeader
+        back={{ to: '/programs', label: 'All programs' }}
+        title={program.title}
+        meta={<><MarketTag market={program.market} /><span>{program.level}</span><span>{program.duration}</span><span>{program.format}</span></>}
+        intro={program.summary}
+      />
 
-      <div className="wrap grid-12 gap-8 lg:gap-10 py-8 sm:py-12 lg:py-14">
-        <div className="col-span-4 space-y-10 sm:col-span-8 lg:col-span-7">
-          <section className="rounded-xl border border-white/10 bg-[#1a1a20] text-white p-5 sm:p-6 shadow-sm">
-            <span className="badge-signal text-xs font-bold uppercase tracking-wider py-0.5 px-2.5">Target Audience</span>
-            <h2 className="mt-2 font-display text-2xl sm:text-3xl font-extrabold text-white">Who it is for</h2>
-            <p className="mt-2 text-xs sm:text-sm text-white/70 leading-relaxed">{program.audience}</p>
+      <div className="wrap grid-12 gap-y-14 py-14 sm:py-16 lg:py-20">
+        <div className="col-span-4 space-y-16 sm:col-span-8 lg:col-span-7">
+          <section>
+            <h2 className="text-3xl">Who it is for</h2>
+            <p className="mt-4 max-w-[38rem] text-lg leading-relaxed text-ink-soft">{program.audience}</p>
           </section>
 
-          <section className="rounded-xl border border-white/10 bg-[#1a1a20] text-white p-5 sm:p-6 shadow-sm">
-            <span className="badge-signal text-xs font-bold uppercase tracking-wider py-0.5 px-2.5">Core Skills</span>
-            <h2 className="mt-2 font-display text-2xl sm:text-3xl font-extrabold text-white">What you will learn</h2>
-            <ul className="mt-4 grid gap-2.5 sm:grid-cols-2 text-xs sm:text-sm">
-              {program.outcomes.map((o) => (
-                <li key={o} className="flex items-center gap-2 rounded-lg bg-[#22222a] border border-white/5 p-2.5 font-medium text-white">
-                  <span className="text-signal font-bold">✓</span>
-                  <span>{o}</span>
-                </li>
-              ))}
+          <section>
+            <h2 className="text-3xl">What you will learn</h2>
+            <ul className="mt-6 grid gap-x-8 border-t border-ink sm:grid-cols-2">
+              {program.outcomes.map((o) => <li key={o} className="border-b border-line py-3.5">{o}</li>)}
             </ul>
           </section>
 
           {modules.length > 0 && (
-            <section className="rounded-xl border border-white/10 bg-[#1a1a20] text-white p-5 sm:p-6 shadow-sm">
-              <span className="badge-signal text-xs font-bold uppercase tracking-wider py-0.5 px-2.5">Structured Syllabus</span>
-              <h2 className="mt-2 font-display text-2xl sm:text-3xl font-extrabold text-white">Curriculum</h2>
-              <p className="mt-1 text-xs sm:text-sm text-white/70">Modules are taken in sequence. Each ends with a knowledge check to ensure understanding before moving to the next.</p>
-              <ol className="mt-5 space-y-4">
+            <section>
+              <h2 className="text-3xl">Curriculum</h2>
+              <p className="mt-4 max-w-[38rem] text-ink-soft">Modules are taken in order. Each ends with a short quiz you need to pass before moving on.</p>
+              <ol className="mt-8">
                 {modules.map((m, i) => (
-                  <li key={m.id} className="rounded-lg border border-white/10 bg-[#22222a] p-4">
-                    <div className="flex items-center gap-3">
-                      <span className="flap flap-amber [--flap-w:1.35rem]" aria-hidden="true">{i + 1}</span>
-                      <h3 className="font-display text-base sm:text-lg font-bold text-white">{m.title}</h3>
-                    </div>
-                    <ul className="mt-3 divide-y divide-white/10 text-xs">
-                      {m.lessons.map((l) => (
-                        <li key={l.id} className="flex justify-between gap-4 py-2 text-white/90">
-                          <span>{l.title}</span>
-                          <span className="whitespace-nowrap tabular-nums text-white/50">{l.minutes} min</span>
+                  <li key={m.id} className="grid grid-cols-[auto_1fr] gap-x-5 border-t border-ink py-6">
+                    <span className="grid size-9 place-items-center rounded-full border border-line-strong text-sm font-semibold tabular-nums" aria-hidden="true">{i + 1}</span>
+                    <div>
+                      <h3 className="text-xl"><span className="sr-only">Module {i + 1}: </span>{m.title}</h3>
+                      <ul className="mt-3 divide-y divide-line text-sm">
+                        {m.lessons.map((l) => (
+                          <li key={l.id} className="flex justify-between gap-4 py-2.5">
+                            <span>{l.title}</span>
+                            <span className="whitespace-nowrap tabular-nums text-ink-soft">{l.minutes} min</span>
+                          </li>
+                        ))}
+                        <li className="flex justify-between gap-4 py-2.5 font-semibold">
+                          <span>Module quiz</span>
+                          <span className="whitespace-nowrap text-ink-soft">{m.quiz.length} questions</span>
                         </li>
-                      ))}
-                      <li className="flex justify-between gap-4 py-2 font-bold text-signal">
-                        <span>Module Knowledge Quiz & Journal Check</span>
-                        <span className="whitespace-nowrap">{m.quiz.length} questions</span>
-                      </li>
-                    </ul>
+                      </ul>
+                    </div>
                   </li>
                 ))}
               </ol>
@@ -145,53 +142,51 @@ export function ProgramDetail() {
           )}
         </div>
 
-        <aside className="col-span-4 sm:col-span-8 lg:col-span-5">
-          <Ticket className="lg:sticky lg:top-24 p-5 sm:p-6">
-            <span className="badge-signal text-xs font-bold uppercase tracking-wider py-0.5 px-2.5">Cohort Enrollment</span>
-            <h2 className="mt-2 font-display text-xl sm:text-2xl font-extrabold text-white">Program Fees & Options</h2>
-            <dl className="mt-4 grid grid-cols-2 gap-4 border-b border-white/15 pb-4">
+        <aside className="col-span-4 sm:col-span-8 lg:col-span-4 lg:col-start-9">
+          <Ticket className="lg:sticky lg:top-24">
+            <h2 className="text-xl">Fees</h2>
+            <dl className="mt-4 grid grid-cols-2 gap-4 border-b border-line pb-5">
               <div>
-                <dt className="text-xs text-white/55 font-semibold">In India (₹)</dt>
-                <dd className="mt-1 font-display text-2xl sm:text-3xl leading-none font-extrabold gold-foil-text tabular-nums">{formatINR(program.price)}</dd>
+                <dt className="text-sm text-ink-soft">In India</dt>
+                <dd className="mt-1 font-display text-3xl font-semibold tabular-nums">{formatINR(program.price)}</dd>
               </div>
               <div>
-                <dt className="text-xs text-white/55 font-semibold">In Dubai (AED)</dt>
-                <dd className="mt-1 font-display text-2xl sm:text-3xl leading-none font-extrabold gold-foil-text tabular-nums">{formatAED(program.priceAed)}</dd>
+                <dt className="text-sm text-ink-soft">In the UAE</dt>
+                <dd className="mt-1 font-display text-3xl font-semibold tabular-nums">{formatAED(program.priceAed)}</dd>
               </div>
             </dl>
-            <dl className="divide-y divide-white/10 text-xs sm:text-sm py-2">
+            <dl className="divide-y divide-line text-sm">
               {facts.map(([k, v]) => (
-                <div key={k} className="flex justify-between gap-4 py-2.5">
-                  <dt className="text-white/60">{k}</dt>
-                  <dd className="text-right font-bold text-white">{v}</dd>
+                <div key={k} className="flex justify-between gap-4 py-3">
+                  <dt className="text-ink-soft">{k}</dt>
+                  <dd className="text-right font-semibold">{v}</dd>
                 </div>
               ))}
             </dl>
-            <Link to={`/register?program=${program.id}`} className="btn-brand mt-4 w-full py-2.5 text-xs sm:text-sm font-bold text-center block shadow-md">Apply for {program.title}</Link>
-            <Link to={`/contact?program=${program.id}`} className="btn-outline-light mt-2.5 w-full py-2 text-xs sm:text-sm font-semibold text-center block">Book Free Advisor Call</Link>
+            <Link to={`/register?program=${program.id}`} className="btn-brand btn-lg mt-6 w-full">Apply for {program.title}</Link>
+            <Link to={`/contact?program=${program.id}`} className="btn-ghost btn-lg mt-3 w-full">Ask a question first</Link>
             {mentor && (
-              <p className="mt-4 border-t border-white/10 pt-3 text-xs text-white/65">
-                Cohort led by <Link to={`/mentors#${mentor.name.toLowerCase()}`} className="link-line text-white font-bold">{mentor.name}</Link>, {mentor.role}.
+              <p className="mt-6 text-sm text-ink-soft">
+                Taught by <Link to={`/mentors#${mentor.name.toLowerCase()}`} className="link-line text-ink">{mentor.name}</Link>, {mentor.role.toLowerCase()}.
               </p>
             )}
           </Ticket>
         </aside>
       </div>
 
-      {/* Sticky Mobile Enrollment Bar for Program Details */}
-      <div className="fixed inset-x-0 bottom-0 z-30 lg:hidden border-t border-board-line bg-[#0d0d12]/95 backdrop-blur-md px-4 py-3 flex items-center justify-between shadow-2xl">
+      {/* phones: the fee and the main action stay within reach */}
+      <div className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-4 border-t border-line bg-paper/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur lg:hidden">
         <div>
-          <span className="text-xs text-white/65 block">Enrollment Fee</span>
-          <span className="font-display text-lg font-extrabold gold-foil-text">{formatINR(program.price)} / {formatAED(program.priceAed)}</span>
+          <span className="block text-xs text-ink-soft">Fee</span>
+          <span className="font-semibold tabular-nums">{formatINR(program.price)} or {formatAED(program.priceAed)}</span>
         </div>
-        <Link to={`/register?program=${program.id}`} className="btn-brand py-2 px-5 text-xs font-bold shadow-md">
-          Apply Now →
-        </Link>
+        <Link to={`/register?program=${program.id}`} className="btn-brand">Apply now</Link>
       </div>
 
-      <Section tight title="Other programs." intro="Explore other asset classes and skill levels." className="bg-[#09090b] border-t border-white/10">
+      <Section tight tone="mist" title="Other programs.">
         <ProgramBoard programs={others} />
       </Section>
+      <div className="h-20 bg-board lg:hidden" aria-hidden="true" />
     </>
   )
 }

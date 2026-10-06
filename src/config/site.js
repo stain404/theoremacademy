@@ -3,7 +3,7 @@
 
 export const site = {
   name: 'Theorem Institute',
-  description: 'Premier financial trading educational institute with campuses in Dubai (Business Bay) and India, plus live interactive global cohorts.',
+  description: 'A trading academy in Business Bay, Dubai, and in India, teaching forex, crypto and equity in small cohorts, in person and live online.',
   email: 'admissions@theoreminstitute.com',
   phone: '+971 4 240 8899',
   whatsapp: '+971 58 500 8921',
@@ -36,12 +36,58 @@ export const locations = [
   },
 ]
 
+/*
+  Hero video stage: one slot per way to study. To add a video, put the file in /public/hero/
+  and set `video` (and optionally `videoMobile`, a smaller file for phones). Until a slot has
+  a video, its `poster` still image is shown. Keep clips short (6–15 s), muted and under ~3 MB.
+  `tz` drives the live local time shown on the slot's tab.
+*/
+export const heroSlots = [
+  {
+    id: 'dubai',
+    label: 'Dubai campus',
+    short: 'Dubai',
+    caption: 'Business Bay, Dubai', // describe what the clip shows; update when a campus video is added
+    tz: 'Asia/Dubai',
+    video: null, // placeholder: add '/hero/dubai.mp4'
+    videoMobile: null,
+    poster: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1600&q=80', // placeholder: replace with a still of the real campus
+  },
+  {
+    id: 'online',
+    label: 'Live online',
+    short: 'Online',
+    caption: 'Reading price on a live chart',
+    tz: null,
+    video: '/hero/online.mp4',
+    videoMobile: '/hero/online-mobile.mp4',
+    poster: '/hero/online-poster.jpg',
+  },
+  {
+    id: 'india',
+    label: 'India campus',
+    short: 'India',
+    caption: 'India',
+    tz: 'Asia/Kolkata',
+    video: null, // placeholder: add '/hero/india.mp4'
+    videoMobile: null,
+    poster: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?auto=format&fit=crop&w=1600&q=80', // placeholder: replace with a still of the real campus
+  },
+]
+
+// Numbers shown under the hero. placeholder: confirm every figure with the academy before launch.
+export const heroStats = [
+  ['4.9 out of 5', 'average student rating'],
+  ['1,850+', 'students taught'],
+  ['15 or fewer', 'traders in each cohort'],
+]
+
 // photo: path under /public, e.g. '/mentors/farhan.jpg'. Until then a captioned placeholder is shown.
 export const teachers = [
   {
     name: 'Farhan',
     role: 'Lead mentor, forex',
-    photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
+    photo: null, // placeholder: add '/mentors/farhan.jpg' (a real photo; stock portraits removed)
     teaches: ['Forex Basic', 'Forex Advanced'],
     focus: 'Price action, market structure and risk management',
     bio: 'Farhan leads the forex programs. His classes start from a blank chart and end with a written plan, and he reviews the trades every student logs during the course.',
@@ -50,7 +96,7 @@ export const teachers = [
   {
     name: 'Sohail',
     role: 'Mentor, crypto and equity',
-    photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80',
+    photo: null, // placeholder: add '/mentors/sohail.jpg' (a real photo; stock portraits removed)
     teaches: ['Crypto Trading', 'Equity Course'],
     focus: 'Crypto market cycles, exchange safety and equity swing trading',
     bio: 'Sohail teaches the crypto and equity programs. He puts as much time into protecting capital (wallet security, position size, avoiding scams) as into finding trades.',
@@ -169,18 +215,40 @@ export const formatINR = (n) => '₹' + n.toLocaleString('en-IN')
 export const formatAED = (n) => 'AED ' + n.toLocaleString('en-AE')
 export const lowestPrice = () => Math.min(...programs.map((p) => p.price))
 
+// The all-four-programs bundle. Its prices and length are derived from the programs above,
+// so changing a program's fee updates the bundle too. It has the same fields as a program
+// (price, level, duration, outcomes) so sign-up and checkout can list it like one; paying for
+// it enrols the student in each of the four programs (see payOrder in lib/api.js).
+const BUNDLE_DISCOUNT = 10 // percent
+const sum = (key) => programs.reduce((n, p) => n + p[key], 0)
+const discounted = (n) => Math.round(n * (1 - BUNDLE_DISCOUNT / 100))
+const totalWeeks = programs.reduce((n, p) => n + parseInt(p.duration, 10), 0)
+
 export const bundlePackage = {
   id: 'all-programs-bundle',
-  title: 'All-Access 4-Course Institutional Pass',
-  subtitle: 'Complete Multi-Asset Mastery: Forex, Crypto & Equities',
-  discountPercent: 10,
-  totalInr: 119996, // 24,999 + 44,999 + 29,999 + 19,999
-  discountedInr: 107996, // 10% discount
-  savingsInr: 12000,
-  totalAed: 5296, // 1,099 + 1,999 + 1,299 + 899
-  discountedAed: 4766, // 10% discount
-  savingsAed: 530,
-  totalWeeks: '26 Weeks of Live Guided Mentorship',
-  certificationsCount: 4,
-  programsIncluded: ['Forex Basic', 'Forex Advanced', 'Crypto Trading', 'Equity Course'],
+  bundle: true,
+  title: 'All four programs',
+  market: 'Forex, crypto and equity',
+  level: 'All levels',
+  duration: `${totalWeeks} weeks`,
+  discountPercent: BUNDLE_DISCOUNT,
+  totalInr: sum('price'),
+  discountedInr: discounted(sum('price')),
+  savingsInr: sum('price') - discounted(sum('price')),
+  totalAed: sum('priceAed'),
+  discountedAed: discounted(sum('priceAed')),
+  savingsAed: sum('priceAed') - discounted(sum('priceAed')),
+  totalWeeks: `${totalWeeks} weeks of live classes`,
+  certificationsCount: programs.length,
+  programsIncluded: programs.map((p) => p.title),
+  programIds: programs.map((p) => p.id),
+  outcomes: programs.map((p) => p.title),
+  // the fields every program has, so lists and checkout treat the bundle like one
+  get price() { return this.discountedInr },
+  get priceAed() { return this.discountedAed },
+  get originalPrice() { return this.totalInr },
+  get originalPriceAed() { return this.totalAed },
 }
+
+// A program or the bundle, by id.
+export const findOffering = (id) => (id === bundlePackage.id ? bundlePackage : programs.find((p) => p.id === id))

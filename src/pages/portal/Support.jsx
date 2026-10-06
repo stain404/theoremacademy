@@ -43,7 +43,7 @@ export default function Support() {
             <details key={q} className="group border-b border-line">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 font-semibold marker:hidden">
                 {q}
-                <span className="grid size-6 shrink-0 place-items-center bg-ink text-sm leading-none text-white transition-transform group-open:rotate-45" aria-hidden="true">+</span>
+                <span className="grid size-6 shrink-0 place-items-center bg-ink text-sm leading-none text-paper transition-transform group-open:rotate-45" aria-hidden="true">+</span>
               </summary>
               <p className="max-w-[40rem] pb-5 text-ink-soft">{a}</p>
             </details>

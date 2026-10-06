@@ -5,7 +5,7 @@
 // real backend (Supabase, Firebase, a custom API…) keeping the same signatures.
 // Never ship this file to production: passwords are stored in plain text here.
 
-import { programs } from '../config/site'
+import { findOffering } from '../config/site'
 import { allLessons, curriculum } from '../config/curriculum'
 
 const KEY = 'academy-mock-db'
@@ -80,7 +80,7 @@ export async function updateProfile(userId, patch) {
 export async function createOrder(userId, programId, currency) {
   await delay(200)
   const db = load()
-  const program = programs.find((p) => p.id === programId)
+  const program = findOffering(programId)
   const order = {
     id: 'ord_' + uid(),
     userId,
@@ -103,8 +103,14 @@ export async function payOrder(orderId, { cardNumber }) {
   const declined = cardNumber.replace(/\s/g, '').endsWith('0002')
   order.status = declined ? 'failed' : 'paid'
   order.paidAt = declined ? null : Date.now()
-  if (!declined && !db.enrollments.some((e) => e.userId === order.userId && e.programId === order.programId)) {
-    db.enrollments.push({ id: uid(), userId: order.userId, programId: order.programId, orderId, enrolledAt: Date.now() })
+  if (!declined) {
+    // the bundle enrols the student in each program it contains
+    const ids = findOffering(order.programId)?.programIds || [order.programId]
+    for (const programId of ids) {
+      if (!db.enrollments.some((e) => e.userId === order.userId && e.programId === programId)) {
+        db.enrollments.push({ id: uid(), userId: order.userId, programId, orderId, enrolledAt: Date.now() })
+      }
+    }
   }
   save(db)
   if (declined) throw new Error('Your bank declined the payment. No money was taken. Try another card or UPI.')
