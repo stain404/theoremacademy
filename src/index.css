@@ -357,17 +357,13 @@ details.faq[open]::details-content { block-size: auto; }
   a.card-hover-glow:hover { transform: none; }
 }
 
-/* ---------- Intro gate: the coin and its orbits (components/IntroGate.jsx) ----------
-   Pure CSS 3D. One preserve-3d world holds the big coin and two tilted orbit planes, so
-   small coins really pass behind and in front of it. The base styles are a composed still
-   (used as-is with reduced motion); all movement is added under no-preference below. */
+/* ---------- Intro gate: the Bitcoin and its drifting coins (components/IntroGate.jsx) ----------
+   The big coin spins in its own 3D context. The small coins sit in a layer above it and
+   drift on loose ovals that always clear its edge (positions are set by the component),
+   so they never pass behind or across it. */
 
 .intro-gate {
-  /* sized from both width and height, so the scene fills phones and large screens alike */
-  --coin: clamp(104px, min(30vw, 26vh), 230px);
-  --r-out: clamp(138px, min(43vw, 40vh), 370px);
-  --r-in: clamp(90px, min(26vw, 24vh), 210px);
-  --tilt: 74deg;
+  --coin: clamp(108px, min(30vw, 26vh), 220px);
   --thick: calc(var(--coin) * 0.085);
   position: fixed;
   inset: 0;
@@ -375,45 +371,74 @@ details.faq[open]::details-content { block-size: auto; }
   display: grid;
   grid-template-rows: auto 1fr auto;
   background:
-    radial-gradient(ellipse 42% 34% at 50% 52%, color-mix(in srgb, var(--color-signal) 13%, transparent), transparent 70%),
+    radial-gradient(ellipse 40% 34% at 50% 50%, color-mix(in srgb, #f7931a 12%, transparent), transparent 70%),
     var(--color-paper);
   color: var(--color-ink);
   overflow: hidden;
   transition: opacity 0.6s ease;
 }
 .intro-gate.is-leaving { opacity: 0; pointer-events: none; }
-/* narrow screens: tilt the orbits less, so they use the height a phone has */
-@media (max-width: 640px) { .intro-gate { --tilt: 64deg; } }
 
-.intro-stage { position: relative; display: grid; place-items: center; perspective: 1100px; transition: transform 0.65s var(--ease-out); }
-.intro-gate.is-leaving .intro-stage { transform: scale(1.35); }
-.intro-world { position: relative; width: 0; height: 0; transform-style: preserve-3d; transform: rotateX(-7deg); }
+.intro-stage { position: relative; min-height: 0; transition: transform 0.65s var(--ease-out); }
+.intro-gate.is-leaving .intro-stage { transform: scale(1.3); }
 
-/* orbit planes, tilted back so their circles read as ellipses */
-.orbit { position: absolute; left: 0; top: 0; transform-style: preserve-3d; transform: rotateX(var(--tilt)); }
-.orbit-outer { --r: var(--r-out); --dur: 26s; }
-.orbit-inner { --r: var(--r-in); --dur: 14s; }
-.orbit-path {
+/* the big coin, centred in the stage, in its own perspective */
+.intro-coin-wrap { position: absolute; left: 50%; top: 50%; width: 0; height: 0; perspective: 1000px; z-index: 1; }
+.big-coin {
   position: absolute;
-  left: calc(var(--r) * -1);
-  top: calc(var(--r) * -1);
-  width: calc(var(--r) * 2);
-  height: calc(var(--r) * 2);
-  border: 1px solid var(--color-line-strong);
-  border-radius: 50%;
+  left: calc(var(--coin) / -2);
+  top: calc(var(--coin) / -2);
+  width: var(--coin);
+  height: var(--coin);
+  transform-style: preserve-3d;
+  transform: rotateX(-6deg) rotateY(-24deg);
 }
-.orbit-inner .orbit-path { border-style: dashed; }
-/* each coin sits on its own arm, spread evenly round the ring */
-.orbit-arm { position: absolute; left: 0; top: 0; transform-style: preserve-3d; transform: rotateZ(calc(360deg * var(--i) / var(--n))); }
-.orbit-holder { position: absolute; transform-style: preserve-3d; transform: translateY(calc(var(--r) * -1)); }
-
-/* small coins: turned back to face the viewer whatever their position on the ring */
-.mini-coin {
-  --size: clamp(32px, min(8.5vw, 6.2vh), 52px);
-  --rim: var(--color-forex);
+.big-coin-face, .big-coin-edge { position: absolute; inset: 0; border-radius: 50%; }
+.big-coin-edge {
+  background: linear-gradient(90deg, #8f4a06, #d27a14 40%, #a85a08);
+  transform: translateZ(calc(var(--thick) / 2 - (var(--z) + 1) * var(--thick) / 10));
+}
+/* Bitcoin orange, with a raised rim */
+.big-coin-face {
+  display: grid;
+  place-items: center;
+  backface-visibility: hidden;
+  background: radial-gradient(circle at 34% 28%, #ffd79a 0%, #f9a53a 36%, #f7931a 62%, #c96d0c 100%);
+  box-shadow:
+    inset 0 0 0 calc(var(--coin) * 0.04) #f0951f,
+    inset 0 0 0 calc(var(--coin) * 0.052) #ffc77a,
+    inset 0 0 0 calc(var(--coin) * 0.064) #c56a0b;
+}
+.big-coin-front { transform: translateZ(calc(var(--thick) / 2)); }
+.big-coin-back { transform: rotateY(180deg) translateZ(calc(var(--thick) / 2)); }
+/* the ₿, slanted as in the Bitcoin mark, struck in cream */
+.big-coin-face > span {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: calc(var(--coin) * 0.56);
+  line-height: 1;
+  color: #fff6e6;
+  transform: rotate(14deg);
+  text-shadow: 0 2px 0 #b8600a, 0 -1px 0 #ffe2b3;
+}
+/* a soft shadow on the floor, narrowing as the coin turns edge-on */
+.intro-shadow {
   position: absolute;
-  left: calc(var(--size) / -2);
-  top: calc(var(--size) / -2);
+  left: calc(var(--coin) * -0.62);
+  top: calc(var(--coin) * 0.74);
+  width: calc(var(--coin) * 1.24);
+  height: calc(var(--coin) * 0.13);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(30 20 5 / 0.22), transparent);
+  transform: scaleX(0.92);
+}
+
+/* drifting coins: centred on the stage; the component moves each one along its oval */
+.drift-coin { position: absolute; left: 50%; top: 50%; will-change: transform; transform: translate(-50%, -50%); }
+
+.mini-coin {
+  --size: clamp(32px, min(8.5vw, 6.2vh), 50px);
+  --rim: var(--color-forex);
   display: grid;
   place-items: center;
   width: var(--size);
@@ -426,80 +451,48 @@ details.faq[open]::details-content { block-size: auto; }
   font-weight: 600;
   font-size: calc(var(--size) * 0.42);
   line-height: 1;
-  transform: rotateZ(calc(-360deg * var(--i) / var(--n))) rotateX(calc(var(--tilt) * -1));
 }
 .mini-crypto { --rim: var(--color-crypto); }
 .mini-wide { font-size: calc(var(--size) * 0.28); letter-spacing: -0.02em; }
 
-/* the big coin: two faces and a stacked rim, so it has real thickness when it turns */
-.big-coin {
-  position: absolute;
-  left: calc(var(--coin) / -2);
-  top: calc(var(--coin) / -2);
-  width: var(--coin);
-  height: var(--coin);
-  transform-style: preserve-3d;
-  transform: rotateY(-24deg);
-}
-.big-coin-face, .big-coin-edge { position: absolute; inset: 0; border-radius: 50%; }
-.big-coin-edge {
-  background: linear-gradient(90deg, #8f6210, #c99227 40%, #a8760f);
-  transform: translateZ(calc(var(--thick) / 2 - (var(--z) + 1) * var(--thick) / 10));
-}
-.big-coin-face {
+/* the three Learn coins: bigger, in their market's colour, and clickable */
+.learn-coin {
+  --size: clamp(74px, min(19vw, 11.5vh), 98px);
+  --rim: var(--color-forex);
+  --fill: var(--color-forex-soft);
   display: grid;
-  place-items: center;
-  backface-visibility: hidden;
-  background: radial-gradient(circle at 34% 28%, #fde9ad 0%, #f4bd45 38%, #e0a32b 70%, #b98216 100%);
-  box-shadow:
-    inset 0 0 0 calc(var(--coin) * 0.04) #e6aa30,
-    inset 0 0 0 calc(var(--coin) * 0.052) #fbdc8f,
-    inset 0 0 0 calc(var(--coin) * 0.064) #c18a1c;
-}
-.big-coin-front { transform: translateZ(calc(var(--thick) / 2)); }
-.big-coin-back { transform: rotateY(180deg) translateZ(calc(var(--thick) / 2)); }
-/* the Theorem mark, struck into the face */
-.big-coin-face > span {
-  font-family: var(--font-display);
-  font-stretch: 88%;
-  font-weight: 700;
-  font-size: calc(var(--coin) * 0.52);
-  line-height: 1;
-  color: #9a6608;
-  text-shadow: 0 1px 0 #fde9ad, 0 -1px 0 #7a5005;
-}
-/* a soft shadow on the floor, narrowing as the coin turns edge-on */
-.intro-shadow {
-  position: absolute;
-  left: 50%;
-  top: calc(50% + var(--coin) * 0.78);
-  width: calc(var(--coin) * 1.3);
-  height: calc(var(--coin) * 0.14);
-  margin-left: calc(var(--coin) * -0.65);
+  place-content: center;
+  width: var(--size);
+  height: var(--size);
   border-radius: 50%;
-  background: radial-gradient(closest-side, rgb(30 20 5 / 0.22), transparent);
-  transform: scaleX(0.92);
+  border: 2px solid var(--rim);
+  background: var(--fill);
+  box-shadow: inset 0 0 0 4px var(--fill), inset 0 0 0 5px color-mix(in srgb, var(--rim) 40%, transparent), 0 12px 24px -12px rgb(0 0 0 / 0.4);
+  color: var(--rim);
+  font-size: calc(var(--size) * 0.2);
+  line-height: 1.1;
+  text-align: center;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease;
 }
+.learn-coin:hover { box-shadow: inset 0 0 0 4px var(--fill), inset 0 0 0 5px var(--rim), 0 14px 28px -12px rgb(0 0 0 / 0.5); }
+.learn-crypto { --rim: var(--color-crypto); --fill: var(--color-crypto-soft); }
+.learn-equity { --rim: var(--color-equity); --fill: var(--color-equity-soft); }
 
 .intro-bottom { padding: 0 1.25rem max(2.5rem, env(safe-area-inset-bottom)); text-align: center; }
 
 @media (prefers-reduced-motion: no-preference) {
-  @keyframes coin-spin { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
+  @keyframes coin-spin { from { transform: rotateX(-6deg) rotateY(0deg); } to { transform: rotateX(-6deg) rotateY(360deg); } }
   @keyframes coin-shadow { 0%, 50%, 100% { transform: scaleX(1); } 25%, 75% { transform: scaleX(0.3); } }
-  @keyframes orbit-spin { from { transform: rotateZ(calc(360deg * var(--i) / var(--n))); } to { transform: rotateZ(calc(360deg * var(--i) / var(--n) + 360deg)); } }
-  @keyframes orbit-face {
-    from { transform: rotateZ(calc(-360deg * var(--i) / var(--n))) rotateX(calc(var(--tilt) * -1)); }
-    to { transform: rotateZ(calc(-360deg * var(--i) / var(--n) - 360deg)) rotateX(calc(var(--tilt) * -1)); }
-  }
-  @keyframes world-in { from { opacity: 0; transform: rotateX(-7deg) scale(0.82); } to { opacity: 1; transform: rotateX(-7deg); } }
-  @keyframes paths-in { from { opacity: 0; } }
+  @keyframes coin-in { from { opacity: 0; transform: scale(0.8); } }
+  @keyframes drift-in { from { opacity: 0; } }
 
   .big-coin { animation: coin-spin 9s linear infinite; }
   .intro-shadow { animation: coin-shadow 9s linear infinite; }
-  .orbit-arm { animation: orbit-spin var(--dur) linear infinite; }
-  .mini-coin { animation: orbit-face var(--dur) linear infinite; }
-  .intro-world { animation: world-in 1.1s var(--ease-out) both; }
-  .orbit-path { animation: paths-in 1.4s ease 0.3s both; }
+  .intro-coin-wrap { animation: coin-in 1s var(--ease-out) both; }
+  .drift-coin { animation: drift-in 0.9s ease both; }
+  .drift-coin:nth-of-type(odd) { animation-delay: 0.25s; }
+  .drift-coin:nth-of-type(even) { animation-delay: 0.45s; }
   .intro-top { animation: rise 0.7s var(--ease-out) 0.15s both; }
   .intro-bottom { animation: rise 0.7s var(--ease-out) 0.45s both; }
 }
