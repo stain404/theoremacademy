@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { locations, programs, site } from '../config/site'
 import { useAuth } from '../lib/auth'
+import IntroGate, { shouldShowIntro } from './IntroGate'
 import { MarketDot } from './ui'
 
 // Wordmark: a single marigold-on-ink tile as the mark, then the name.
@@ -351,16 +352,22 @@ export function Footer() {
 
 export default function SiteLayout() {
   const { pathname } = useLocation()
+  // the coin intro, on a visit that starts on the homepage (see IntroGate)
+  const [intro, setIntro] = useState(() => shouldShowIntro(pathname))
   // portal sub-pages keep one key so the sidebar does not flash between them
   const pageKey = pathname.startsWith('/portal') ? '/portal' : pathname
   return (
-    <div className="flex min-h-screen flex-col">
-      <Nav />
-      <main key={pageKey} className="page-enter flex-1"><Outlet /></main>
-      <Footer />
-      <MobileCtaBar />
-      <WhatsAppPill />
-    </div>
+    <>
+      {intro && <IntroGate onClose={() => setIntro(false)} />}
+      {/* while the intro is open, the site behind it is out of reach for keyboard and screen readers */}
+      <div className="flex min-h-screen flex-col" inert={intro}>
+        <Nav />
+        <main key={pageKey} className="page-enter flex-1"><Outlet /></main>
+        <Footer />
+        <MobileCtaBar />
+        <WhatsAppPill />
+      </div>
+    </>
   )
 }
 
