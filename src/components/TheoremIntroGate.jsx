@@ -157,12 +157,7 @@ export default function TheoremIntroGate({ forceOpen = false, onEnter, onClose }
 
         ctx.strokeStyle = asset.color
         ctx.lineWidth = 2.2
-        if (!mob) {
-          ctx.shadowColor = asset.color
-          ctx.shadowBlur = 8
-        }
         ctx.stroke()
-        ctx.shadowBlur = 0
 
         // Inner Milled Coin Ridge
         ctx.beginPath()
@@ -206,10 +201,6 @@ export default function TheoremIntroGate({ forceOpen = false, onEnter, onClose }
       }
 
       // Main Coin Face Front
-      if (!mob) {
-        ctx.shadowColor = '#f2b134'
-        ctx.shadowBlur = 18
-      }
       ctx.beginPath()
       ctx.ellipse(0, 0, coinRadius * Math.abs(cosAngle), coinRadius, 0, 0, Math.PI * 2)
 
@@ -226,7 +217,6 @@ export default function TheoremIntroGate({ forceOpen = false, onEnter, onClose }
       ctx.strokeStyle = '#fff0c2'
       ctx.lineWidth = mob ? 2 : 3
       ctx.stroke()
-      ctx.shadowBlur = 0
 
       // Inner Coin Milled Ridge
       ctx.beginPath()
@@ -300,7 +290,7 @@ export default function TheoremIntroGate({ forceOpen = false, onEnter, onClose }
       role="dialog"
       aria-modal="true"
       aria-label="Theorem 3D Financial Intro"
-      className={`fixed inset-0 z-50 flex flex-col justify-between overflow-hidden bg-[#050508] bg-[radial-gradient(ellipse_at_center,_rgba(242,177,52,0.18)_0%,_rgba(15,15,20,0.85)_40%,_#050508_100%)] text-white transition-all duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
+      className={`fixed inset-0 z-50 flex flex-col justify-between overflow-hidden bg-[#050508] text-white transition-all duration-700 ease-[cubic-bezier(0.77,0,0.175,1)] ${
         isExiting ? 'scale-110 opacity-0 pointer-events-none' : 'scale-100 opacity-100'
       }`}
     >
@@ -329,7 +319,7 @@ export default function TheoremIntroGate({ forceOpen = false, onEnter, onClose }
         <button
           type="button"
           onClick={handleEnter}
-          className="pointer-events-auto shimmer-button group relative flex items-center gap-3 rounded-full border border-signal/60 bg-gradient-to-r from-[#f2b134] via-[#ffe39c] to-[#f2b134] px-9 py-4 text-sm sm:text-base font-extrabold text-[#082326] shadow-[0_0_40px_rgba(242,177,52,0.6)] hover:shadow-[0_0_60px_rgba(242,177,52,0.9)] transition-all transform hover:scale-105 active:scale-95"
+          className="pointer-events-auto shimmer-button group relative flex items-center gap-3 rounded-full border border-signal/60 bg-gradient-to-r from-[#f2b134] via-[#ffe39c] to-[#f2b134] px-9 py-4 text-sm sm:text-base font-extrabold text-[#082326] transition-all transform hover:scale-105 active:scale-95"
         >
           <span className="tracking-wider">ENTER THEOREM</span>
           <span className="transition-transform duration-200 group-hover:translate-x-1 font-bold text-lg">→</span>

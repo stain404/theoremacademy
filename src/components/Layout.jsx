@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
-import { locations, programs, site } from '../config/site'
+import { bundlePackage, locations, programs, site } from '../config/site'
 import { useAuth } from '../lib/auth'
 import TheoremIntroGate from './TheoremIntroGate'
 import { ScrollProgressBar } from './ui'
@@ -17,15 +17,20 @@ export function Wordmark({ className = '', onClick }) {
 
 const NAV_LINKS = [
   ['About', '/about'],
-  ['Mentors', '/mentors'],
+  ['Our Team', '/mentors'],
   ['Contact', '/contact'],
 ]
+
+// Programs grouped by market for the Courses mega-menu — each market shows its
+// Basic / Intermediate / Advanced tiers together.
+const MARKETS = ['Forex', 'Crypto', 'Equity']
+const programsByMarket = (list) => MARKETS.map((market) => [market, list.filter((p) => p.market === market)])
 
 // Current page: an amber bar along the bottom edge of the header, like a selected tab.
 const desktopLink = ({ isActive }) =>
   `relative flex h-full items-center transition-colors after:absolute after:inset-x-0 after:bottom-0 after:h-[3px] after:origin-left after:transition-transform after:duration-300 after:ease-out ${
     isActive
-      ? 'text-white font-bold after:scale-x-100 after:bg-signal after:shadow-[0_0_8px_rgba(242,177,52,0.8)]'
+      ? 'text-white font-bold after:scale-x-100 after:bg-signal'
       : 'text-white/75 hover:text-signal after:scale-x-0 after:bg-signal/50 hover:after:scale-x-100'
   }`
 
@@ -60,11 +65,11 @@ function MobileCtaBar() {
       >
         <div className="mx-auto flex w-full max-w-md items-center justify-between gap-3">
           <Link
-            to="/register"
+            to="/contact"
             tabIndex={shown ? 0 : -1}
             className="btn btn-brand flex-1 py-3 text-center text-xs font-bold uppercase tracking-wider text-ink shadow-md"
           >
-            Apply now
+            Contact us
           </Link>
           <a
             href={site.whatsappLink}
@@ -95,7 +100,7 @@ function DesktopConciergePill() {
         href={site.whatsappLink}
         target="_blank"
         rel="noopener noreferrer"
-        className="group flex items-center gap-2.5 rounded-full border border-signal/40 bg-[#0d0d12]/90 px-4 py-2 text-xs font-bold text-white shadow-xl backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-signal hover:shadow-[0_0_20px_rgba(255,215,0,0.35)]"
+        className="group flex items-center gap-2.5 rounded-full border border-signal/40 bg-[#0d0d12]/90 px-4 py-2 text-xs font-bold text-white shadow-xl backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-signal"
       >
         <span className="relative flex size-2.5">
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-signal opacity-75" />
@@ -141,7 +146,7 @@ export function Nav({ isHidden = false, animateIn = false }) {
               className={({ isActive }) =>
                 `relative flex h-full items-center gap-1.5 transition-colors after:absolute after:inset-x-0 after:bottom-0 after:h-[3px] after:origin-left after:transition-transform after:duration-300 after:ease-out ${
                   isActive
-                    ? 'text-white font-bold after:scale-x-100 after:bg-signal after:shadow-[0_0_8px_rgba(242,177,52,0.8)]'
+                    ? 'text-white font-bold after:scale-x-100 after:bg-signal'
                     : 'text-white/75 hover:text-signal after:scale-x-0 after:bg-signal/50 hover:after:scale-x-100'
                 }`
               }
@@ -152,32 +157,35 @@ export function Nav({ isHidden = false, animateIn = false }) {
               </svg>
             </NavLink>
 
-            {/* Courses Dropdown Menu */}
-            <div className="absolute top-full left-0 w-80 rounded-2xl bg-[#121218] border border-white/15 p-3 shadow-2xl backdrop-blur-2xl opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 z-50">
-              <div className="text-[0.65rem] font-bold uppercase tracking-wider text-white/50 px-3 py-1.5 border-b border-white/10 mb-1.5">
-                Flagship Trading Curriculums
-              </div>
-              <div className="space-y-1">
-                {programs.map((p) => (
-                  <Link
-                    key={p.id}
-                    to={`/programs/${p.id}`}
-                    className="flex flex-col p-2.5 rounded-xl hover:bg-white/5 hover:border-signal/30 border border-transparent transition-all group/item"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-xs text-white group-hover/item:text-signal transition-colors">{p.title}</span>
-                      <span className="text-[0.65rem] font-mono text-white/50">{p.duration}</span>
+            {/* Courses Dropdown Menu: one column per market, Basic / Intermediate / Advanced */}
+            <div className="absolute top-full left-0 w-[46rem] rounded-2xl bg-[#121218] border border-white/15 p-4 shadow-2xl backdrop-blur-2xl opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 z-50">
+              <div className="grid grid-cols-3 gap-4">
+                {programsByMarket(programs).map(([market, list]) => (
+                  <div key={market}>
+                    <div className="text-[0.65rem] font-bold uppercase tracking-wider text-white/50 px-2.5 py-1.5 border-b border-white/10 mb-1.5">
+                      {market}
                     </div>
-                    <span className="text-[0.72rem] text-white/60 line-clamp-1 mt-0.5">{p.audience}</span>
-                  </Link>
+                    <div className="space-y-1">
+                      {list.map((p) => (
+                        <Link
+                          key={p.id}
+                          to={`/programs/${p.id}`}
+                          className="flex items-center justify-between gap-2 p-2.5 rounded-xl hover:bg-white/5 hover:border-signal/30 border border-transparent transition-all group/item"
+                        >
+                          <span className="font-bold text-xs text-white group-hover/item:text-signal transition-colors">{p.level}</span>
+                          {p.comingSoon && <span className="text-[0.62rem] text-white/45">Coming soon</span>}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
                 ))}
               </div>
-              <div className="mt-2 pt-2 border-t border-white/10 px-2">
+              <div className="mt-3 pt-3 border-t border-white/10 px-2.5">
                 <Link
                   to="/programs"
                   className="flex items-center justify-between text-xs font-bold text-signal hover:underline py-1"
                 >
-                  <span>Compare All Programs & Syllabus</span>
+                  <span>Learn all programs — save {bundlePackage.discountPercent}%</span>
                   <span>→</span>
                 </Link>
               </div>
@@ -194,12 +202,12 @@ export function Nav({ isHidden = false, animateIn = false }) {
               className={({ isActive }) =>
                 `relative flex h-full items-center gap-1.5 transition-colors after:absolute after:inset-x-0 after:bottom-0 after:h-[3px] after:origin-left after:transition-transform after:duration-300 after:ease-out ${
                   isActive
-                    ? 'text-white font-bold after:scale-x-100 after:bg-signal after:shadow-[0_0_8px_rgba(242,177,52,0.8)]'
+                    ? 'text-white font-bold after:scale-x-100 after:bg-signal'
                     : 'text-white/75 hover:text-signal after:scale-x-0 after:bg-signal/50 hover:after:scale-x-100'
                 }`
               }
             >
-              <span>Technology</span>
+              <span>Knowledge Toolkit</span>
               <svg className="size-3.5 transition-transform duration-200 group-hover:rotate-180 opacity-70" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
               </svg>
@@ -232,6 +240,17 @@ export function Nav({ isHidden = false, animateIn = false }) {
                   </div>
                   <span className="text-[0.72rem] text-white/60 mt-0.5">Multi-monitor trading desks & low-latency feeds</span>
                 </Link>
+
+                <Link
+                  to="/technology#ebooks"
+                  className="flex flex-col p-2.5 rounded-xl hover:bg-white/5 hover:border-signal/30 border border-transparent transition-all group/item"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-base">📘</span>
+                    <span className="font-bold text-xs text-white group-hover/item:text-signal transition-colors">Free E-books</span>
+                  </div>
+                  <span className="text-[0.72rem] text-white/60 mt-0.5">Short guides on risk, safety and journaling</span>
+                </Link>
               </div>
             </div>
           </div>
@@ -256,8 +275,8 @@ export function Nav({ isHidden = false, animateIn = false }) {
           <Link to={user ? '/portal' : '/login'} className="text-xs sm:text-sm font-semibold text-white/80 transition-colors hover:text-signal">
             {user ? 'My portal' : 'Log in'}
           </Link>
-          <Link to="/register" className="btn-brand shimmer-button rounded-lg px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-ink shadow-[0_0_12px_rgba(242,177,52,0.35)]">
-            Apply now
+          <Link to="/contact" className="btn-brand shimmer-button rounded-lg px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-ink">
+            Contact us
           </Link>
         </div>
 
@@ -294,36 +313,42 @@ export function Nav({ isHidden = false, animateIn = false }) {
                 <span className="text-sm text-signal">{mobileCoursesOpen ? '▲' : '▼'}</span>
               </button>
               {mobileCoursesOpen && (
-                <div className="mt-2 space-y-2 pl-3 border-l border-white/10">
-                  {programs.map((p) => (
-                    <Link
-                      key={p.id}
-                      to={`/programs/${p.id}`}
-                      onClick={close}
-                      className="block py-1.5 text-sm font-semibold text-white/80 hover:text-signal"
-                    >
-                      {p.title}
-                    </Link>
+                <div className="mt-2 space-y-4 pl-3 border-l border-white/10">
+                  {programsByMarket(programs).map(([market, list]) => (
+                    <div key={market}>
+                      <p className="text-[0.65rem] font-bold uppercase tracking-wider text-white/50 mb-1">{market}</p>
+                      {list.map((p) => (
+                        <Link
+                          key={p.id}
+                          to={`/programs/${p.id}`}
+                          onClick={close}
+                          className="flex items-center justify-between gap-2 py-1.5 text-sm font-semibold text-white/80 hover:text-signal"
+                        >
+                          <span>{p.level}</span>
+                          {p.comingSoon && <span className="text-[0.65rem] font-normal text-white/40">Coming soon</span>}
+                        </Link>
+                      ))}
+                    </div>
                   ))}
                   <Link
                     to="/programs"
                     onClick={close}
                     className="block pt-1 text-xs font-bold text-signal"
                   >
-                    All Programs & Pricing →
+                    Learn all programs — save {bundlePackage.discountPercent}% →
                   </Link>
                 </div>
               )}
             </div>
 
-            {/* Mobile Technology Accordion */}
+            {/* Mobile Knowledge Toolkit Accordion */}
             <div className="border-b border-white/10 pb-3">
               <button
                 type="button"
                 onClick={() => setMobileTechOpen(!mobileTechOpen)}
                 className="flex w-full items-center justify-between py-2 font-display text-2xl font-extrabold text-white"
               >
-                <span>Technology</span>
+                <span>Knowledge Toolkit</span>
                 <span className="text-sm text-signal">{mobileTechOpen ? '▲' : '▼'}</span>
               </button>
               {mobileTechOpen && (
@@ -341,6 +366,13 @@ export function Nav({ isHidden = false, animateIn = false }) {
                     className="block py-1.5 text-sm font-semibold text-white/80 hover:text-signal"
                   >
                     Trading Floor Overview
+                  </Link>
+                  <Link
+                    to="/technology#ebooks"
+                    onClick={close}
+                    className="block py-1.5 text-sm font-semibold text-white/80 hover:text-signal"
+                  >
+                    Free E-books
                   </Link>
                 </div>
               )}
@@ -366,13 +398,37 @@ export function Nav({ isHidden = false, animateIn = false }) {
           </div>
 
           <div className="mt-auto pt-6 flex flex-col gap-3">
-            <Link to="/register" onClick={close} className="btn btn-brand shimmer-button py-3 text-center text-xs font-bold uppercase tracking-wider text-ink shadow-lg">Apply now</Link>
+            <Link to="/contact" onClick={close} className="btn btn-brand shimmer-button py-3 text-center text-xs font-bold uppercase tracking-wider text-ink shadow-lg">Contact us</Link>
             <Link to={user ? '/portal' : '/login'} onClick={close} className="btn btn-outline-light py-3 text-center text-xs font-semibold text-white">{user ? 'My portal' : 'Log in'}</Link>
           </div>
         </nav>
       )}
     </header>
   )
+}
+
+// Simple monochrome icons, inline so no icon package is needed. href is set per social
+// entry in config/site.js — update the placeholder "#" links before launch.
+const SOCIAL_ICON = {
+  Instagram: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4.2" />
+      <circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  ),
+  YouTube: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+      <rect x="2.5" y="5.5" width="19" height="13" rx="4" />
+      <path d="M10.5 9.3v5.4l5-2.7-5-2.7Z" fill="currentColor" stroke="none" />
+    </svg>
+  ),
+  LinkedIn: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+      <rect x="3" y="3" width="18" height="18" rx="3" />
+      <path d="M7.7 10.2v6.3M7.7 7.6v.01M11.3 16.5v-3.7c0-1.4.9-2.4 2.2-2.4 1.3 0 2 .9 2 2.4v3.7" />
+    </svg>
+  ),
 }
 
 function FooterColumn({ title, children }) {
@@ -395,17 +451,32 @@ export function Footer() {
         <div className="col-span-2 lg:col-span-2">
           <FooterColumn title="Academy">
             <li><Link to="/programs" className="hover:text-signal">Courses</Link></li>
-            <li><Link to="/technology/tools" className="hover:text-signal">Technology & Tools</Link></li>
+            <li><Link to="/technology" className="hover:text-signal">Knowledge Toolkit</Link></li>
             {NAV_LINKS.map(([label, to]) => <li key={to}><Link to={to} className="hover:text-signal">{label}</Link></li>)}
             <li><Link to="/login" className="hover:text-signal">Student log in</Link></li>
           </FooterColumn>
         </div>
         <div className="col-span-2 lg:col-span-2">
           <FooterColumn title="Programs">
-            {programs.map((p) => <li key={p.id}><Link to={`/programs/${p.id}`} className="hover:text-signal">{p.title}</Link></li>)}
+            {programsByMarket(programs).map(([market, list]) => (
+              <li key={market}><Link to={`/programs/${list[0].id}`} className="hover:text-signal">{market}</Link></li>
+            ))}
+            <li><Link to="/programs" className="hover:text-signal">Compare all</Link></li>
           </FooterColumn>
         </div>
-        <div className="col-span-4 lg:col-span-5">
+        <div className="col-span-2 lg:col-span-2">
+          <FooterColumn title="Follow us">
+            {site.social.map((s) => (
+              <li key={s.label}>
+                <a href={s.href} className="flex items-center gap-2 hover:text-signal">
+                  <span className="size-4 shrink-0">{SOCIAL_ICON[s.label]}</span>
+                  {s.label}
+                </a>
+              </li>
+            ))}
+          </FooterColumn>
+        </div>
+        <div className="col-span-4 sm:col-span-8 lg:col-span-3">
           <FooterColumn title="Contact">
             <li><a href={`mailto:${site.email}`} className="hover:text-signal">{site.email}</a></li>
             <li>{site.phone}</li>
@@ -425,7 +496,6 @@ export function Footer() {
           <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <p>© {new Date().getFullYear()} {site.name}</p>
             <ul className="flex flex-wrap items-center gap-x-6 gap-y-2">
-              {site.social.map((s) => <li key={s.label}><a href={s.href} className="text-white/80 hover:text-white">{s.label}</a></li>)}
               {/* placeholder: legal pages still need to be written */}
               <li><a href="#" className="text-white/80 hover:text-white">Terms</a></li>
               <li><a href="#" className="text-white/80 hover:text-white">Privacy</a></li>

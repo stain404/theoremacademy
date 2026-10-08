@@ -1,6 +1,15 @@
-import { useEffect, useState } from 'react'
-
 export const HERO_SCENES = [
+  {
+    id: 'india',
+    name: 'India Campus',
+    location: 'Mumbai BKC & Financial Hub',
+    flag: '🇮🇳',
+    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?auto=format&fit=crop&w=2000&q=85',
+    tagline: 'Structured Trading Labs • Financial Hub, India',
+    session: 'India Market Session (Active)',
+    badge: 'India Hub',
+    tz: 'IST (UTC+5:30)',
+  },
   {
     id: 'dubai',
     name: 'Dubai Campus',
@@ -23,20 +32,9 @@ export const HERO_SCENES = [
     badge: 'Live Online Cohort',
     tz: 'Global Timezones',
   },
-  {
-    id: 'india',
-    name: 'India Campus',
-    location: 'Mumbai BKC & Financial Hub',
-    flag: '🇮🇳',
-    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?auto=format&fit=crop&w=2000&q=85',
-    tagline: 'Structured Trading Labs • Financial Hub, India',
-    session: 'India Market Session (Active)',
-    badge: 'India Hub',
-    tz: 'IST (UTC+5:30)',
-  },
 ]
 
-export default function HeroVisualBackground({ activeScene = 'dubai' }) {
+export default function HeroVisualBackground({ activeScene = 'india' }) {
   const active = HERO_SCENES.find((s) => s.id === activeScene) || HERO_SCENES[0]
 
   return (
@@ -56,14 +54,6 @@ export default function HeroVisualBackground({ activeScene = 'dubai' }) {
       {/* Directional Contrast Gradient: Solid obsidian on left for crystal-clear text readability */}
       <div className="absolute inset-0 bg-gradient-to-r from-[#07070a]/95 via-[#07070a]/75 to-[#07070a]/25" />
       <div className="absolute inset-0 bg-gradient-to-b from-[#07070a]/60 via-transparent to-[#09090b]" />
-
-      {/* Warm Ambient Gold Radial Halo Glow behind the right showcase area */}
-      <div
-        className="absolute top-1/4 right-[5%] w-[620px] h-[620px] rounded-full blur-[110px] opacity-85 pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, rgba(229, 184, 11, 0.16) 45%, transparent 70%)',
-        }}
-      />
 
       {/* Subtle Micro-Grid Accent */}
       <div

@@ -2,53 +2,28 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 import { FinalCta, Offer, PageHeader, usePageTitle } from '../components/sections'
 import { ProgramBoard, ProgramCards, Section, Ticket } from '../components/ui'
 import { curriculum } from '../config/curriculum'
-import { formatINR, programs, teachers } from '../config/site'
+import { programs, teachers } from '../config/site'
 
 const mentorFor = (program) => teachers.find((t) => t.teaches.includes(program.title))
-const formatAED = (n) => 'AED ' + n.toLocaleString('en-AE')
 
-function CompareTable() {
-  const rows = [
-    ['Market', (p) => p.market],
-    ['Level', (p) => p.level],
-    ['Duration', (p) => p.duration],
-    ['Format', (p) => p.format],
-    ['Mentor', (p) => mentorFor(p)?.name ?? 'To be announced'],
-    ['Fee in India', (p) => formatINR(p.price)],
-    ['Fee in the UAE', (p) => formatAED(p.priceAed)],
-  ]
+// Replaces the old price-by-price comparison table: fees aren't published yet (see
+// config/site.js), so the section that used to compare them now promotes the bundle instead.
+function BundleBanner() {
   return (
-    <Section tight title="Side by side." intro="The same key details for every program, in one structured comparison table." className="bg-[#09090b] border-t border-white/10">
-      {/* scrolls inside its own box on narrow screens; the page itself never scrolls sideways */}
-      <div className="-mx-5 overflow-x-auto px-5 sm:mx-0 sm:px-0">
-        <table className="w-full min-w-[46rem] border-collapse text-left">
-          <thead>
-            <tr className="border-b-2 border-white/20">
-              <th scope="col" className="w-[17%] py-3.5 pr-4"><span className="sr-only">Detail</span></th>
-              {programs.map((p) => (
-                <th key={p.id} scope="col" className="py-3.5 pr-4 align-bottom">
-                  <Link to={`/programs/${p.id}`} className="font-display text-lg sm:text-xl font-extrabold text-white hover:text-signal transition-colors block">{p.title}</Link>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map(([label, get]) => (
-              <tr key={label} className="border-b border-white/10">
-                <th scope="row" className="py-3 pr-4 text-xs font-bold text-white/60">{label}</th>
-                {programs.map((p) => <td key={p.id} className="py-3 pr-4 text-xs sm:text-sm tabular-nums text-white/90">{get(p)}</td>)}
-              </tr>
-            ))}
-            <tr>
-              <td />
-              {programs.map((p) => (
-                <td key={p.id} className="pt-4 pr-4">
-                  <Link to={`/programs/${p.id}`} className="link-line text-xs font-bold text-signal">View Syllabus →</Link>
-                </td>
-              ))}
-            </tr>
-          </tbody>
-        </table>
+    <Section tight className="bg-[#09090b] border-t border-white/10">
+      <div className="card-rich flex flex-col items-start gap-5 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+        <div>
+          <span className="badge-signal text-xs font-bold uppercase tracking-wider py-0.5 px-2.5">All 4 programs</span>
+          <h2 className="mt-2 font-display text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-tight">
+            Learn all programs and save 40%.
+          </h2>
+          <p className="mt-1.5 text-xs sm:text-sm text-white/70 leading-relaxed max-w-xl">
+            Forex, Crypto and Equity together, with the same mentors and one student portal.
+          </p>
+        </div>
+        <Link to="/contact?package=all-programs-bundle" className="btn-brand py-2.5 px-5 text-xs sm:text-sm font-bold text-center shrink-0">
+          Contact us about the bundle
+        </Link>
       </div>
     </Section>
   )
@@ -59,13 +34,13 @@ export function Programs() {
   return (
     <>
       <PageHeader
-        title="Four structured programs. Choose your market."
-        intro="Each program runs in our Dubai & India classrooms and interactive live online, with seasoned mentors, weekly trade reviews, and certificates on completion."
+        title="Structured programs. Choose your market."
+        intro="Each program runs in our Dubai & India classrooms and interactive live online, with seasoned mentors and weekly trade reviews."
       />
       <Section tight className="pt-6 sm:pt-8 lg:pt-10">
         <ProgramCards />
       </Section>
-      <CompareTable />
+      <BundleBanner />
       <Offer className="border-t border-white/10" />
       <FinalCta title="Not sure which program fits your schedule?" body="Tell us what you trade now, or that you have never traded. An advisor will recommend a program and a batch in Dubai, India or online." />
     </>
@@ -114,7 +89,7 @@ export function ProgramDetail() {
             </ul>
           </section>
 
-          {modules.length > 0 && (
+          {modules.length > 0 ? (
             <section className="rounded-xl border border-white/10 bg-[#1a1a20] text-white p-5 sm:p-6 shadow-sm">
               <span className="badge-signal text-xs font-bold uppercase tracking-wider py-0.5 px-2.5">Structured Syllabus</span>
               <h2 className="mt-2 font-display text-2xl sm:text-3xl font-extrabold text-white">Curriculum</h2>
@@ -142,24 +117,20 @@ export function ProgramDetail() {
                 ))}
               </ol>
             </section>
-          )}
+          ) : program.comingSoon ? (
+            <section className="rounded-xl border border-white/10 bg-[#1a1a20] text-white p-5 sm:p-6 shadow-sm">
+              <span className="badge-outline text-xs font-bold uppercase tracking-wider py-0.5 px-2.5">Coming soon</span>
+              <h2 className="mt-2 font-display text-2xl sm:text-3xl font-extrabold text-white">Curriculum</h2>
+              <p className="mt-2 text-xs sm:text-sm text-white/70 leading-relaxed">The module-by-module syllabus for this program is being finalised. Contact us and an advisor will tell you what's confirmed so far and when it opens for enrolment.</p>
+            </section>
+          ) : null}
         </div>
 
         <aside className="col-span-4 sm:col-span-8 lg:col-span-5">
           <Ticket className="lg:sticky lg:top-24 p-5 sm:p-6">
-            <span className="badge-signal text-xs font-bold uppercase tracking-wider py-0.5 px-2.5">Cohort Enrollment</span>
-            <h2 className="mt-2 font-display text-xl sm:text-2xl font-extrabold text-white">Program Fees & Options</h2>
-            <dl className="mt-4 grid grid-cols-2 gap-4 border-b border-white/15 pb-4">
-              <div>
-                <dt className="text-xs text-white/55 font-semibold">In India (₹)</dt>
-                <dd className="mt-1 font-display text-2xl sm:text-3xl leading-none font-extrabold gold-foil-text tabular-nums">{formatINR(program.price)}</dd>
-              </div>
-              <div>
-                <dt className="text-xs text-white/55 font-semibold">In Dubai (AED)</dt>
-                <dd className="mt-1 font-display text-2xl sm:text-3xl leading-none font-extrabold gold-foil-text tabular-nums">{formatAED(program.priceAed)}</dd>
-              </div>
-            </dl>
-            <dl className="divide-y divide-white/10 text-xs sm:text-sm py-2">
+            <span className="badge-signal text-xs font-bold uppercase tracking-wider py-0.5 px-2.5">{program.comingSoon ? 'Coming soon' : 'Cohort Enrollment'}</span>
+            <h2 className="mt-2 font-display text-xl sm:text-2xl font-extrabold text-white">{program.title}</h2>
+            <dl className="divide-y divide-white/10 text-xs sm:text-sm py-2 border-t border-white/15 mt-3">
               {facts.map(([k, v]) => (
                 <div key={k} className="flex justify-between gap-4 py-2.5">
                   <dt className="text-white/60">{k}</dt>
@@ -167,8 +138,14 @@ export function ProgramDetail() {
                 </div>
               ))}
             </dl>
-            <Link to={`/register?program=${program.id}`} className="btn-brand mt-4 w-full py-2.5 text-xs sm:text-sm font-bold text-center block shadow-md">Apply for {program.title}</Link>
-            <Link to={`/contact?program=${program.id}`} className="btn-outline-light mt-2.5 w-full py-2 text-xs sm:text-sm font-semibold text-center block">Book Free Advisor Call</Link>
+            <p className="mt-4 border-t border-white/15 pt-4 text-xs sm:text-sm text-white/75 leading-relaxed">
+              {program.comingSoon
+                ? 'Dates and fees for this program are being confirmed. Contact admissions to be notified when it opens.'
+                : 'Contact admissions for current fees, the next cohort dates, and to check your batch (Dubai, India or online).'}
+            </p>
+            <Link to={`/contact?program=${program.id}`} className="btn-brand mt-4 w-full py-2.5 text-xs sm:text-sm font-bold text-center block shadow-md">
+              Contact us about {program.title}
+            </Link>
             {mentor && (
               <p className="mt-4 border-t border-white/10 pt-3 text-xs text-white/65">
                 Cohort led by <Link to={`/mentors#${mentor.name.toLowerCase()}`} className="link-line text-white font-bold">{mentor.name}</Link>, {mentor.role}.
@@ -181,11 +158,11 @@ export function ProgramDetail() {
       {/* Sticky Mobile Enrollment Bar for Program Details */}
       <div className="fixed inset-x-0 bottom-0 z-30 lg:hidden border-t border-board-line bg-[#0d0d12]/95 backdrop-blur-md px-4 py-3 flex items-center justify-between shadow-2xl">
         <div>
-          <span className="text-xs text-white/65 block">Enrollment Fee</span>
-          <span className="font-display text-lg font-extrabold gold-foil-text">{formatINR(program.price)} / {formatAED(program.priceAed)}</span>
+          <span className="text-xs text-white/65 block">{program.comingSoon ? 'Coming soon' : program.title}</span>
+          <span className="font-display text-base font-extrabold text-white">Contact us for fees & dates</span>
         </div>
-        <Link to={`/register?program=${program.id}`} className="btn-brand py-2 px-5 text-xs font-bold shadow-md">
-          Apply Now →
+        <Link to={`/contact?program=${program.id}`} className="btn-brand py-2 px-5 text-xs font-bold shadow-md">
+          Contact us
         </Link>
       </div>
 

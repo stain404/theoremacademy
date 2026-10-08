@@ -83,9 +83,6 @@ export default function TradingTerminalVisual() {
 
   return (
     <div className="relative">
-      {/* Glow aura */}
-      <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-signal/20 to-brand/30 opacity-70 blur-xl" aria-hidden="true" />
-
       {/* Main Glassmorphic Terminal Window */}
       <div className="relative rounded-2xl border border-signal/30 bg-[#0d0d0d]/95 shadow-2xl backdrop-blur-xl overflow-hidden">
         
@@ -278,8 +275,8 @@ export default function TradingTerminalVisual() {
             <span className="size-2 rounded-full bg-signal animate-pulse" />
             <span className="text-[0.75rem]">Next Dubai In-Person Cohort: <strong className="text-white">Enrolling</strong></span>
           </div>
-          <Link to="/register" className="text-signal hover:underline font-bold text-xs flex items-center gap-1">
-            <span>Apply for Batch</span>
+          <Link to="/contact" className="text-signal hover:underline font-bold text-xs flex items-center gap-1">
+            <span>Contact us</span>
             <span>→</span>
           </Link>
         </div>

@@ -1,8 +1,8 @@
 // Page sections shared by more than one page. Each page composes these in its own order.
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { bundlePackage, faqs, formatAED, formatINR, offer, programs, site, stories } from '../config/site'
-import { ImageBlock, MethodTrack, Section, STAGES, Testimonial, Ticket, useReveal } from './ui'
+import { bundlePackage, faqs, offer, programs, site, stories } from '../config/site'
+import { ImageBlock, MethodTrack, Section, STAGES, Testimonial, Ticket, useReveal, VideoBlock } from './ui'
 
 export function usePageTitle(title) {
   useEffect(() => {
@@ -14,8 +14,6 @@ export function usePageTitle(title) {
 export function PageHeader({ back, title, intro, children }) {
   return (
     <header className="border-b border-board-line bg-[#050505] text-white relative overflow-hidden">
-      {/* Subtle Ambient Radial Gold Glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(255,215,0,0.15),transparent_70%)] pointer-events-none" />
       <div
         className="absolute inset-0 opacity-10 pointer-events-none"
         style={{
@@ -100,7 +98,7 @@ const PATHS = [
     situation: 'Crypto & Equities',
     body: 'Master self-custody and spot/futures cycles, or swing trade Indian (NSE/BSE) and US equities.',
     skills: ['Self-Custody', 'Spot & Futures', 'Stock Screeners', 'Swing Breakouts'],
-    programs: ['crypto', 'equity'],
+    programs: ['crypto-basic', 'equity-basic'],
   },
 ]
 
@@ -319,60 +317,53 @@ export function HybridExperience() {
 }
 
 // The All-Access 4-Course Bundle Offer: displays all 4 courses in one unified package with 10% bundle discount.
+// The 4-program bundle, without any figures: fees aren't published while the catalogue is
+// being finalised (see bundlePackage in config/site.js). Contact us is the one action here.
 export function Offer({ className = 'bg-card/40' }) {
-  const [currency, setCurrency] = useState('INR')
-
-  const isAed = currency === 'AED'
-  const totalDisplay = isAed ? `AED ${bundlePackage.totalAed.toLocaleString('en-AE')}` : formatINR(bundlePackage.totalInr)
-  const discountedDisplay = isAed ? `AED ${bundlePackage.discountedAed.toLocaleString('en-AE')}` : formatINR(bundlePackage.discountedInr)
-  const savingsDisplay = isAed ? `AED ${bundlePackage.savingsAed.toLocaleString('en-AE')}` : formatINR(bundlePackage.savingsInr)
-
   return (
     <Section tight className={`${className} border-t border-line`}>
       <div className="grid-12 gap-y-8 lg:gap-x-12 lg:items-center">
-        {/* Left Column: 4-Course Package Breakdown & Inclusions */}
+        {/* Left Column: What's included */}
         <div className="col-span-4 sm:col-span-8 lg:col-span-7 space-y-5">
           <div>
-            <div className="flex flex-wrap items-center gap-2 mb-2">
-              <span className="badge-signal text-[0.65rem] font-bold uppercase tracking-wider py-0.5 px-2">
-                All-Access Master Pass
-              </span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-bull/15 px-2.5 py-0.5 text-[0.65rem] font-bold text-bull">
-                <span>🔥 10% Bundle Discount Included</span>
-              </span>
-            </div>
-            <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight text-white">
-              All 4 Flagship Programs. <span className="gold-foil-text">Everything in One Fee.</span>
+            <span className="badge-signal text-[0.65rem] font-bold uppercase tracking-wider py-0.5 px-2">
+              All 4 programs
+            </span>
+            <h2 className="mt-2 font-display text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight text-white">
+              Everything, in one enrollment.
             </h2>
             <p className="mt-2 text-xs sm:text-sm text-white/65 leading-relaxed max-w-xl">
-              Gain complete multi-asset mastery across Forex, Crypto, and Global Equities. Enrol in the full curriculum with dedicated mentorship, private mentor reviews, and verified certifications.
+              Forex, Crypto and Equity, taken together with dedicated mentorship and private trade reviews across the full curriculum.
             </p>
           </div>
 
           {/* Mention 4 Courses Included as Clean Badges */}
           <div className="flex flex-wrap items-center gap-2 pt-1">
-            {programs.map((p) => (
-              <Link
-                key={p.id}
-                to={`/programs/${p.id}`}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-[#22222a] px-3 py-1.5 text-xs font-bold text-white shadow-sm transition-all hover:border-signal hover:text-signal hover:bg-signal/10"
-              >
-                <span className="text-signal font-bold">✓</span>
-                <span>{p.title}</span>
-                <span className="text-[0.7rem] font-medium text-white/50">({p.duration})</span>
-              </Link>
-            ))}
+            {bundlePackage.programsIncluded.map((title) => {
+              const p = programs.find((pr) => pr.title === title)
+              return (
+                <Link
+                  key={title}
+                  to={p ? `/programs/${p.id}` : '/programs'}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-[#22222a] px-3 py-1.5 text-xs font-bold text-white shadow-sm transition-all hover:border-signal hover:text-signal hover:bg-signal/10"
+                >
+                  <span className="text-signal font-bold">✓</span>
+                  <span>{title}</span>
+                  {p && <span className="text-[0.7rem] font-medium text-white/50">({p.duration})</span>}
+                </Link>
+              )
+            })}
           </div>
 
           {/* Package Inclusions Checklist: 4 clean highlights */}
           <div className="card-rich p-4.5 sm:p-5">
             <h4 className="text-xs font-bold uppercase tracking-wider text-white/60 mb-3">
-              Included with Your All-Access Pass:
+              Included with the bundle:
             </h4>
             <ul className="grid sm:grid-cols-2 gap-3 text-xs sm:text-[0.82rem]">
               {[
-                'Full 4 flagship curriculums (26 weeks total)',
-                '4 official verified graduation certificates',
+                `All 4 programs (${bundlePackage.totalWeeks})`,
+                `${bundlePackage.certificationsCount} verified graduation certificates`,
                 'Weekly 1-on-1 private trade reviews',
                 'Dubai & India trading floors + 24/7 recordings',
               ].map((item) => (
@@ -387,92 +378,37 @@ export function Offer({ className = 'bg-card/40' }) {
           </div>
         </div>
 
-        {/* Right Column: Executive Gold & Obsidian Package Ticket */}
+        {/* Right Column: Bundle Ticket */}
         <div className="col-span-4 sm:col-span-8 lg:col-span-5">
           <Ticket className="relative p-5 sm:p-7 overflow-hidden rounded-2xl">
-            {/* Top Tag & Currency Toggle */}
-            <div className="flex items-center justify-between border-b border-white/15 pb-4">
-              <div>
-                <span className="badge-signal text-[0.65rem] font-bold uppercase tracking-wider py-0.5 px-2">
-                  4-Course Master Pass
-                </span>
-                <p className="mt-1 text-[0.7rem] text-white/60 font-medium">Dubai • India • Live Online</p>
-              </div>
+            <span className="badge-signal text-[0.65rem] font-bold uppercase tracking-wider py-0.5 px-2">
+              {bundlePackage.title}
+            </span>
+            <p className="mt-1 text-[0.7rem] text-white/60 font-medium">Dubai • India • Live Online</p>
 
-              {/* Currency Toggle */}
-              <div className="flex items-center rounded-lg border border-white/20 bg-black/40 p-0.5">
-                <button
-                  type="button"
-                  onClick={() => setCurrency('INR')}
-                  className={`rounded-md px-2.5 py-1 text-xs font-bold transition-all ${
-                    currency === 'INR' ? 'bg-signal text-black font-extrabold shadow-sm' : 'text-white/70 hover:text-white'
-                  }`}
-                >
-                  ₹ INR
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCurrency('AED')}
-                  className={`rounded-md px-2.5 py-1 text-xs font-bold transition-all ${
-                    currency === 'AED' ? 'bg-signal text-black font-extrabold shadow-sm' : 'text-white/70 hover:text-white'
-                  }`}
-                >
-                  AED
-                </button>
-              </div>
-            </div>
-
-            {/* Price Calculation Display with 10% Discount */}
-            <div className="mt-5 space-y-1">
-              <div className="flex items-center justify-between text-xs text-white/65">
-                <span>Total Individual Value (4 Courses):</span>
-                <span className="line-through text-white/50 tabular-nums text-sm">{totalDisplay}</span>
-              </div>
-              <div className="flex items-center justify-between text-xs font-semibold text-signal">
-                <span>Bundle Discount (10% OFF):</span>
-                <span className="tabular-nums">- {savingsDisplay}</span>
-              </div>
-              <div className="pt-2 border-t border-white/15 flex items-baseline justify-between">
-                <div>
-                  <span className="text-[0.65rem] font-bold uppercase tracking-wider text-white/60 block">
-                    All-Inclusive Bundle Fee
-                  </span>
-                  <div className="font-display text-3xl sm:text-4xl lg:text-[2.6rem] font-extrabold gold-foil-text tabular-nums leading-none mt-1">
-                    {discountedDisplay}
-                  </div>
-                </div>
-                <span className="rounded-full bg-signal/20 border border-signal/40 px-2.5 py-1 text-xs font-bold text-signal">
-                  SAVE 10%
-                </span>
-              </div>
-            </div>
-
-            <p className="mt-4 text-xs text-white/75 leading-relaxed">
-              Complete enrollment for all 4 courses. Pay securely via Credit Card, Debit Card, UPI, or Apple Pay with zero hidden fees.
+            <p className="mt-4 text-xl sm:text-2xl font-display font-extrabold text-white leading-snug">
+              Save {bundlePackage.discountPercent}% versus enrolling in each program separately.
+            </p>
+            <p className="mt-3 text-xs text-white/75 leading-relaxed">
+              Contact admissions for the current bundle fee and the next cohort dates. Pay by card, UPI or Apple Pay with no hidden fees.
             </p>
 
             {/* Actions */}
             <div className="mt-5 flex flex-col gap-2.5">
               <Link
-                to="/register?program=all-programs-bundle"
-                className="btn-brand shimmer-button w-full py-3 text-xs sm:text-sm font-bold text-center block shadow-[0_0_20px_rgba(242,177,52,0.4)]"
+                to={`/contact?package=${bundlePackage.id}`}
+                className="btn-brand shimmer-button w-full py-3 text-xs sm:text-sm font-bold text-center block"
               >
-                Enrol in All 4 Courses (Save 10%) →
-              </Link>
-              <Link
-                to="/contact?package=all-4-courses"
-                className="btn-outline-light w-full py-2.5 text-xs sm:text-sm font-semibold text-center block"
-              >
-                Speak with Admissions Advisor
+                Contact us about the bundle
               </Link>
             </div>
 
             {/* Refund terms & Guarantee */}
             <div className="mt-5 border-t border-white/15 pt-3.5 flex items-center justify-between text-[0.7rem] text-white/65">
-              <span className="flex items-center gap-1 text-signal font-semibold">
-                <span>🛡️</span> 100% {offer.refundDays}-Day Refund Guarantee
+              <span className="font-semibold text-signal">
+                {offer.refundDays}-day refund guarantee
               </span>
-              <span>4 Verified Certifications</span>
+              <span>{bundlePackage.certificationsCount} verified certificates</span>
             </div>
           </Ticket>
         </div>
@@ -607,6 +543,12 @@ export function Experience() {
           caption="Marking up a student's journal and chart setup"
           className="hidden sm:col-span-4 sm:col-start-5 sm:block lg:col-span-4 lg:col-start-9"
         />
+        <VideoBlock
+          ratio="16/9"
+          shotNote="A 60–90 second walkthrough of a live class: the room, a mentor teaching, and a trade review."
+          caption="A walkthrough of a live class"
+          className="col-span-4 sm:col-span-8 lg:col-span-12"
+        />
       </div>
     </Section>
   )
@@ -643,7 +585,7 @@ export function Stories({ limit }) {
   if (visible.length === 0) return null
   const [lead, ...rest] = visible
   return (
-    <Section tight title="Student Feedback." intro={lead.sample ? 'Verified student reviews from our Dubai and India cohorts.' : undefined} className="bg-card">
+    <Section tight title="Student Testimonials." intro={lead.sample ? 'Verified student reviews from our Dubai and India cohorts.' : undefined} className="bg-card">
       <div className="grid-12 gap-y-6">
         <div className="col-span-4 sm:col-span-8 lg:col-span-8">
           <Testimonial story={lead} />
@@ -671,12 +613,9 @@ export function FinalCta({ title = 'Start with a conversation.', body = 'Tell us
         </div>
         <div className="col-span-4 sm:col-span-6 lg:col-span-5 lg:col-start-8 lg:justify-self-end">
           <div className="flex flex-wrap items-center gap-3">
-            <Link to="/register" className="btn-brand py-2.5 px-5 text-xs sm:text-sm font-bold shadow-md">Apply now</Link>
+            <Link to="/contact" className="btn-brand py-2.5 px-5 text-xs sm:text-sm font-bold shadow-md">Contact us</Link>
             <a href={site.whatsappLink} className="btn-outline-light py-2.5 px-4 text-xs sm:text-sm font-semibold">Chat on WhatsApp</a>
           </div>
-          <p className="mt-3 text-xs text-white/60">
-            Prefer email? <Link to="/contact" className="link-line text-white">Send an enquiry</Link>
-          </p>
         </div>
       </div>
     </section>

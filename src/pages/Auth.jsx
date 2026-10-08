@@ -160,7 +160,9 @@ export function Register() {
               {program.originalPrice && (
                 <span className="text-xs line-through text-white/50 block">{formatINR(program.originalPrice)}</span>
               )}
-              <span className="font-display text-2xl sm:text-3xl leading-none font-extrabold gold-foil-text tabular-nums">{formatINR(program.price)}</span>
+              <span className="font-display text-2xl sm:text-3xl leading-none font-extrabold gold-foil-text tabular-nums">
+                {program.price ? formatINR(program.price) : 'Contact us'}
+              </span>
             </div>
           </div>
         </Ticket>
@@ -222,7 +224,12 @@ export function Register() {
                       </span>
                       {p.discountPercent && (
                         <span className="rounded bg-signal px-1.5 py-0.2 text-[0.65rem] font-bold text-ink">
-                          10% OFF
+                          {p.discountPercent}% OFF
+                        </span>
+                      )}
+                      {p.comingSoon && (
+                        <span className="rounded border border-white/20 px-1.5 py-0.2 text-[0.65rem] font-bold text-white/70">
+                          Coming soon
                         </span>
                       )}
                     </div>
@@ -232,7 +239,9 @@ export function Register() {
                     {p.originalPrice && (
                       <span className="text-[0.7rem] line-through text-white/50 block leading-none">{formatINR(p.originalPrice)}</span>
                     )}
-                    <span className="text-xs sm:text-sm font-bold tabular-nums text-signal">{formatINR(p.price)}</span>
+                    <span className="text-xs sm:text-sm font-bold tabular-nums text-signal">
+                      {p.price ? formatINR(p.price) : 'Contact us'}
+                    </span>
                   </div>
                 </label>
               ))}

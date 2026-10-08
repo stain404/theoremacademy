@@ -9,6 +9,21 @@ import { Link } from 'react-router-dom'
 
 const CAMPUSES = [
   {
+    id: 'india',
+    title: 'India Trading & Technology Lab',
+    tag: 'India Hub',
+    location: 'Metro Financial Hub, India',
+    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?auto=format&fit=crop&w=1200&q=85',
+    hours: 'Mon – Sat, 10:00 – 19:00 IST',
+    perks: [
+      'Physical classroom trading floor',
+      'Indian Equity & Global Forex masterclasses',
+      'Dedicated mentor workstations',
+      'Peer trading circles & group review sessions',
+    ],
+    status: 'Classroom Lab Enrolling',
+  },
+  {
     id: 'dubai',
     title: 'Dubai Business Bay Campus',
     tag: 'UAE Flagship Campus',
@@ -38,25 +53,10 @@ const CAMPUSES = [
     ],
     status: 'Online Batch Enrolling',
   },
-  {
-    id: 'india',
-    title: 'India Trading & Technology Lab',
-    tag: 'India Hub',
-    location: 'Metro Financial Hub, India',
-    image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?auto=format&fit=crop&w=1200&q=85',
-    hours: 'Mon – Sat, 10:00 – 19:00 IST',
-    perks: [
-      'Physical classroom trading floor',
-      'Indian Equity & Global Forex masterclasses',
-      'Dedicated mentor workstations',
-      'Peer trading circles & group review sessions',
-    ],
-    status: 'Classroom Lab Enrolling',
-  },
 ]
 
-export default function DubaiCampusShowcase({ activeId = 'dubai', onSelect }) {
-  const [localId, setLocalId] = useState('dubai')
+export default function DubaiCampusShowcase({ activeId = 'india', onSelect }) {
+  const [localId, setLocalId] = useState('india')
   const currentId = activeId || localId
   const handleSelect = (id) => {
     setLocalId(id)
@@ -67,26 +67,8 @@ export default function DubaiCampusShowcase({ activeId = 'dubai', onSelect }) {
 
   return (
     <div className="relative">
-      {/* 1. Deep Radiant Outer Halo - Wide Soft Bloom */}
-      <div
-        className="absolute -inset-10 sm:-inset-16 rounded-[3rem] opacity-85 blur-[60px] pointer-events-none"
-        style={{
-          background: 'radial-gradient(ellipse at center, rgba(255, 215, 0, 0.45) 0%, rgba(229, 184, 11, 0.25) 45%, transparent 75%)',
-        }}
-        aria-hidden="true"
-      />
-
-      {/* 2. Focused Bright Inner Halo Ring */}
-      <div
-        className="absolute -inset-3 sm:-inset-4 rounded-3xl opacity-90 blur-xl pointer-events-none"
-        style={{
-          background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.5) 0%, rgba(242, 177, 52, 0.35) 50%, rgba(255, 215, 0, 0.15) 100%)',
-        }}
-        aria-hidden="true"
-      />
-
       {/* Main Crisp Showcase Card */}
-      <div className="relative rounded-2xl border border-signal/30 bg-[#101016]/95 shadow-[0_0_50px_rgba(255,215,0,0.18)] backdrop-blur-xl overflow-hidden">
+      <div className="relative rounded-2xl border border-signal/30 bg-[#101016]/95 shadow-2xl backdrop-blur-xl overflow-hidden">
         
         {/* Campus Segmented Switcher */}
         <div className="border-b border-white/10 bg-black/60 p-2 sm:p-2.5">
@@ -98,7 +80,7 @@ export default function DubaiCampusShowcase({ activeId = 'dubai', onSelect }) {
                 onClick={() => handleSelect(c.id)}
                 className={`rounded-lg py-2 px-1 sm:px-2 text-center text-xs font-bold transition-all ${
                   currentId === c.id
-                    ? 'bg-signal text-black font-extrabold shadow-[0_0_14px_rgba(255,215,0,0.4)]'
+                    ? 'bg-signal text-black font-extrabold'
                     : 'text-white/70 hover:text-white hover:bg-white/5'
                 }`}
               >

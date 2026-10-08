@@ -41,6 +41,8 @@ export default function Checkout() {
   }, [user.id, programId])
 
   if (!program) return <Navigate to="/programs" replace />
+  // Fees for comingSoon programs aren't published yet — send them to admissions instead of a broken payment screen.
+  if (program.price == null) return <Navigate to={`/contact?program=${program.id}`} replace />
   const amount = currency === 'AED' ? program.priceAed : program.price
   const walletLabel = currency === 'INR' ? 'UPI' : 'Apple Pay'
 

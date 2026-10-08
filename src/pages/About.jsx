@@ -1,4 +1,4 @@
-import { Approach, Experience, FinalCta, Outcomes, PageHeader, Story, usePageTitle } from '../components/sections'
+import { Approach, Experience, FinalCta, Outcomes, PageHeader, Stories, Story, usePageTitle } from '../components/sections'
 
 export default function About() {
   usePageTitle('About')
@@ -12,6 +12,7 @@ export default function About() {
       <Experience />
       <Story />
       <Outcomes />
+      <Stories />
       <FinalCta />
     </>
   )

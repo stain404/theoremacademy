@@ -8,6 +8,9 @@ export const site = {
   phone: '+971 4 240 8899',
   whatsapp: '+971 58 500 8921',
   whatsappLink: 'https://wa.me/971585008921',
+  // placeholder: replace with the academy's real Google Business Profile review link
+  // (from Google Business Profile → "Ask for reviews" → Share review form)
+  googleReviewLink: 'https://g.page/r/REPLACE-WITH-GOOGLE-PLACE-ID/review',
   social: [
     { label: 'Instagram', href: '#' }, // placeholder links
     { label: 'YouTube', href: '#' },
@@ -42,7 +45,7 @@ export const teachers = [
     name: 'Farhan',
     role: 'Lead mentor, forex',
     photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
-    teaches: ['Forex Basic', 'Forex Advanced'],
+    teaches: ['Forex Basic', 'Forex Intermediate', 'Forex Advanced'],
     focus: 'Price action, market structure and risk management',
     bio: 'Farhan leads the forex programs. His classes start from a blank chart and end with a written plan, and he reviews the trades every student logs during the course.',
     initials: 'F',
@@ -51,21 +54,24 @@ export const teachers = [
     name: 'Sohail',
     role: 'Mentor, crypto and equity',
     photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80',
-    teaches: ['Crypto Trading', 'Equity Course'],
+    teaches: ['Crypto Basic', 'Crypto Intermediate', 'Crypto Advanced', 'Equity Basic', 'Equity Intermediate', 'Equity Advanced'],
     focus: 'Crypto market cycles, exchange safety and equity swing trading',
     bio: 'Sohail teaches the crypto and equity programs. He puts as much time into protecting capital (wallet security, position size, avoiding scams) as into finding trades.',
     initials: 'S',
   },
 ]
 
-// price is in INR; priceAed is shown for Dubai students
+// price is in INR; priceAed is shown for Dubai students.
+// Each market (Forex, Crypto, Equity) now runs as three tiers: Basic, Intermediate, Advanced.
+// comingSoon programs have no published syllabus or price yet — their detail page shows a
+// "curriculum being finalised" notice instead of a module list, and no fee is shown anywhere.
 export const programs = [
   {
     id: 'forex-basic',
     audience: 'People who have never traded, or who have traded from tips and signals and want to understand what they are doing. No prior knowledge needed.', // placeholder copy: confirm with the academy
     title: 'Forex Basic',
     market: 'Forex',
-    level: 'Beginner',
+    level: 'Basic',
     duration: '6 weeks',
     format: 'In person or online',
     price: 24999,
@@ -73,6 +79,18 @@ export const programs = [
     featured: true,
     summary: 'Currency pairs, pips, lots and leverage. You learn to read a chart, place a trade, and size it so that one loss never hurts.',
     outcomes: ['How the forex market and brokers work', 'Candlesticks, support and resistance', 'Position sizing and stop losses', 'A written trading plan of your own'],
+  },
+  {
+    id: 'forex-intermediate',
+    comingSoon: true,
+    audience: 'Students who have finished Forex Basic, or who already place and size their own trades and want a more structured, reviewed process.', // placeholder copy: confirm with the academy
+    title: 'Forex Intermediate',
+    market: 'Forex',
+    level: 'Intermediate',
+    duration: '6 weeks', // placeholder: confirm length
+    format: 'In person or online',
+    summary: 'The bridge between a beginner and an advanced trader: reading higher-timeframe structure, trading with a plan, and reviewing every trade.',
+    outcomes: ['Multi-timeframe chart reading', 'Building and following a trading plan', 'Common mistakes at this stage', 'Preparing for Forex Advanced'],
   },
   {
     id: 'forex-advanced',
@@ -88,11 +106,11 @@ export const programs = [
     outcomes: ['Market structure and liquidity', 'Multi-timeframe analysis', 'Trade journaling and review', 'Prop-firm challenge preparation'],
   },
   {
-    id: 'crypto',
+    id: 'crypto-basic',
     audience: 'Anyone who holds or wants to trade crypto and wants to do it safely, from first-time buyers to people already trading futures without a plan.', // placeholder copy: confirm with the academy
-    title: 'Crypto Trading',
+    title: 'Crypto Basic',
     market: 'Crypto',
-    level: 'All levels',
+    level: 'Basic',
     duration: '6 weeks',
     format: 'In person or online',
     price: 29999,
@@ -101,17 +119,65 @@ export const programs = [
     outcomes: ['Exchanges, wallets and security', 'Spot vs futures and funding rates', 'Reading crypto market cycles', 'Risk rules for a volatile market'],
   },
   {
-    id: 'equity',
+    id: 'crypto-intermediate',
+    comingSoon: true,
+    audience: 'Students who have finished Crypto Basic and want to trade spot and futures with a tested process rather than a feeling.', // placeholder copy: confirm with the academy
+    title: 'Crypto Intermediate',
+    market: 'Crypto',
+    level: 'Intermediate',
+    duration: '6 weeks', // placeholder: confirm length
+    format: 'In person or online',
+    summary: 'Building a repeatable crypto strategy: position sizing across volatile markets, journaling trades, and reading on-chain and funding data.',
+    outcomes: ['Position sizing for volatile markets', 'Reading funding and open interest', 'Journaling and reviewing crypto trades', 'Preparing for Crypto Advanced'],
+  },
+  {
+    id: 'crypto-advanced',
+    comingSoon: true,
+    audience: 'Experienced crypto traders who want institutional-style market structure and risk tools applied to digital assets.', // placeholder copy: confirm with the academy
+    title: 'Crypto Advanced',
+    market: 'Crypto',
+    level: 'Advanced',
+    duration: '8 weeks', // placeholder: confirm length
+    format: 'In person or online',
+    summary: 'Market structure and liquidity concepts applied to Bitcoin, Ethereum and major altcoins, with a weekly live-trade review.',
+    outcomes: ['Market structure across crypto pairs', 'Liquidity and multi-timeframe entries', 'Managing a live crypto portfolio', 'Weekly reviewed trade journal'],
+  },
+  {
+    id: 'equity-basic',
     audience: 'Working professionals and beginners who want to trade or invest in Indian and US stocks with a clear method rather than tips.', // placeholder copy: confirm with the academy
-    title: 'Equity Course',
+    title: 'Equity Basic',
     market: 'Equity',
-    level: 'Beginner',
+    level: 'Basic',
     duration: '6 weeks',
     format: 'In person or online',
     price: 19999,
     priceAed: 899,
     summary: 'Indian and US stock markets: reading fundamentals, swing trading setups, and building a watchlist.',
     outcomes: ['How stock exchanges work', 'Reading financial statements', 'Swing trading setups', 'Building and managing a watchlist'],
+  },
+  {
+    id: 'equity-intermediate',
+    comingSoon: true,
+    audience: 'Students who have finished Equity Basic and want to move from watching a watchlist to trading it with a plan.', // placeholder copy: confirm with the academy
+    title: 'Equity Intermediate',
+    market: 'Equity',
+    level: 'Intermediate',
+    duration: '6 weeks', // placeholder: confirm length
+    format: 'In person or online',
+    summary: 'Sector and index context, position sizing for equities, and a reviewed trade journal across Indian and US markets.',
+    outcomes: ['Sector and index context', 'Position sizing for equities', 'Journaling swing trades', 'Preparing for Equity Advanced'],
+  },
+  {
+    id: 'equity-advanced',
+    comingSoon: true,
+    audience: 'Experienced equity traders ready for a full portfolio approach across Indian and US markets.', // placeholder copy: confirm with the academy
+    title: 'Equity Advanced',
+    market: 'Equity',
+    level: 'Advanced',
+    duration: '8 weeks', // placeholder: confirm length
+    format: 'In person or online',
+    summary: 'Building and managing a full equity portfolio, with sector rotation, risk budgeting and a weekly live-trade review.',
+    outcomes: ['Portfolio construction and risk budgeting', 'Sector rotation', 'Advanced chart and fundamentals reading', 'Weekly reviewed trade journal'],
   },
 ]
 
@@ -128,13 +194,13 @@ export const stories = [
   {
     sample: true,
     name: 'Student name',
-    program: 'Crypto Trading, online batch',
+    program: 'Crypto Basic, online batch',
     quote: 'The session on wallet security alone was worth it. I moved everything off an exchange I should never have trusted.',
   },
   {
     sample: true,
     name: 'Student name',
-    program: 'Equity Course, India batch',
+    program: 'Equity Basic, India batch',
     quote: 'I work full time, so the recordings mattered. I watched on Sundays and brought my questions to the weekday class.',
   },
 ]
@@ -167,20 +233,25 @@ export const faqs = [
 
 export const formatINR = (n) => '₹' + n.toLocaleString('en-IN')
 export const formatAED = (n) => 'AED ' + n.toLocaleString('en-AE')
-export const lowestPrice = () => Math.min(...programs.map((p) => p.price))
+export const lowestPrice = () => Math.min(...programs.map((p) => p.price).filter(Boolean))
 
+// The bundle of the 4 published programs (the 5 comingSoon tiers aren't priced yet, so
+// they aren't part of it). Pricing isn't shown on the site right now (see Offer in
+// sections.jsx) — these figures are kept correct for when it is, and for the mock checkout.
 export const bundlePackage = {
   id: 'all-programs-bundle',
-  title: 'All-Access 4-Course Institutional Pass',
-  subtitle: 'Complete Multi-Asset Mastery: Forex, Crypto & Equities',
-  discountPercent: 10,
+  title: 'All 4 Programs Bundle',
+  subtitle: 'Forex, Crypto and Equity, together',
+  discountPercent: 40,
   totalInr: 119996, // 24,999 + 44,999 + 29,999 + 19,999
-  discountedInr: 107996, // 10% discount
-  savingsInr: 12000,
+  discountedInr: 71998, // 40% discount
+  savingsInr: 47998,
   totalAed: 5296, // 1,099 + 1,999 + 1,299 + 899
-  discountedAed: 4766, // 10% discount
-  savingsAed: 530,
-  totalWeeks: '26 Weeks of Live Guided Mentorship',
+  discountedAed: 3178, // 40% discount
+  savingsAed: 2118,
+  totalWeeks: '26 weeks of live guided mentorship',
   certificationsCount: 4,
-  programsIncluded: ['Forex Basic', 'Forex Advanced', 'Crypto Trading', 'Equity Course'],
+  programsIncluded: ['Forex Basic', 'Forex Advanced', 'Crypto Basic', 'Equity Basic'],
+  // so the (unlinked but still reachable) Register page can list it like a program
+  outcomes: ['All 4 flagship programs, back to back', 'A written plan for each market', '4 reviewed trade journals', '4 verified certificates'],
 }

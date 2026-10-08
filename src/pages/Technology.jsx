@@ -1,8 +1,16 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { FinalCta, PageHeader, usePageTitle } from '../components/sections'
-import { Section, Ticket } from '../components/ui'
+import { Section } from '../components/ui'
 import TradingTerminalVisual from '../components/TradingTerminalVisual'
+
+// Free e-books, under Knowledge Toolkit. No file-delivery backend exists yet, so each one
+// hands off to Contact rather than a fake download link — swap in real files when ready.
+const EBOOKS = [
+  { id: 'forex-starter', title: 'The Forex Starter Workbook', blurb: 'Pips, lots and leverage, and how to size your first risk-managed trade.', icon: '📘' }, // placeholder: replace with the real e-book
+  { id: 'crypto-safety', title: 'Crypto Safety Checklist', blurb: 'Exchanges, wallets and the scams every new holder should know to avoid.', icon: '📗' }, // placeholder: replace with the real e-book
+  { id: 'trade-journal', title: 'The Trade Journal Template', blurb: 'The exact format mentors ask every student to keep from day one.', icon: '📙' }, // placeholder: replace with the real e-book
+]
 
 const ALGO_TOOLS = [
   {
@@ -247,6 +255,30 @@ export default function Technology() {
                   </ul>
                 </div>
               </div>
+            </article>
+          ))}
+        </div>
+      </Section>
+
+      {/* Free E-books */}
+      <Section
+        id="ebooks"
+        tight
+        dark
+        title="Free e-books"
+        intro="Short, practical guides. Leave your details and we'll send the PDF straight to you."
+      >
+        <div className="grid gap-5 sm:gap-6 md:grid-cols-3">
+          {EBOOKS.map((book) => (
+            <article key={book.id} className="card-hover-glow p-5 sm:p-6 rounded-2xl border border-white/10 bg-[#14141b] text-white flex flex-col justify-between">
+              <div>
+                <span className="text-2xl">{book.icon}</span>
+                <h3 className="mt-3 font-display text-lg sm:text-xl font-bold text-white">{book.title}</h3>
+                <p className="mt-2 text-xs sm:text-sm text-white/75 leading-relaxed">{book.blurb}</p>
+              </div>
+              <Link to={`/contact?ebook=${book.id}`} className="btn-ghost mt-5 py-2 px-3 text-xs sm:text-sm font-semibold self-start">
+                Get the e-book
+              </Link>
             </article>
           ))}
         </div>

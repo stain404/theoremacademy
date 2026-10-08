@@ -3,7 +3,7 @@ import { FacultyProfile } from '../components/ui'
 import { teachers } from '../config/site'
 
 export default function Mentors() {
-  usePageTitle('Mentors')
+  usePageTitle('Our Team')
   return (
     <>
       <PageHeader

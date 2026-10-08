@@ -12,14 +12,18 @@ import {
   usePageTitle,
 } from '../components/sections'
 import { ImageBlock, Section } from '../components/ui'
-import { site, teachers } from '../config/site'
+import { programs, site, teachers } from '../config/site'
 
-const SCENE_ROTATION = ['dubai', 'online', 'india']
+// The markets a mentor teaches (not every tier by name — Sohail alone covers 6 program
+// tiers now, which reads as a wall of text joined with "&").
+const marketsTaught = (teaches) => [...new Set(programs.filter((p) => teaches.includes(p.title)).map((p) => p.market))]
+
+const SCENE_ROTATION = ['india', 'dubai', 'online']
 
 function Hero() {
-  const [activeScene, setActiveScene] = useState('dubai')
+  const [activeScene, setActiveScene] = useState('india')
 
-  // Auto-rotate background scenes every 5 seconds (Dubai -> Live Online -> India -> Dubai)
+  // Auto-rotate background scenes every 5 seconds (India -> Dubai -> Live Online -> India)
   useEffect(() => {
     const rotationTimer = setInterval(() => {
       setActiveScene((current) => {
@@ -45,21 +49,21 @@ function Hero() {
             <div className="flex flex-wrap items-center gap-2">
               <div className="inline-flex items-center gap-2 rounded-full border border-signal/40 bg-[#121218]/90 px-3.5 py-1.5 text-xs font-semibold text-white/95 backdrop-blur-md shadow-sm">
                 <span className="size-2 rounded-full bg-signal animate-pulse" />
-                <span>🇦🇪 Dubai Campus • 🇮🇳 India Hub • 🌐 Live Online</span>
+                <span>🇮🇳 India Hub • 🇦🇪 Dubai Campus • 🌐 Live Online</span>
               </div>
             </div>
 
             {/* Main Headline */}
             <div className="space-y-3 sm:space-y-3.5">
               <h1 className="font-display text-4xl sm:text-5xl lg:text-[4rem] font-extrabold tracking-tight leading-[1.02]">
-                <span className="text-white drop-shadow-[0_0_24px_rgba(255,255,255,0.4)]">Master </span>
+                <span className="text-white">Master </span>
                 <span className="gold-bright-text">Institutional Trading.</span>
               </h1>
 
               {/* Concise Asset Focus */}
               <div className="space-y-0.5 pt-0.5">
                 <span className="text-sm sm:text-base font-semibold text-white/80 block">Learn</span>
-                <p className="font-display text-xl sm:text-2xl lg:text-[1.85rem] font-extrabold tracking-wide text-signal drop-shadow-[0_0_16px_rgba(255,215,0,0.4)]">
+                <p className="font-display text-xl sm:text-2xl lg:text-[1.85rem] font-extrabold tracking-wide text-signal">
                   Forex <span className="text-white/40 font-normal mx-1.5">|</span> Crypto <span className="text-white/40 font-normal mx-1.5">|</span> Equity
                 </p>
               </div>
@@ -69,7 +73,7 @@ function Hero() {
             <div className="flex flex-wrap items-center gap-3.5 pt-1">
               <Link
                 to="/programs"
-                className="btn-brand shimmer-button px-7 py-3.5 text-xs sm:text-sm font-bold shadow-[0_0_24px_rgba(255,215,0,0.35)]"
+                className="btn-brand shimmer-button px-7 py-3.5 text-xs sm:text-sm font-bold"
               >
                 Explore Programs →
               </Link>
@@ -84,14 +88,19 @@ function Hero() {
             {/* Clean Trust & Metric Strip */}
             <div className="pt-4 border-t border-white/10">
               <div className="grid grid-cols-3 gap-3 sm:gap-6 max-w-lg">
-                <div>
+                <a
+                  href={site.googleReviewLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group block rounded-md transition-opacity hover:opacity-80 focus-visible:opacity-80"
+                >
                   <div className="font-display text-2xl sm:text-3xl font-extrabold gold-foil-text tabular-nums leading-none">
                     4.9 <span className="text-sm font-sans text-signal">★</span>
                   </div>
-                  <div className="mt-1.5 text-xs text-white/70 font-medium leading-tight">
-                    Verified Rating
+                  <div className="mt-1.5 text-xs text-white/70 font-medium leading-tight underline decoration-white/30 underline-offset-2 group-hover:decoration-white/70">
+                    Rated on Google
                   </div>
-                </div>
+                </a>
                 <div>
                   <div className="font-display text-2xl sm:text-3xl font-extrabold gold-foil-text tabular-nums leading-none">
                     1,850+
@@ -145,7 +154,7 @@ function MentorsPreview() {
                 </h3>
                 <p className="mt-2 text-xs sm:text-sm text-white/75 leading-relaxed line-clamp-2">{t.focus}.</p>
                 <div className="mt-3 text-xs sm:text-sm font-medium text-white/80">
-                  Teaches: <span className="font-bold text-white">{t.teaches.join(' & ')}</span>
+                  Teaches: <span className="font-bold text-white">{marketsTaught(t.teaches).join(' & ')}</span>
                 </div>
                 <span className="link-line mt-3.5 inline-block text-xs sm:text-sm font-bold text-signal">View Profile →</span>
               </div>
@@ -179,8 +188,8 @@ export default function Home() {
       {/* 6. Lead Mentors Spotlight */}
       <MentorsPreview />
 
-      {/* 7. Verified Student Stories */}
-      <Stories limit={1} />
+      {/* 7. Student Testimonials */}
+      <Stories limit={3} />
 
       {/* 8. Frequently Asked Questions */}
       <Faq className="bg-card" />

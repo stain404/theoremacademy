@@ -59,7 +59,7 @@ export const curriculum = {
       ],
     },
   ],
-  crypto: [
+  'crypto-basic': [
     {
       id: 'cr-1', title: 'Crypto foundations',
       lessons: [lesson('cr-1-1', 'Bitcoin, Ethereum and altcoins', 18), lesson('cr-1-2', 'Exchanges and wallets', 20), lesson('cr-1-3', 'Keeping your funds safe', 16)],
@@ -77,7 +77,7 @@ export const curriculum = {
       ],
     },
   ],
-  equity: [
+  'equity-basic': [
     {
       id: 'eq-1', title: 'Stock market basics',
       lessons: [lesson('eq-1-1', 'NSE, BSE, NYSE and NASDAQ', 15), lesson('eq-1-2', 'Opening a demat account', 12), lesson('eq-1-3', 'Order types', 17)],

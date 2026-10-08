@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { formatINR, programs as allPrograms } from '../config/site'
+import { programs as allPrograms } from '../config/site'
 
 // Adds .is-visible once the element scrolls into view (used for smooth scroll reveals).
 export function useReveal(threshold = 0.12) {
@@ -48,7 +48,7 @@ export function ScrollProgressBar() {
   return (
     <div className="fixed top-0 left-0 right-0 h-[2.5px] z-50 pointer-events-none bg-transparent" aria-hidden="true">
       <div
-        className="h-full bg-gradient-to-r from-signal via-[#ffd778] to-signal shadow-[0_0_10px_rgba(242,177,52,0.8)] transition-all duration-75 ease-out"
+        className="h-full bg-gradient-to-r from-signal via-[#ffd778] to-signal transition-all duration-75 ease-out"
         style={{ width: `${scrollProgress}%` }}
       />
     </div>
@@ -106,6 +106,32 @@ export function ImageBlock({ src, alt = '', ratio = '3/2', caption, shotNote, cl
   )
 }
 
+/*
+  Video block, same placeholder convention as ImageBlock. Pass `src` once a real classroom
+  video exists; until then it shows a play-button placeholder captioned with what to film.
+*/
+export function VideoBlock({ src, poster, caption, shotNote, ratio = '16/9', className = '' }) {
+  const ref = useReveal()
+  return (
+    <figure ref={ref} className={className}>
+      <div className="reveal panel relative overflow-hidden bg-stone" style={{ aspectRatio: ratio }}>
+        {src ? (
+          <video src={src} poster={poster} controls preload="metadata" playsInline className="h-full w-full object-cover" />
+        ) : (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-4 sm:p-5" role="img" aria-label={`Video placeholder: ${shotNote || caption}`}>
+            <span className="grid size-12 place-items-center rounded-full border border-white/20 text-white/70" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5.5v13l11-6.5-11-6.5Z" /></svg>
+            </span>
+            <p className="max-w-[28ch] text-center text-xs leading-snug text-ink-soft">{shotNote}</p>
+            <p className="text-[0.65rem] text-ink-soft/70">Video to come, {ratio.replace('/', ':')}</p>
+          </div>
+        )}
+      </div>
+      {caption && <figcaption className="mt-2 text-xs text-ink-soft">{caption}</figcaption>}
+    </figure>
+  )
+}
+
 // Dark panel for anything transactional: fees, order summaries. Same surface as the board.
 export function Ticket({ children, className = '' }) {
   return (
@@ -116,135 +142,99 @@ export function Ticket({ children, className = '' }) {
 }
 
 /*
-  Modern Program Cards: High-converting educational course cards with currency toggle,
-  hybrid delivery badges, outcome checklists, and compact clean height.
+  Program cards: filterable by market, with outcome checklists and compact clean height.
+  Fees aren't published while the catalogue is being finalised (see config/site.js), so
+  every card closes on a single "Contact us" action instead of a price and an Apply button.
 */
 export function ProgramCards({ programs = allPrograms }) {
-  const [currency, setCurrency] = useState('INR')
   const [filter, setFilter] = useState('all')
 
   const filtered = filter === 'all' ? programs : programs.filter((p) => p.market.toLowerCase() === filter.toLowerCase())
 
   return (
     <div className="space-y-4">
-      {/* Controls Bar: Filter by Market + Currency Switcher */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3">
-        <div className="flex flex-wrap gap-1.5">
-          {[
-            ['all', 'All Programs'],
-            ['forex', 'Forex'],
-            ['crypto', 'Crypto'],
-            ['equity', 'Equities'],
-          ].map(([val, label]) => (
-            <button
-              key={val}
-              type="button"
-              onClick={() => setFilter(val)}
-              className={`rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
-                filter === val
-                  ? 'bg-signal text-black font-extrabold shadow-sm'
-                  : 'border border-white/10 bg-[#1e1e26] text-white/70 hover:border-signal/40 hover:text-white'
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-
-        <div className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-[#1e1e26] p-1">
-          <span className="px-2 text-[0.7rem] font-bold text-white/60">Fee:</span>
+      {/* Controls Bar: Filter by Market */}
+      <div className="flex flex-wrap gap-1.5 border-b border-white/10 pb-3">
+        {[
+          ['all', 'All programs'],
+          ['forex', 'Forex'],
+          ['crypto', 'Crypto'],
+          ['equity', 'Equities'],
+        ].map(([val, label]) => (
           <button
+            key={val}
             type="button"
-            onClick={() => setCurrency('INR')}
-            className={`rounded-md px-2.5 py-0.5 text-xs font-bold transition-all ${
-              currency === 'INR' ? 'bg-signal text-black shadow-sm font-extrabold' : 'text-white/60 hover:text-white'
+            onClick={() => setFilter(val)}
+            className={`rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
+              filter === val
+                ? 'bg-signal text-black font-extrabold shadow-sm'
+                : 'border border-white/10 bg-[#1e1e26] text-white/70 hover:border-signal/40 hover:text-white'
             }`}
           >
-            ₹ INR (India)
+            {label}
           </button>
-          <button
-            type="button"
-            onClick={() => setCurrency('AED')}
-            className={`rounded-md px-2.5 py-0.5 text-xs font-bold transition-all ${
-              currency === 'AED' ? 'bg-signal text-black shadow-sm font-extrabold' : 'text-white/60 hover:text-white'
-            }`}
-          >
-            AED (Dubai)
-          </button>
-        </div>
+        ))}
       </div>
 
       {/* Grid of Compact Course Cards */}
       <div className="grid gap-5 sm:gap-6 md:grid-cols-2">
-        {filtered.map((p) => {
-          const priceDisplay = currency === 'AED' ? `AED ${p.priceAed?.toLocaleString('en-AE')}` : formatINR(p.price)
-
-          return (
-            <article
-              key={p.id}
-              className={`card-hover-glow group relative flex flex-col justify-between p-5 sm:p-6 ${
-                p.featured ? 'border-brand/50 ring-1 ring-brand/35 bg-gradient-to-b from-[#1a1a22] to-[#121217]' : 'bg-[#15151b]'
-              }`}
-            >
-              <div>
-                {/* Card Header Row */}
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <span className="rounded bg-[#262630] border border-white/10 px-2.5 py-1 text-xs font-bold text-white uppercase tracking-wider">
-                      {p.market}
-                    </span>
-                    <span className="text-xs font-medium text-white/70">
-                      {p.level} • {p.duration}
-                    </span>
-                  </div>
-                  {p.featured && (
-                    <span className="badge-signal text-xs py-0.5 px-2.5">
-                      <span className="size-1.5 rounded-full bg-brand animate-pulse" />
-                      Popular
-                    </span>
-                  )}
-                </div>
-
-                {/* Title & Short Summary */}
-                <h3 className="mt-3 font-display text-xl sm:text-2xl font-extrabold text-white transition-colors group-hover:text-signal leading-snug">
-                  <Link to={`/programs/${p.id}`}>{p.title}</Link>
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-white/75 line-clamp-2">
-                  {p.summary}
-                </p>
-
-                {/* Inline Skills Tags */}
-                <div className="mt-3.5 flex flex-wrap gap-2">
-                  {p.outcomes.slice(0, 3).map((item) => (
-                    <span key={item} className="inline-flex items-center gap-1.5 rounded bg-[#22222a] border border-white/10 px-2.5 py-1 text-xs font-medium text-white/90">
-                      <span className="text-signal font-bold">✓</span>
-                      <span className="truncate max-w-[200px]">{item}</span>
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Pricing & Actions Footer */}
-              <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4">
-                <div>
-                  <span className="text-xs font-semibold text-white/60 block leading-none">Total Fee ({currency})</span>
-                  <span className="font-display text-xl sm:text-2xl font-extrabold gold-foil-text tabular-nums leading-tight mt-1 inline-block">
-                    {priceDisplay}
+        {filtered.map((p) => (
+          <article
+            key={p.id}
+            className={`card-hover-glow group relative flex flex-col justify-between p-5 sm:p-6 ${
+              p.featured ? 'border-brand/50 ring-1 ring-brand/35 bg-gradient-to-b from-[#1a1a22] to-[#121217]' : 'bg-[#15151b]'
+            }`}
+          >
+            <div>
+              {/* Card Header Row */}
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="rounded bg-[#262630] border border-white/10 px-2.5 py-1 text-xs font-bold text-white uppercase tracking-wider">
+                    {p.market}
+                  </span>
+                  <span className="text-xs font-medium text-white/70">
+                    {p.level} • {p.duration}
                   </span>
                 </div>
-
-                <div className="flex items-center gap-2.5">
-                  <Link to={`/programs/${p.id}`} className="btn-ghost py-2 px-3 text-xs sm:text-sm font-semibold">
-                    Syllabus →
-                  </Link>
-                  <Link to={`/register?program=${p.id}`} className="btn-brand py-2 px-4 text-xs sm:text-sm font-bold shadow-sm">
-                    Apply
-                  </Link>
-                </div>
+                {p.featured && (
+                  <span className="badge-signal text-xs py-0.5 px-2.5">
+                    <span className="size-1.5 rounded-full bg-brand animate-pulse" />
+                    Popular
+                  </span>
+                )}
+                {p.comingSoon && <span className="badge-outline text-xs py-0.5 px-2.5">Coming soon</span>}
               </div>
-            </article>
-          )
-        })}
+
+              {/* Title & Short Summary */}
+              <h3 className="mt-3 font-display text-xl sm:text-2xl font-extrabold text-white transition-colors group-hover:text-signal leading-snug">
+                <Link to={`/programs/${p.id}`}>{p.title}</Link>
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-white/75 line-clamp-2">
+                {p.summary}
+              </p>
+
+              {/* Inline Skills Tags */}
+              <div className="mt-3.5 flex flex-wrap gap-2">
+                {p.outcomes.slice(0, 3).map((item) => (
+                  <span key={item} className="inline-flex items-center gap-1.5 rounded bg-[#22222a] border border-white/10 px-2.5 py-1 text-xs font-medium text-white/90">
+                    <span className="text-signal font-bold">✓</span>
+                    <span className="truncate max-w-[200px]">{item}</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Actions Footer */}
+            <div className="mt-5 flex items-center justify-end gap-2.5 border-t border-white/10 pt-4">
+              <Link to={`/programs/${p.id}`} className="btn-ghost py-2 px-3 text-xs sm:text-sm font-semibold">
+                Syllabus
+              </Link>
+              <Link to={`/contact?program=${p.id}`} className="btn-brand py-2 px-4 text-xs sm:text-sm font-bold shadow-sm">
+                Contact us
+              </Link>
+            </div>
+          </article>
+        ))}
       </div>
     </div>
   )
@@ -257,25 +247,25 @@ export function ProgramCards({ programs = allPrograms }) {
 export function ProgramBoard({ programs = allPrograms, detailed = false }) {
   return (
     <div role="table" aria-label="Programs" className="border-t-2 border-ink">
-      <div role="row" className="hidden grid-cols-[minmax(0,1fr)_7rem_7rem_6rem_7rem] gap-4 border-b border-line py-2 text-xs text-ink-soft lg:grid">
+      <div role="row" className="hidden grid-cols-[minmax(0,1fr)_7rem_7rem_6rem] gap-4 border-b border-line py-2 text-xs text-ink-soft lg:grid">
         <span role="columnheader">Program</span>
         <span role="columnheader">Market</span>
         <span role="columnheader">Level</span>
         <span role="columnheader">Duration</span>
-        <span role="columnheader" className="text-right">Fee in India</span>
       </div>
       {programs.map((p) => (
         <Link
           key={p.id}
           to={`/programs/${p.id}`}
           role="row"
-          className="group relative grid gap-x-4 gap-y-1.5 border-b border-line py-4 transition-colors hover:bg-signal/[0.06] lg:grid-cols-[minmax(0,1fr)_7rem_7rem_6rem_7rem] lg:items-baseline"
+          className="group relative grid gap-x-4 gap-y-1.5 border-b border-line py-4 transition-colors hover:bg-signal/[0.06] lg:grid-cols-[minmax(0,1fr)_7rem_7rem_6rem] lg:items-baseline"
         >
           <span aria-hidden="true" className="absolute inset-y-0 -left-5 w-1 origin-top scale-y-0 bg-signal transition-transform duration-200 group-hover:scale-y-100 sm:-left-8 lg:-left-12" />
           <span role="cell" className="min-w-0">
             <span className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
               <span className="font-display text-xl leading-none font-bold transition-transform duration-200 ease-out group-hover:translate-x-1 sm:text-2xl">{p.title}</span>
               {p.featured && <span className="rounded bg-signal px-1.5 py-0.5 text-[0.65rem] font-bold text-ink">Start here</span>}
+              {p.comingSoon && <span className="rounded border border-line px-1.5 py-0.5 text-[0.65rem] font-bold text-ink-soft">Coming soon</span>}
             </span>
             {detailed && <span className="mt-1.5 block max-w-[40rem] text-xs text-ink-soft">{p.summary}</span>}
           </span>
@@ -285,7 +275,6 @@ export function ProgramBoard({ programs = allPrograms, detailed = false }) {
           </span>
           <span role="cell" className="hidden text-xs lg:block">{p.level}</span>
           <span role="cell" className="hidden text-xs lg:block">{p.duration}</span>
-          <span role="cell" className="text-xs font-semibold tabular-nums lg:text-right lg:text-sm">{formatINR(p.price)}</span>
         </Link>
       ))}
     </div>

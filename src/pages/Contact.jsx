@@ -2,14 +2,26 @@ import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { FlapText, localTime, useNow } from '../components/Board'
 import { PageHeader, usePageTitle } from '../components/sections'
-import { locations, programs, site } from '../config/site'
+import { bundlePackage, locations, programs, site } from '../config/site'
 import { createEnquiry } from '../lib/api'
 
 const TIMEZONES = { Dubai: 'Asia/Dubai', India: 'Asia/Kolkata' }
 
+// Links into this form can arrive with ?program=, ?package=all-programs-bundle, or
+// ?ebook=<id> (see the program cards, the bundle banner, and the Knowledge Toolkit page).
+// This turns whichever one is present into a sensible starting program choice and message.
+function initialForm(params) {
+  const ebook = params.get('ebook')
+  if (ebook) {
+    return { name: '', contact: '', program: 'not-sure', location: 'Online', message: `I'd like to receive the free e-book: ${ebook.replace(/-/g, ' ')}.` }
+  }
+  const program = params.get('package') === bundlePackage.id ? bundlePackage.id : params.get('program') || 'not-sure'
+  return { name: '', contact: '', program, location: 'Online', message: '' }
+}
+
 function EnquiryForm() {
   const [params] = useSearchParams()
-  const [form, setForm] = useState({ name: '', contact: '', program: params.get('program') || 'not-sure', location: 'Online', message: '' })
+  const [form, setForm] = useState(() => initialForm(params))
   const [status, setStatus] = useState('idle') // idle | sending | sent
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value })
 
@@ -53,6 +65,7 @@ function EnquiryForm() {
           <select id="program" className="field py-2 text-xs sm:text-sm" value={form.program} onChange={set('program')}>
             <option value="not-sure">Not sure yet</option>
             {programs.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}
+            <option value={bundlePackage.id}>{bundlePackage.title} (all 4)</option>
           </select>
         </div>
         <div>
