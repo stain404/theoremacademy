@@ -1,27 +1,78 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { formatAED, formatINR, programs as allPrograms } from '../config/site'
+import { formatINR, programs as allPrograms } from '../config/site'
+
+// Adds .is-visible once the element scrolls into view (used for smooth scroll reveals).
+export function useReveal(threshold = 0.12) {
+  const ref = useRef(null)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    if (!('IntersectionObserver' in window)) {
+      el.classList.add('is-visible')
+      return
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add('is-visible')
+          io.disconnect()
+        }
+      },
+      { threshold },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [threshold])
+  return ref
+}
 
 /*
-  Section: heading on the left, intro on the right, aligned to the heading's last line.
-  `tone` picks the band: paper (default), mist, or ink for the one dark band on a page.
-  `dark` is kept as a shorthand for tone="ink".
+  Luxury Top Scroll Progress Indicator
+  Fills dynamically based on current page scroll position.
 */
-export function Section({ id, title, intro, action, children, dark = false, tone, tight = false, className = '' }) {
-  const band = tone || (dark ? 'ink' : 'paper')
-  const bg = { paper: 'bg-paper text-ink', mist: 'bg-card text-ink', ink: 'bg-board text-white' }[band]
-  const soft = band === 'ink' ? 'text-white/70' : 'text-ink-soft'
-  const py = tight ? 'py-16 sm:py-20 lg:py-24' : 'py-20 sm:py-24 lg:py-32'
+export function ScrollProgressBar() {
+  const [scrollProgress, setScrollProgress] = useState(0)
+
+  useEffect(() => {
+    const updateScroll = () => {
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight
+      if (totalHeight > 0) {
+        setScrollProgress((window.scrollY / totalHeight) * 100)
+      }
+    }
+    window.addEventListener('scroll', updateScroll, { passive: true })
+    return () => window.removeEventListener('scroll', updateScroll)
+  }, [])
+
   return (
-    <section id={id} className={`scroll-mt-20 ${py} ${bg} ${className}`}>
+    <div className="fixed top-0 left-0 right-0 h-[2.5px] z-50 pointer-events-none bg-transparent" aria-hidden="true">
+      <div
+        className="h-full bg-gradient-to-r from-signal via-[#ffd778] to-signal shadow-[0_0_10px_rgba(242,177,52,0.8)] transition-all duration-75 ease-out"
+        style={{ width: `${scrollProgress}%` }}
+      />
+    </div>
+  )
+}
+
+/*
+  Section: heading on the left, intro on the right aligned to the heading's baseline.
+  The asymmetric split is the site's standard section opening.
+  Includes smooth scroll reveal.
+*/
+export function Section({ id, title, intro, action, children, dark = false, tight = false, className = '' }) {
+  const py = tight ? 'py-12 sm:py-16 lg:py-20' : 'py-16 sm:py-20 lg:py-24'
+  const ref = useReveal()
+  return (
+    <section id={id} ref={ref} className={`scroll-mt-20 reveal-up ${py} ${dark ? 'bg-[#09090b] text-white' : 'bg-[#121215] text-white'} ${className}`}>
       <div className="wrap">
         {title && (
-          <header className="grid-12 mb-10 gap-y-4 sm:mb-14">
-            <h2 className="col-span-4 text-3xl sm:col-span-8 sm:text-4xl lg:col-span-6">{title}</h2>
+          <header className="grid-12 mb-8 sm:mb-12 gap-y-3 sm:gap-y-4">
+            <h2 className="col-span-4 font-display text-2xl font-extrabold sm:col-span-8 sm:text-3xl lg:col-span-6 lg:text-4xl tracking-tight leading-tight text-white">{title}</h2>
             {(intro || action) && (
               <div className="col-span-4 sm:col-span-6 lg:col-span-5 lg:col-start-8 lg:self-end">
-                {intro && <p className={`max-w-[34rem] text-base leading-relaxed sm:text-lg ${soft}`}>{intro}</p>}
-                {action && <div className="mt-3 text-sm">{action}</div>}
+                {intro && <p className="text-xs sm:text-sm leading-relaxed text-white/65 max-w-lg">{intro}</p>}
+                {action && <div className="mt-2.5 text-xs font-semibold">{action}</div>}
               </div>
             )}
           </header>
@@ -33,149 +84,180 @@ export function Section({ id, title, intro, action, children, dark = false, tone
 }
 
 /*
-  Image block. Pass `src` when real photography exists. Until then:
-  - with `initials` (portraits) it shows a monogram tile in the brand's mark style, which
-    reads as deliberate on the live site;
-  - otherwise a quiet tile at the right ratio.
-  On the dev server the tile also says what should be photographed (`shotNote`).
+  Image block. Pass `src` when real photography exists; until then it renders a
+  placeholder at the correct ratio, captioned with what should be photographed.
 */
-export function ImageBlock({ src, alt = '', ratio = '3/2', caption, shotNote, initials, className = '' }) {
+export function ImageBlock({ src, alt = '', ratio = '3/2', caption, shotNote, className = '' }) {
+  const ref = useReveal()
   return (
-    <figure className={className}>
-      <div className={`reveal panel relative overflow-hidden [container-type:inline-size] ${initials && !src ? 'bg-board' : 'bg-stone'}`} style={{ aspectRatio: ratio }}>
+    <figure ref={ref} className={className}>
+      <div className="reveal panel relative overflow-hidden bg-stone" style={{ aspectRatio: ratio }}>
         {src ? (
           <img src={src} alt={alt} className="h-full w-full object-cover" loading="lazy" />
         ) : (
-          <div className="absolute inset-0" role="img" aria-label={alt || shotNote || caption}>
-            {initials && (
-              <span className="absolute inset-0 grid place-items-center font-display text-[46cqw] leading-none font-semibold text-signal" aria-hidden="true">
-                {initials}
-              </span>
-            )}
-            {import.meta.env.DEV && shotNote && !initials && (
-              <p className="absolute inset-x-0 bottom-0 p-3 text-xs leading-snug text-ink-soft">Photo to come: {shotNote}</p>
-            )}
+          <div className="absolute inset-0 flex flex-col justify-end p-4 sm:p-5" role="img" aria-label={`Photo placeholder: ${shotNote || caption}`}>
+            <p className="max-w-[28ch] text-xs leading-snug text-ink-soft">{shotNote}</p>
+            <p className="mt-1 text-[0.65rem] text-ink-soft/70">Photo to come, {ratio.replace('/', ':')}</p>
           </div>
         )}
       </div>
-      {caption && <figcaption className="mt-2.5 text-sm text-ink-soft">{caption}</figcaption>}
+      {caption && <figcaption className="mt-2 text-xs text-ink-soft">{caption}</figcaption>}
     </figure>
   )
 }
 
-/*
-  Market colours: one per market, used wherever a program appears (cards, rows, menus,
-  program pages) so a market is recognisable before its name is read. Literal class names,
-  so Tailwind can see them.
-*/
-export const MARKET_TONE = {
-  Forex: { text: 'text-forex', dot: 'bg-forex', soft: 'bg-forex-soft' },
-  Crypto: { text: 'text-crypto', dot: 'bg-crypto', soft: 'bg-crypto-soft' },
-  Equity: { text: 'text-equity', dot: 'bg-equity', soft: 'bg-equity-soft' },
-}
-export const toneOf = (market) => MARKET_TONE[market] || MARKET_TONE.Forex
-
-export function MarketDot({ market, className = '' }) {
-  return <span aria-hidden="true" className={`inline-block size-2 shrink-0 rounded-full ${toneOf(market).dot} ${className}`} />
-}
-
-// The market as a small tinted tag: dot and name in the market's colour.
-export function MarketTag({ market, className = '' }) {
-  const t = toneOf(market)
-  return (
-    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${t.soft} ${t.text} ${className}`}>
-      <MarketDot market={market} />
-      {market}
-    </span>
-  )
-}
-
-// The surface for anything transactional (fees, order summaries): a quiet bordered card on mist.
+// Dark panel for anything transactional: fees, order summaries. Same surface as the board.
 export function Ticket({ children, className = '' }) {
-  return <div className={`rounded-[var(--radius-panel)] border border-line bg-card p-6 text-ink sm:p-7 ${className}`}>{children}</div>
-}
-
-// Two-option switch for currency and similar choices.
-function Toggle({ value, options, onChange, label }) {
   return (
-    <div className="inline-flex rounded-[var(--radius-ctl)] border border-line bg-card p-1" role="radiogroup" aria-label={label}>
-      {options.map(([val, text]) => (
-        <button
-          key={val}
-          type="button"
-          role="radio"
-          aria-checked={value === val}
-          onClick={() => onChange(val)}
-          className={`rounded-[7px] px-3 py-1.5 text-sm font-semibold transition-colors ${value === val ? 'bg-surface text-ink shadow-[0_1px_2px_rgb(14_27_23/0.12)]' : 'text-ink-soft hover:text-ink'}`}
-        >
-          {text}
-        </button>
-      ))}
+    <div className={`gold-foil-border-glow rounded-2xl p-5 text-white shadow-2xl sm:p-6 ${className}`}>
+      {children}
     </div>
   )
 }
 
 /*
-  Program cards: the four programs as comparable cards, filterable by market,
-  with fees in rupees or dirhams.
+  Modern Program Cards: High-converting educational course cards with currency toggle,
+  hybrid delivery badges, outcome checklists, and compact clean height.
 */
 export function ProgramCards({ programs = allPrograms }) {
   const [currency, setCurrency] = useState('INR')
   const [filter, setFilter] = useState('all')
-  const filtered = filter === 'all' ? programs : programs.filter((p) => p.market.toLowerCase() === filter)
+
+  const filtered = filter === 'all' ? programs : programs.filter((p) => p.market.toLowerCase() === filter.toLowerCase())
 
   return (
-    <div>
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <Toggle label="Market" value={filter} onChange={setFilter} options={[['all', 'All'], ['forex', 'Forex'], ['crypto', 'Crypto'], ['equity', 'Equity']]} />
-        <Toggle label="Currency" value={currency} onChange={setCurrency} options={[['INR', '₹ India'], ['AED', 'AED Dubai']]} />
+    <div className="space-y-4">
+      {/* Controls Bar: Filter by Market + Currency Switcher */}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3">
+        <div className="flex flex-wrap gap-1.5">
+          {[
+            ['all', 'All Programs'],
+            ['forex', 'Forex'],
+            ['crypto', 'Crypto'],
+            ['equity', 'Equities'],
+          ].map(([val, label]) => (
+            <button
+              key={val}
+              type="button"
+              onClick={() => setFilter(val)}
+              className={`rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
+                filter === val
+                  ? 'bg-signal text-black font-extrabold shadow-sm'
+                  : 'border border-white/10 bg-[#1e1e26] text-white/70 hover:border-signal/40 hover:text-white'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-[#1e1e26] p-1">
+          <span className="px-2 text-[0.7rem] font-bold text-white/60">Fee:</span>
+          <button
+            type="button"
+            onClick={() => setCurrency('INR')}
+            className={`rounded-md px-2.5 py-0.5 text-xs font-bold transition-all ${
+              currency === 'INR' ? 'bg-signal text-black shadow-sm font-extrabold' : 'text-white/60 hover:text-white'
+            }`}
+          >
+            ₹ INR (India)
+          </button>
+          <button
+            type="button"
+            onClick={() => setCurrency('AED')}
+            className={`rounded-md px-2.5 py-0.5 text-xs font-bold transition-all ${
+              currency === 'AED' ? 'bg-signal text-black shadow-sm font-extrabold' : 'text-white/60 hover:text-white'
+            }`}
+          >
+            AED (Dubai)
+          </button>
+        </div>
       </div>
 
-      <div className="grid gap-5 md:grid-cols-2">
-        {filtered.map((p) => (
-          <article key={p.id} className="card-rich relative flex flex-col overflow-hidden p-6 sm:p-7">
-            <span aria-hidden="true" className={`absolute inset-x-0 top-0 h-1 ${toneOf(p.market).dot}`} />
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-ink-soft">
-              <MarketTag market={p.market} />
-              <span>{p.level}, {p.duration}</span>
-              {p.featured && <span className="badge-save ml-auto">Start here</span>}
-            </div>
-            <h3 className="mt-3 text-2xl sm:text-[1.9rem]">
-              <Link to={`/programs/${p.id}`} className="hover:text-brand">{p.title}</Link>
-            </h3>
-            <p className="mt-2 text-ink-soft">{p.summary}</p>
-            <ul className="mt-5 mb-7 space-y-1.5 text-sm">
-              {p.outcomes.slice(0, 3).map((item) => (
-                <li key={item} className="flex gap-2.5">
-                  <span aria-hidden="true" className={`mt-[0.55em] size-1.5 shrink-0 rounded-full ${toneOf(p.market).dot}`} />
-                  {item}
-                </li>
-              ))}
-            </ul>
-            <div className="mt-auto flex flex-wrap items-end justify-between gap-4 border-t border-line pt-5">
+      {/* Grid of Compact Course Cards */}
+      <div className="grid gap-5 sm:gap-6 md:grid-cols-2">
+        {filtered.map((p) => {
+          const priceDisplay = currency === 'AED' ? `AED ${p.priceAed?.toLocaleString('en-AE')}` : formatINR(p.price)
+
+          return (
+            <article
+              key={p.id}
+              className={`card-hover-glow group relative flex flex-col justify-between p-5 sm:p-6 ${
+                p.featured ? 'border-brand/50 ring-1 ring-brand/35 bg-gradient-to-b from-[#1a1a22] to-[#121217]' : 'bg-[#15151b]'
+              }`}
+            >
               <div>
-                <span className="block text-xs text-ink-soft">Fee</span>
-                <span className="text-2xl font-semibold tabular-nums">{currency === 'AED' ? formatAED(p.priceAed) : formatINR(p.price)}</span>
+                {/* Card Header Row */}
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="rounded bg-[#262630] border border-white/10 px-2.5 py-1 text-xs font-bold text-white uppercase tracking-wider">
+                      {p.market}
+                    </span>
+                    <span className="text-xs font-medium text-white/70">
+                      {p.level} • {p.duration}
+                    </span>
+                  </div>
+                  {p.featured && (
+                    <span className="badge-signal text-xs py-0.5 px-2.5">
+                      <span className="size-1.5 rounded-full bg-brand animate-pulse" />
+                      Popular
+                    </span>
+                  )}
+                </div>
+
+                {/* Title & Short Summary */}
+                <h3 className="mt-3 font-display text-xl sm:text-2xl font-extrabold text-white transition-colors group-hover:text-signal leading-snug">
+                  <Link to={`/programs/${p.id}`}>{p.title}</Link>
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-white/75 line-clamp-2">
+                  {p.summary}
+                </p>
+
+                {/* Inline Skills Tags */}
+                <div className="mt-3.5 flex flex-wrap gap-2">
+                  {p.outcomes.slice(0, 3).map((item) => (
+                    <span key={item} className="inline-flex items-center gap-1.5 rounded bg-[#22222a] border border-white/10 px-2.5 py-1 text-xs font-medium text-white/90">
+                      <span className="text-signal font-bold">✓</span>
+                      <span className="truncate max-w-[200px]">{item}</span>
+                    </span>
+                  ))}
+                </div>
               </div>
-              <div className="flex gap-2">
-                <Link to={`/programs/${p.id}`} className="btn-ghost">See syllabus</Link>
-                <Link to={`/register?program=${p.id}`} className="btn-brand">Apply</Link>
+
+              {/* Pricing & Actions Footer */}
+              <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4">
+                <div>
+                  <span className="text-xs font-semibold text-white/60 block leading-none">Total Fee ({currency})</span>
+                  <span className="font-display text-xl sm:text-2xl font-extrabold gold-foil-text tabular-nums leading-tight mt-1 inline-block">
+                    {priceDisplay}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2.5">
+                  <Link to={`/programs/${p.id}`} className="btn-ghost py-2 px-3 text-xs sm:text-sm font-semibold">
+                    Syllabus →
+                  </Link>
+                  <Link to={`/register?program=${p.id}`} className="btn-brand py-2 px-4 text-xs sm:text-sm font-bold shadow-sm">
+                    Apply
+                  </Link>
+                </div>
               </div>
-            </div>
-          </article>
-        ))}
+            </article>
+          )
+        })}
       </div>
     </div>
   )
 }
 
 /*
-  Programs as rows: comparable attributes line up in columns, and each row opens the program.
+  Programs as a board of rows, echoing the market board: comparable attributes line up
+  in columns, and each row opens the program page.
 */
 export function ProgramBoard({ programs = allPrograms, detailed = false }) {
   return (
-    <div role="table" aria-label="Programs" className="border-t border-ink">
-      <div role="row" className="hidden grid-cols-[minmax(0,1fr)_7rem_7rem_6rem_7rem] gap-4 border-b border-line py-3 text-sm text-ink-soft lg:grid">
+    <div role="table" aria-label="Programs" className="border-t-2 border-ink">
+      <div role="row" className="hidden grid-cols-[minmax(0,1fr)_7rem_7rem_6rem_7rem] gap-4 border-b border-line py-2 text-xs text-ink-soft lg:grid">
         <span role="columnheader">Program</span>
         <span role="columnheader">Market</span>
         <span role="columnheader">Level</span>
@@ -187,55 +269,56 @@ export function ProgramBoard({ programs = allPrograms, detailed = false }) {
           key={p.id}
           to={`/programs/${p.id}`}
           role="row"
-          className="group grid gap-x-4 gap-y-1 border-b border-line py-5 transition-colors hover:bg-card lg:grid-cols-[minmax(0,1fr)_7rem_7rem_6rem_7rem] lg:items-baseline lg:px-3 lg:-mx-3"
+          className="group relative grid gap-x-4 gap-y-1.5 border-b border-line py-4 transition-colors hover:bg-signal/[0.06] lg:grid-cols-[minmax(0,1fr)_7rem_7rem_6rem_7rem] lg:items-baseline"
         >
+          <span aria-hidden="true" className="absolute inset-y-0 -left-5 w-1 origin-top scale-y-0 bg-signal transition-transform duration-200 group-hover:scale-y-100 sm:-left-8 lg:-left-12" />
           <span role="cell" className="min-w-0">
             <span className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <span className="flex items-center gap-2.5 font-display text-xl font-semibold group-hover:text-brand sm:text-2xl"><MarketDot market={p.market} className="size-2.5" />{p.title}</span>
-              {p.featured && <span className="badge-save">Start here</span>}
+              <span className="font-display text-xl leading-none font-bold transition-transform duration-200 ease-out group-hover:translate-x-1 sm:text-2xl">{p.title}</span>
+              {p.featured && <span className="rounded bg-signal px-1.5 py-0.5 text-[0.65rem] font-bold text-ink">Start here</span>}
             </span>
-            {detailed && <span className="mt-1.5 block max-w-[40rem] text-sm text-ink-soft">{p.summary}</span>}
+            {detailed && <span className="mt-1.5 block max-w-[40rem] text-xs text-ink-soft">{p.summary}</span>}
           </span>
-          <span role="cell" className="text-sm text-ink-soft lg:text-ink">
+          <span role="cell" className="text-xs text-ink-soft lg:text-sm lg:text-ink">
             <span className="lg:hidden">{p.market}, {p.level.toLowerCase()}, {p.duration}</span>
-            <span className={`hidden font-medium lg:inline ${toneOf(p.market).text}`}>{p.market}</span>
+            <span className="hidden lg:inline">{p.market}</span>
           </span>
-          <span role="cell" className="hidden text-sm lg:block">{p.level}</span>
-          <span role="cell" className="hidden text-sm lg:block">{p.duration}</span>
-          <span role="cell" className="text-sm font-semibold tabular-nums lg:text-right">{formatINR(p.price)}</span>
+          <span role="cell" className="hidden text-xs lg:block">{p.level}</span>
+          <span role="cell" className="hidden text-xs lg:block">{p.duration}</span>
+          <span role="cell" className="text-xs font-semibold tabular-nums lg:text-right lg:text-sm">{formatINR(p.price)}</span>
         </Link>
       ))}
     </div>
   )
 }
 
-// The four teaching stages. They happen in order, so they are numbered.
+// The four teaching stages. They happen in order, so they are numbered, on board tiles.
 export const STAGES = [
-  ['Theory and live charts', 'Live classes on market structure, liquidity and how brokers actually fill your orders.'],
-  ['Practice on a demo account', 'Apply each lesson on a simulated account until sizing and execution are routine.'],
-  ['Small live trades, reviewed', 'Trade real micro lots. Your mentor reviews every trade you log.'],
-  ['Your plan and certificate', 'Graduate with a written trading plan of your own and the academy certificate.'],
+  ['01. Theory & Live Charts', 'Interactive classes dissecting market structure, liquidity zones, and broker spreads.'],
+  ['02. Simulated Demo Lab', 'Practice execution and position sizing on demo accounts until rules become routine.'],
+  ['03. Small Live Trades + Review', 'Trade real micro-lots. Your mentor personally reviews the trades you log during the course.'],
+  ['04. Custom Plan & Certificate', 'Graduate with a personalized written trading plan and official academy certificate.'],
 ]
 
-/*
-  The method as a track: four steps joined by a line that fills as the section comes into view.
-*/
 export function MethodTrack({ dark = false }) {
-  const soft = dark ? 'text-white/70' : 'text-ink-soft'
+  const ref = useReveal()
   return (
-    <ol className="stagger grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+    <ol ref={ref} className="stagger grid gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
       {STAGES.map(([title, body], i) => (
-        <li key={title} className="relative">
-          <div className="flex items-center gap-4">
-            <span className={`grid size-10 shrink-0 place-items-center rounded-full border text-sm font-semibold tabular-nums ${dark ? 'border-white/25 text-white' : 'border-line-strong text-ink'}`}>
-              {i + 1}
-            </span>
-            {i < STAGES.length - 1 && (
-              <span aria-hidden="true" className={`hidden h-px flex-1 lg:block ${dark ? 'bg-white/20' : 'bg-line'}`} />
-            )}
+        <li
+          key={title}
+          className="card-hover-glow panel relative flex flex-col justify-between p-5 sm:p-6"
+        >
+          <div>
+            <div className="flex items-center justify-between gap-2">
+              <span className="flap flap-amber [--flap-w:1.4rem]" aria-hidden="true">{i + 1}</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-signal">
+                Phase 0{i + 1}
+              </span>
+            </div>
+            <h3 className="mt-3.5 text-base sm:text-lg font-bold text-white">{title}</h3>
+            <p className="mt-2 text-xs sm:text-sm leading-relaxed text-white/75">{body}</p>
           </div>
-          <h3 className="mt-5 text-xl">{title}</h3>
-          <p className={`mt-2 max-w-[18rem] ${soft}`}>{body}</p>
         </li>
       ))}
     </ol>
@@ -245,29 +328,28 @@ export function MethodTrack({ dark = false }) {
 export function FacultyProfile({ person, reverse = false }) {
   const teaches = allPrograms.filter((p) => person.teaches.includes(p.title))
   return (
-    <article id={person.name.toLowerCase()} className="grid-12 scroll-mt-24 items-center gap-y-8 lg:gap-x-10">
+    <article id={person.name.toLowerCase()} className="grid-12 scroll-mt-24 items-center gap-y-6 lg:gap-x-10">
       <ImageBlock
         src={person.photo}
         alt={`Portrait of ${person.name}`}
         ratio="4/5"
         shotNote={`Portrait of ${person.name}, natural light, in the classroom`}
-        initials={person.initials}
         className={`col-span-3 sm:col-span-4 lg:col-span-5 ${reverse ? 'lg:col-start-8 lg:row-start-1' : ''}`}
       />
       <div className={`col-span-4 sm:col-span-7 lg:col-span-6 ${reverse ? 'lg:col-start-1 lg:row-start-1' : 'lg:col-start-7'}`}>
-        <p className="text-sm font-semibold text-brand">{person.role}</p>
-        <h2 className="mt-2 text-4xl sm:text-5xl">{person.name}</h2>
-        <p className="mt-5 max-w-[34rem] text-lg leading-relaxed text-ink-soft">{person.bio}</p>
-        <dl className="mt-7 grid gap-5 border-t border-line pt-5 sm:grid-cols-2">
+        <span className="badge-signal text-[0.65rem] font-bold uppercase tracking-wider py-0.5 px-2">{person.role}</span>
+        <h2 className="mt-2 font-display text-3xl sm:text-4xl font-extrabold text-white leading-tight">{person.name}</h2>
+        <p className="mt-3 max-w-[34rem] text-xs sm:text-sm leading-relaxed text-white/75">{person.bio}</p>
+        <dl className="mt-5 grid gap-4 border-t border-white/10 pt-4 sm:grid-cols-2">
           <div>
-            <dt className="text-sm text-ink-soft">Teaches</dt>
+            <dt className="text-xs font-bold text-white/55 uppercase tracking-wider">Teaches</dt>
             <dd className="mt-1 flex flex-col items-start gap-1">
-              {teaches.map((p) => <Link key={p.id} to={`/programs/${p.id}`} className="link-line">{p.title}</Link>)}
+              {teaches.map((p) => <Link key={p.id} to={`/programs/${p.id}`} className="link-line text-xs sm:text-sm font-semibold text-white hover:text-signal">{p.title}</Link>)}
             </dd>
           </div>
           <div>
-            <dt className="text-sm text-ink-soft">Focus</dt>
-            <dd className="mt-1">{person.focus}</dd>
+            <dt className="text-xs font-bold text-white/55 uppercase tracking-wider">Focus</dt>
+            <dd className="mt-1 text-xs sm:text-sm font-medium text-white/90">{person.focus}</dd>
           </div>
         </dl>
       </div>
@@ -278,28 +360,32 @@ export function FacultyProfile({ person, reverse = false }) {
 export function Testimonial({ story, size = 'large' }) {
   const large = size === 'large'
   return (
-    <figure className={large ? '' : 'border-t border-line pt-6'}>
-      <blockquote className={large ? 'font-display text-xl leading-snug font-medium tracking-tight sm:text-2xl lg:text-[2rem]' : 'text-lg leading-relaxed'}>
+    <figure className="card-rich p-5 sm:p-6 border-l-4 border-l-signal">
+      <blockquote className={large ? 'font-display text-base sm:text-lg font-medium leading-relaxed text-white' : 'text-xs sm:text-sm leading-relaxed text-white/90'}>
         <p>“{story.quote}”</p>
       </blockquote>
-      <figcaption className={`${large ? 'mt-7' : 'mt-4'} text-sm`}>
-        <span className="font-semibold">{story.name}</span>
-        <span className="text-ink-soft">, {story.program}</span>
-        {story.outcome && <span className="mt-1 block text-ink-soft">{story.outcome}</span>}
+      <figcaption className="mt-4 border-t border-white/10 pt-3 text-xs flex flex-wrap items-center justify-between gap-1">
+        <div>
+          <span className="font-bold text-white">{story.name}</span>
+          <span className="text-white/60"> • {story.program}</span>
+        </div>
+        {story.outcome && <span className="badge-signal text-[0.65rem] py-0.5 px-2">{story.outcome}</span>}
       </figcaption>
     </figure>
   )
 }
 
-// Segmented choice: a row of options, one selected.
+// Segmented choice: a row of square buttons, one selected.
 export function Segmented({ name, options, value, onChange }) {
   return (
-    <div className="flex gap-1 rounded-[var(--radius-ctl)] border border-line bg-card p-1" role="radiogroup" aria-label={name}>
+    <div className="flex flex-wrap overflow-hidden rounded-[var(--radius-ctl)] border border-white/15 bg-[#22222a] p-1 gap-1" role="radiogroup" aria-label={name}>
       {options.map(([val, label]) => (
         <label
           key={val}
-          className={`flex-1 cursor-pointer rounded-[7px] px-3 py-2 text-center text-sm font-semibold whitespace-nowrap transition-colors has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-brand ${
-            value === val ? 'bg-surface text-ink shadow-[0_1px_2px_rgb(14_27_23/0.12)]' : 'text-ink-soft hover:text-ink'
+          className={`flex-1 cursor-pointer rounded px-3 py-2 text-center text-xs sm:text-sm font-bold whitespace-nowrap transition-all ${
+            value === val
+              ? 'bg-signal text-black shadow-md font-extrabold'
+              : 'bg-transparent text-white/70 hover:text-white hover:bg-white/5'
           }`}
         >
           <input type="radio" name={name} className="sr-only" checked={value === val} onChange={() => onChange(val)} />

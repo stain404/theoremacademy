@@ -1,15 +1,15 @@
 import { useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { FinalCta, PageHeader, usePageTitle } from '../components/sections'
-import { Section } from '../components/ui'
+import { Section, Ticket } from '../components/ui'
 import TradingTerminalVisual from '../components/TradingTerminalVisual'
 
 const ALGO_TOOLS = [
   {
     id: 'risk-engine',
-    title: 'Automated risk allocation and lot calculator',
-    tag: 'Capital protection',
-    icon: '',
+    title: 'Automated Risk Allocation & Lot Calculator',
+    tag: 'Capital Protection',
+    icon: '🛡️',
     desc: 'Proprietary sizing algorithm that calculates exact lot and contract sizes before every execution. Ensures no trade ever risks more than your pre-set 1% limit, removing emotional math under live market pressure.',
     capabilities: [
       'Automatic lot-sizing based on precise account balance',
@@ -20,9 +20,9 @@ const ALGO_TOOLS = [
   },
   {
     id: 'execution-engine',
-    title: 'Rule-based algorithmic execution engine',
-    tag: 'Automated precision',
-    icon: '',
+    title: 'Rule-Based Algorithmic Execution Engine',
+    tag: 'Automated Precision',
+    icon: '⚡',
     desc: 'Institutional trade management algorithm that locks profits and protects downside. Automatically moves stops to break-even at key liquidity targets, manages scale-outs, and trails runners without manual micromanagement.',
     capabilities: [
       'Multi-tier partial take-profit automation',
@@ -33,9 +33,9 @@ const ALGO_TOOLS = [
   },
   {
     id: 'backtest-engine',
-    title: 'Quantitative strategy backtesting engine',
-    tag: 'Empirical verification',
-    icon: '',
+    title: 'Quantitative Strategy Backtesting Engine',
+    tag: 'Empirical Verification',
+    icon: '📊',
     desc: 'Test your personal trading plan over 5+ years of institutional tick data before risking real funds. Validate win-rate, maximum drawdown, profit factor, and Sharpe ratio across Forex, Crypto, and Global Equities.',
     capabilities: [
       'Sub-minute and tick-level historical data playback',
@@ -46,9 +46,9 @@ const ALGO_TOOLS = [
   },
   {
     id: 'scanner-suite',
-    title: 'Multi-asset institutional market scanner',
-    tag: 'Real-time alerts',
-    icon: '',
+    title: 'Multi-Asset Institutional Market Scanner',
+    tag: 'Real-Time Alerts',
+    icon: '🛰️',
     desc: 'Continuous algorithmic scanner monitoring 40+ major FX pairs, crypto perps, and global indices. Detects key institutional levels, volume anomalies, and liquidity sweeps across Asian, London, and New York sessions.',
     capabilities: [
       'Liquidity sweep & false-breakout detection',
@@ -62,9 +62,9 @@ const ALGO_TOOLS = [
 const ANALYSIS_TOOLS = [
   {
     id: 'orderflow',
-    title: 'Order flow and DOM (depth of market) heatmaps',
-    tag: 'Institutional liquidity',
-    icon: '',
+    title: 'Order Flow & DOM (Depth of Market) Heatmaps',
+    tag: 'Institutional Liquidity',
+    icon: '🔥',
     desc: 'See exactly where commercial banks and market makers have placed passive limit buy and sell orders. Trade with institutional order flow rather than guessing from retail candlestick patterns alone.',
     capabilities: [
       'Live visual liquidity depth heatmaps',
@@ -75,9 +75,9 @@ const ANALYSIS_TOOLS = [
   },
   {
     id: 'footprint',
-    title: 'Footprint and volume delta charting software',
-    tag: 'Aggression analysis',
-    icon: '',
+    title: 'Footprint & Volume Delta Charting Software',
+    tag: 'Aggression Analysis',
+    icon: '📈',
     desc: 'Inspect trades executing inside each individual candle. Footprint charts reveal whether market buyers or sellers were aggressive, identifying exhausted rallies and high-probability reversal points.',
     capabilities: [
       'Cumulative Volume Delta (CVD) divergence alerts',
@@ -88,9 +88,9 @@ const ANALYSIS_TOOLS = [
   },
   {
     id: 'market-profile',
-    title: 'Market profile and session volume distribution',
-    tag: 'Structural value',
-    icon: '',
+    title: 'Market Profile & Session Volume Distribution',
+    tag: 'Structural Value',
+    icon: '🏛️',
     desc: 'Understand market value versus market price. Session Volume Profiles plot where highest volume traded, highlighting Value Area High (VAH), Value Area Low (VAL), and institutional acceptance zones.',
     capabilities: [
       'Dynamic session and multi-day Volume Profiles',
@@ -101,9 +101,9 @@ const ANALYSIS_TOOLS = [
   },
   {
     id: 'macro-matrix',
-    title: 'Macro correlation and currency strength matrix',
-    tag: 'Global context',
-    icon: '',
+    title: 'Macro Correlation & Currency Strength Matrix',
+    tag: 'Global Context',
+    icon: '🌐',
     desc: 'Cross-asset analytical dashboard mapping relationships between US Dollar Index (DXY), US 10Y Treasury yields, Brent crude, and benchmark equity futures to establish high-conviction daily market directional bias.',
     capabilities: [
       'Real-time central bank interest rate differential tracker',
@@ -125,28 +125,28 @@ export default function Technology() {
     <>
       <PageHeader
         back={{ to: '/', label: 'Home' }}
-        title="The technology in our classrooms."
+        title="Institutional Trading Technology & Tools"
         intro="Explore the proprietary algorithmic software, order flow heatmaps, and institutional execution terminals used daily in our Dubai and India trading labs."
       />
 
       {/* Overview Highlights Strip */}
-      <section className="border-b border-line bg-surface py-8 text-ink">
+      <section className="border-b border-white/10 bg-[#0d0d12] py-8 text-white">
         <div className="wrap grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           <div className="p-3">
-            <div className="font-display text-2xl sm:text-3xl font-semibold text-ink">Multi-Monitor</div>
-            <div className="mt-1 text-xs text-ink-soft">Classroom Trading Stations</div>
+            <div className="font-display text-2xl sm:text-3xl font-extrabold gold-foil-text">Multi-Monitor</div>
+            <div className="mt-1 text-xs text-white/70">Classroom Trading Stations</div>
           </div>
           <div className="p-3">
-            <div className="font-display text-2xl sm:text-3xl font-semibold text-ink">Tick-Level</div>
-            <div className="mt-1 text-xs text-ink-soft">Order Flow & DOM Data</div>
+            <div className="font-display text-2xl sm:text-3xl font-extrabold gold-foil-text">Tick-Level</div>
+            <div className="mt-1 text-xs text-white/70">Order Flow & DOM Data</div>
           </div>
           <div className="p-3">
-            <div className="font-display text-2xl sm:text-3xl font-semibold text-ink">1% Hard Stop</div>
-            <div className="mt-1 text-xs text-ink-soft">Algorithmic Risk Allocation</div>
+            <div className="font-display text-2xl sm:text-3xl font-extrabold gold-foil-text">1% Hard Stop</div>
+            <div className="mt-1 text-xs text-white/70">Algorithmic Risk Allocation</div>
           </div>
           <div className="p-3">
-            <div className="font-display text-2xl sm:text-3xl font-semibold text-ink">CME & FX</div>
-            <div className="mt-1 text-xs text-ink-soft">Institutional Direct Feeds</div>
+            <div className="font-display text-2xl sm:text-3xl font-extrabold gold-foil-text">CME & FX</div>
+            <div className="mt-1 text-xs text-white/70">Institutional Direct Feeds</div>
           </div>
         </div>
       </section>
@@ -154,8 +154,8 @@ export default function Technology() {
       {/* Interactive Pro Terminal Showcase */}
       <Section
         tight
-        tone="mist"
-        title="Try the trading terminal"
+        dark
+        title="Interactive Trading Terminal"
         intro="Experience our live order block tracking, multi-asset execution brackets, and session telemetry."
       >
         <div className="max-w-4xl mx-auto">
@@ -167,35 +167,35 @@ export default function Technology() {
       <Section
         id="algo-software"
         tight
-        title="Algorithmic trading software"
+        title="Algorithmic Trading Software"
         intro="Rule-based automation built to eliminate emotional errors, strictly enforce risk limits, and backtest setups across millions of historical ticks."
       >
         <div className="grid gap-6 md:grid-cols-2">
           {ALGO_TOOLS.map((tool) => (
             <article
               key={tool.id}
-              className="card-hover-glow p-6 sm:p-7 rounded-2xl border border-line bg-surface text-ink flex flex-col justify-between"
+              className="card-hover-glow p-6 sm:p-7 rounded-2xl border border-white/10 bg-[#14141b] text-white flex flex-col justify-between"
             >
               <div>
-                <div className="flex items-center justify-between border-b border-line pb-3.5">
+                <div className="flex items-center justify-between border-b border-white/10 pb-3.5">
                   <span className="text-2xl">{tool.icon}</span>
-                  <span className="badge-signal text-xs font-bold py-0.5 px-2.5">
+                  <span className="badge-signal text-xs font-bold uppercase py-0.5 px-2.5">
                     {tool.tag}
                   </span>
                 </div>
-                <h3 className="mt-4 text-2xl">
+                <h3 className="mt-4 font-display text-xl sm:text-2xl font-bold text-white">
                   {tool.title}
                 </h3>
-                <p className="mt-2 text-sm text-ink-soft leading-relaxed">
+                <p className="mt-2 text-xs sm:text-sm text-white/75 leading-relaxed">
                   {tool.desc}
                 </p>
 
-                <div className="mt-5 space-y-2 border-t border-line pt-4">
-                  <h4 className="text-xs font-bold text-ink-soft">What it does</h4>
-                  <ul className="space-y-1.5 text-xs text-ink">
+                <div className="mt-5 space-y-2 border-t border-white/5 pt-4">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-white/50">Key Capabilities</h4>
+                  <ul className="space-y-1.5 text-xs text-white/90">
                     {tool.capabilities.map((c) => (
                       <li key={c} className="flex items-center gap-2">
-                        <span className="text-brand font-bold">✓</span>
+                        <span className="text-signal font-bold">✓</span>
                         <span>{c}</span>
                       </li>
                     ))}
@@ -211,36 +211,36 @@ export default function Technology() {
       <Section
         id="analysis-software"
         tight
-        tone="mist"
-        title="Market analysis and order flow software"
+        dark
+        title="Market Analysis & Order Flow Software"
         intro="Look beneath standard retail candlestick charts. Our analysis software exposes real-time institutional liquidity, volume delta aggression, and value areas."
       >
         <div className="grid gap-6 md:grid-cols-2">
           {ANALYSIS_TOOLS.map((tool) => (
             <article
               key={tool.id}
-              className="card-hover-glow p-6 sm:p-7 rounded-2xl border border-line bg-surface text-ink flex flex-col justify-between"
+              className="card-hover-glow p-6 sm:p-7 rounded-2xl border border-white/10 bg-[#16161e] text-white flex flex-col justify-between"
             >
               <div>
-                <div className="flex items-center justify-between border-b border-line pb-3.5">
+                <div className="flex items-center justify-between border-b border-white/10 pb-3.5">
                   <span className="text-2xl">{tool.icon}</span>
-                  <span className="badge-signal">
+                  <span className="rounded bg-white/10 px-2.5 py-1 text-xs font-bold text-signal uppercase tracking-wider">
                     {tool.tag}
                   </span>
                 </div>
-                <h3 className="mt-4 text-2xl">
+                <h3 className="mt-4 font-display text-xl sm:text-2xl font-bold text-white">
                   {tool.title}
                 </h3>
-                <p className="mt-2 text-sm text-ink-soft leading-relaxed">
+                <p className="mt-2 text-xs sm:text-sm text-white/75 leading-relaxed">
                   {tool.desc}
                 </p>
 
-                <div className="mt-5 space-y-2 border-t border-line pt-4">
-                  <h4 className="text-xs font-bold text-ink-soft">What it shows</h4>
-                  <ul className="space-y-1.5 text-xs text-ink">
+                <div className="mt-5 space-y-2 border-t border-white/5 pt-4">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-white/50">Analytical Features</h4>
+                  <ul className="space-y-1.5 text-xs text-white/90">
                     {tool.capabilities.map((c) => (
                       <li key={c} className="flex items-center gap-2">
-                        <span className="text-brand font-bold">✓</span>
+                        <span className="text-signal font-bold">✓</span>
                         <span>{c}</span>
                       </li>
                     ))}
@@ -255,28 +255,28 @@ export default function Technology() {
       {/* Classroom Hardware Infrastructure */}
       <Section
         tight
-        title="Classroom hardware"
+        title="Classroom Hardware & Multi-Screen Labs"
         intro="How technology is deployed inside our Dubai Business Bay and India campus classrooms."
       >
         <div className="grid md:grid-cols-3 gap-6">
-          <div className="p-6 rounded-2xl border border-line bg-surface text-ink">
-            <span className="text-3xl block mb-3"></span>
-            <h3 className="text-xl">Multi-monitor desks</h3>
-            <p className="mt-2 text-sm text-ink-soft leading-relaxed">
+          <div className="p-6 rounded-2xl border border-white/10 bg-[#121217] text-white">
+            <span className="text-3xl block mb-3">🖥️</span>
+            <h3 className="font-display text-xl font-bold text-white">Multi-Monitor Desks</h3>
+            <p className="mt-2 text-xs sm:text-sm text-white/70 leading-relaxed">
               Every student workstation features dedicated dual-panel high-refresh monitors configured for simultaneous macro oversight, DOM orderflow, and execution charts.
             </p>
           </div>
-          <div className="p-6 rounded-2xl border border-line bg-surface text-ink">
-            <span className="text-3xl block mb-3"></span>
-            <h3 className="text-xl">Low-latency data feeds</h3>
-            <p className="mt-2 text-sm text-ink-soft leading-relaxed">
+          <div className="p-6 rounded-2xl border border-white/10 bg-[#121217] text-white">
+            <span className="text-3xl block mb-3">⚡</span>
+            <h3 className="font-display text-xl font-bold text-white">Low-Latency Feeds</h3>
+            <p className="mt-2 text-xs sm:text-sm text-white/70 leading-relaxed">
               Direct market data lines connected to major liquidity centers, ensuring orderbook depths update with zero lag during volatile London and New York session opens.
             </p>
           </div>
-          <div className="p-6 rounded-2xl border border-line bg-surface text-ink">
-            <span className="text-3xl block mb-3"></span>
-            <h3 className="text-xl">Live mentor screen broadcast</h3>
-            <p className="mt-2 text-sm text-ink-soft leading-relaxed">
+          <div className="p-6 rounded-2xl border border-white/10 bg-[#121217] text-white">
+            <span className="text-3xl block mb-3">🎙️</span>
+            <h3 className="font-display text-xl font-bold text-white">Live Mentor Screen Broadcast</h3>
+            <p className="mt-2 text-xs sm:text-sm text-white/70 leading-relaxed">
               Lead mentors broadcast high-resolution live markups and executions to student monitors and interactive remote Zoom feeds simultaneously with crystal-clear audio.
             </p>
           </div>
@@ -285,7 +285,7 @@ export default function Technology() {
 
       {/* Closing Call to Action */}
       <FinalCta
-        title="See the tools in a live class."
+        title="See our algo & analysis tools in action."
         body="Visit our Dubai campus in Business Bay, drop into our India lab, or book a live 1-on-1 Zoom walkthrough with an advisor."
       />
     </>

@@ -83,11 +83,14 @@ export default function TradingTerminalVisual() {
 
   return (
     <div className="relative">
-      {/* Terminal window: a dark screen, the one dark object on a light page */}
-      <div className="relative overflow-hidden rounded-[var(--radius-panel)] border border-board-line bg-board-deep text-white shadow-[var(--shadow-lift)]">
+      {/* Glow aura */}
+      <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-signal/20 to-brand/30 opacity-70 blur-xl" aria-hidden="true" />
+
+      {/* Main Glassmorphic Terminal Window */}
+      <div className="relative rounded-2xl border border-signal/30 bg-[#0d0d0d]/95 shadow-2xl backdrop-blur-xl overflow-hidden">
         
         {/* Terminal Top Window Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-board px-4 py-2.5">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-[#050505] px-4 py-2.5">
           <div className="flex items-center gap-2">
             <div className="flex gap-1.5">
               <span className="size-2.5 rounded-full bg-red-500/80" />
@@ -95,7 +98,7 @@ export default function TradingTerminalVisual() {
               <span className="size-2.5 rounded-full bg-green-500/80" />
             </div>
             <span className="text-xs font-bold text-white/90 pl-1.5 flex items-center gap-1.5">
-              <span>Theorem Pro Terminal</span>
+              <span>🇦🇪 Theorem Pro Terminal</span>
               <span className="rounded bg-signal/20 px-1.5 py-0.2 text-[0.65rem] text-signal font-mono font-semibold">DUBAI DESK</span>
             </span>
           </div>
@@ -109,7 +112,7 @@ export default function TradingTerminalVisual() {
                 view === 'chart' ? 'bg-signal text-ink shadow-sm' : 'text-white/70 hover:text-white'
               }`}
             >
-              Live Chart Analysis
+              📊 Live Chart Analysis
             </button>
             <button
               type="button"
@@ -118,7 +121,7 @@ export default function TradingTerminalVisual() {
                 view === 'sessions' ? 'bg-signal text-ink shadow-sm' : 'text-white/70 hover:text-white'
               }`}
             >
-              Forex Hours
+              🕒 Forex Hours
             </button>
           </div>
         </div>
@@ -153,7 +156,7 @@ export default function TradingTerminalVisual() {
             </div>
 
             {/* Interactive Visual Chart Area */}
-            <div className="relative h-44 sm:h-52 w-full rounded-xl border border-white/10 bg-board p-3 overflow-hidden">
+            <div className="relative h-44 sm:h-52 w-full rounded-xl border border-white/10 bg-[#050505] p-3 overflow-hidden">
               
               {/* Chart Grid Lines */}
               <div className="absolute inset-0 flex flex-col justify-between p-3 pointer-events-none opacity-15">
@@ -165,23 +168,23 @@ export default function TradingTerminalVisual() {
 
               {/* Order Block (OB) Highlight Region */}
               <div
-                className="absolute left-[26%] top-[45%] h-[32%] w-[42%] rounded border border-signal/40 bg-signal/10 transition-all flex items-start p-1.5"
+                className="absolute left-[26%] top-[45%] h-[32%] w-[42%] rounded border border-signal/40 bg-signal/10 backdrop-blur-[2px] transition-all flex items-start p-1.5"
                 aria-label="Institutional Order Block Zone"
               >
-                <span className="rounded bg-signal/25 px-1.5 py-0.5 text-[0.6rem] font-bold text-signal font-mono">
-                  Institutional Order Block (OB)
+                <span className="rounded bg-signal/25 px-1.5 py-0.5 text-[0.6rem] font-bold text-signal tracking-wider uppercase font-mono">
+                  ⚡ Institutional Order Block (OB)
                 </span>
               </div>
 
               {/* Take Profit Target Line */}
               <div className="absolute inset-x-3 top-[18%] flex items-center justify-between border-t border-dashed border-bull/70 pt-0.5">
-                <span className="text-[0.6rem] font-bold text-bull font-mono bg-board-deep/85 px-1 rounded">Take Profit: +4.8R Hit</span>
+                <span className="text-[0.6rem] font-bold text-bull font-mono bg-[#000000]/80 px-1 rounded">🎯 Take Profit: +4.8R Hit</span>
                 <span className="text-[0.6rem] font-mono text-bull/80">Target 2,674.00</span>
               </div>
 
               {/* Stop Loss Line */}
               <div className="absolute inset-x-3 bottom-[16%] flex items-center justify-between border-t border-dashed border-bear/70 pt-0.5">
-                <span className="text-[0.6rem] font-bold text-bear font-mono bg-board-deep/85 px-1 rounded">Protected Stop Loss: 1% Risk Max</span>
+                <span className="text-[0.6rem] font-bold text-bear font-mono bg-[#000000]/80 px-1 rounded">🛡️ Protected Stop Loss: 1% Risk Max</span>
                 <span className="text-[0.6rem] font-mono text-bear/80">2,632.00</span>
               </div>
 
@@ -189,8 +192,8 @@ export default function TradingTerminalVisual() {
               <svg className="relative h-full w-full" viewBox="0 0 400 160" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="areaGlow" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#f2b231" stopOpacity="0.3" />
-                    <stop offset="100%" stopColor="#f2b231" stopOpacity="0" />
+                    <stop offset="0%" stopColor="#ffd700" stopOpacity="0.3" />
+                    <stop offset="100%" stopColor="#ffd700" stopOpacity="0" />
                   </linearGradient>
                 </defs>
 
@@ -198,7 +201,7 @@ export default function TradingTerminalVisual() {
                 <path
                   d="M 20 120 Q 80 110, 140 100 T 260 50 T 380 25"
                   fill="none"
-                  stroke="#f2b231"
+                  stroke="#ffd700"
                   strokeWidth="2"
                   strokeDasharray="4 2"
                   className="opacity-70"
@@ -237,8 +240,8 @@ export default function TradingTerminalVisual() {
               </svg>
 
               {/* Live Pulsing Price Tag Indicator */}
-              <div className="absolute right-3 top-[22%] flex items-center gap-1.5 rounded-full bg-bull px-2 py-0.5 text-[0.65rem] font-bold text-white">
-                <span className="size-1.5 rounded-full bg-white" />
+              <div className="absolute right-3 top-[22%] flex items-center gap-1.5 rounded-full bg-bull px-2 py-0.5 text-[0.65rem] font-bold text-white shadow-lg animate-pulse">
+                <span className="size-1.5 rounded-full bg-white animate-ping" />
                 <span>LIVE {market.price}</span>
               </div>
             </div>
@@ -270,17 +273,32 @@ export default function TradingTerminalVisual() {
         )}
 
         {/* Terminal Bottom Bar */}
-        <div className="flex items-center justify-between border-t border-white/10 bg-board px-4 py-2.5 text-xs text-white/70">
+        <div className="flex items-center justify-between border-t border-white/10 bg-[#050505] px-4 py-2.5 text-xs text-white/70">
           <div className="flex items-center gap-2">
-            <span className="size-2 rounded-full bg-signal" />
+            <span className="size-2 rounded-full bg-signal animate-pulse" />
             <span className="text-[0.75rem]">Next Dubai In-Person Cohort: <strong className="text-white">Enrolling</strong></span>
           </div>
           <Link to="/register" className="text-signal hover:underline font-bold text-xs flex items-center gap-1">
-            <span>Apply for a batch</span>
+            <span>Apply for Batch</span>
+            <span>→</span>
           </Link>
         </div>
       </div>
 
+      {/* Floating Badge 1: Top Right Risk Shield */}
+      <div className="animate-float absolute -top-3.5 -right-3.5 rounded-xl border border-signal/40 bg-board-deep/95 px-3 py-1.5 shadow-xl backdrop-blur-md hidden sm:flex items-center gap-2">
+        <span className="text-base">🛡️</span>
+        <span className="text-[0.7rem] font-bold text-white">1% Max Risk Framework</span>
+      </div>
+
+      {/* Floating Badge 2: Bottom Left Dubai Badge */}
+      <div className="animate-float absolute -bottom-3.5 -left-3.5 rounded-xl border border-signal/30 bg-board-deep/95 px-3 py-1.5 shadow-xl backdrop-blur-md hidden sm:flex items-center gap-2">
+        <span className="text-base">🏛️</span>
+        <div>
+          <p className="text-[0.7rem] font-bold text-white">Dubai Business Bay Lab</p>
+          <p className="text-[0.6rem] text-signal">Multi-Screen Terminal Floor</p>
+        </div>
+      </div>
     </div>
   )
 }

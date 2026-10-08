@@ -43,10 +43,10 @@ function Quiz({ programId, module, lastResult, onDone }) {
   }
 
   return (
-    <form onSubmit={submit} className="mt-6 rounded-xl border border-line bg-surface p-5 sm:p-7 text-ink">
+    <form onSubmit={submit} className="mt-6 rounded-xl border border-white/10 bg-[#141417] p-5 sm:p-7 text-white">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h3 className="text-xl font-bold font-display text-ink">Module quiz</h3>
-        <span className="text-sm text-ink-soft">
+        <h3 className="text-xl font-bold font-display text-white">Module quiz</h3>
+        <span className="text-sm text-white/60">
           Pass mark {Math.round(PASS_MARK * 100)}%{lastResult && !result && `. Best so far ${lastResult.correct} of ${lastResult.total}`}
         </span>
       </div>
@@ -54,14 +54,14 @@ function Quiz({ programId, module, lastResult, onDone }) {
         {module.quiz.map((q, i) => (
           <li key={i}>
             <fieldset disabled={!!result}>
-              <legend className="mb-3 font-semibold text-ink">{i + 1}. {q.q}</legend>
+              <legend className="mb-3 font-semibold text-white/90">{i + 1}. {q.q}</legend>
               <div className="grid gap-2 sm:grid-cols-2">
                 {q.options.map((opt, j) => {
                   const chosen = answers[i] === j
                   const reveal = result && (j === q.answer || chosen)
                   const tone = !reveal
-                    ? chosen ? 'border-brand bg-brand-soft text-ink' : 'border-line bg-surface text-ink hover:border-line'
-                    : j === q.answer ? 'border-bull bg-bull/10 text-ink' : 'border-bear bg-bear/10 text-ink'
+                    ? chosen ? 'border-signal bg-signal/15 text-white shadow-[inset_4px_0_0_var(--color-signal)]' : 'border-white/10 bg-[#18181c] text-white/80 hover:border-white/30'
+                    : j === q.answer ? 'border-bull bg-bull/10 text-white' : 'border-bear bg-bear/10 text-white'
                   return (
                     <label key={j} className={`flex cursor-pointer items-center gap-2.5 rounded-lg border px-3 py-2.5 text-sm transition-colors ${tone}`}>
                       <input type="radio" name={`${module.id}-q${i}`} checked={chosen} onChange={() => setAnswers({ ...answers, [i]: j })} className="accent-signal" />
@@ -79,10 +79,10 @@ function Quiz({ programId, module, lastResult, onDone }) {
           <p className="font-semibold">
             {result.correct} of {result.total} correct. {result.passed ? 'Passed.' : 'Not passed yet. Review the lessons and try again.'}
           </p>
-          <button type="button" onClick={retry} className="btn-ghost py-2 px-4 text-xs font-bold">Retake quiz</button>
+          <button type="button" onClick={retry} className="btn-outline-light py-2 px-4 text-xs font-bold">Retake quiz</button>
         </div>
       ) : (
-        <button className="btn-brand mt-6 py-2.5 px-5 text-sm font-bold" disabled={!allAnswered || busy}>{busy ? 'Checking…' : 'Submit answers'}</button>
+        <button className="btn-brand mt-6 py-2.5 px-5 text-xs sm:text-sm font-bold shadow-md" disabled={!allAnswered || busy}>{busy ? 'Checking…' : 'Submit answers'}</button>
       )}
     </form>
   )
@@ -131,7 +131,7 @@ export default function Course() {
         <span className="text-sm font-semibold tabular-nums">{progress.percent}% complete</span>
       </div>
       {progress.finished && (
-        <p className="mt-6 border-l-4 border-brand bg-brand-soft px-4 py-3 text-sm">
+        <p className="mt-6 border-l-4 border-signal bg-brand-soft px-4 py-3 text-sm">
           You finished every lesson and quiz. <Link to="/portal/certificates" className="link-line">Get your certificate</Link>
         </p>
       )}
