@@ -10,14 +10,14 @@ export function usePageTitle(title) {
   }, [title])
 }
 
-// Opening band for every inner page: luxury executive dark header with gold typography.
+// Opening band for every inner page: luxury executive dark header with silver typography.
 export function PageHeader({ back, title, intro, children }) {
   return (
     <header className="border-b border-board-line bg-[#050505] text-white relative overflow-hidden">
       <div
         className="absolute inset-0 opacity-10 pointer-events-none"
         style={{
-          backgroundImage: `radial-gradient(rgba(255,215,0,0.25) 1px, transparent 1px)`,
+          backgroundImage: `radial-gradient(rgba(199,205,214,0.25) 1px, transparent 1px)`,
           backgroundSize: '32px 32px',
         }}
       />

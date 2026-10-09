@@ -11,7 +11,7 @@ function Certificate({ name, program, date, id }) {
     <div className="certificate grid aspect-[1.414] w-full grid-cols-[27%_1fr] border border-white/20 bg-white text-black [container-type:inline-size] shadow-xl rounded-lg overflow-hidden">
       <div className="flex flex-col justify-between bg-board p-[4cqw] text-white">
         <div className="flex items-center gap-[1.2cqw]">
-          <span className="flap flap-amber [--flap-w:2.6cqw]" aria-hidden="true">T</span>
+          <img src="/theorem-logo.png" alt="" aria-hidden="true" className="w-[5.5cqw] object-contain" />
           <span className="font-display text-[2.6cqw] leading-none font-extrabold">{site.name}</span>
         </div>
         <div>

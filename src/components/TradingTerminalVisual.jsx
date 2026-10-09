@@ -189,8 +189,8 @@ export default function TradingTerminalVisual() {
               <svg className="relative h-full w-full" viewBox="0 0 400 160" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="areaGlow" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#ffd700" stopOpacity="0.3" />
-                    <stop offset="100%" stopColor="#ffd700" stopOpacity="0" />
+                    <stop offset="0%" stopColor="#c7cdd6" stopOpacity="0.3" />
+                    <stop offset="100%" stopColor="#c7cdd6" stopOpacity="0" />
                   </linearGradient>
                 </defs>
 
@@ -198,7 +198,7 @@ export default function TradingTerminalVisual() {
                 <path
                   d="M 20 120 Q 80 110, 140 100 T 260 50 T 380 25"
                   fill="none"
-                  stroke="#ffd700"
+                  stroke="#c7cdd6"
                   strokeWidth="2"
                   strokeDasharray="4 2"
                   className="opacity-70"

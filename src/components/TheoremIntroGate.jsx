@@ -47,7 +47,7 @@ export default function TheoremIntroGate({ forceOpen = false, onEnter, onClose }
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [visible])
 
-  // Canvas 3D Gold Coin & Orbiting Asset Coins (Optimized Ultra-Lite for all browsers)
+  // Canvas 3D Chrome Coin & Orbiting Asset Coins (Optimized Ultra-Lite for all browsers)
   useEffect(() => {
     if (!visible) return
     const canvas = canvasRef.current
@@ -102,12 +102,12 @@ export default function TheoremIntroGate({ forceOpen = false, onEnter, onClose }
       const cy = height / 2
       const mob = width < 768
 
-      // Ultra-lite clear: container CSS handles obsidian & gold radial backdrop
+      // Ultra-lite clear: container CSS handles obsidian & silver radial backdrop
       ctx.clearRect(0, 0, width, height)
 
       // 1. Perspective Matrix Floor Grid (single batched stroke for high performance)
       ctx.beginPath()
-      ctx.strokeStyle = 'rgba(242, 177, 52, 0.05)'
+      ctx.strokeStyle = 'rgba(199, 205, 214, 0.06)'
       ctx.lineWidth = 1
       const gridSteps = mob ? 6 : 10
       for (let i = -gridSteps; i <= gridSteps; i++) {
@@ -116,7 +116,7 @@ export default function TheoremIntroGate({ forceOpen = false, onEnter, onClose }
       }
       ctx.stroke()
 
-      // 2. Floating Golden Sparkle Particles (lite: pure alpha circles)
+      // 2. Floating Silver Sparkle Particles (lite: pure alpha circles)
       particles.forEach((p) => {
         p.z -= p.speed * 2
         if (p.z < 0) p.z = 450
@@ -125,7 +125,7 @@ export default function TheoremIntroGate({ forceOpen = false, onEnter, onClose }
         const y2d = cy + p.y * scale
         ctx.beginPath()
         ctx.arc(x2d, y2d, p.size * scale, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(255, 220, 130, ${p.alpha * scale})`
+        ctx.fillStyle = `rgba(220, 224, 230, ${p.alpha * scale})`
         ctx.fill()
       })
 
@@ -179,7 +179,7 @@ export default function TheoremIntroGate({ forceOpen = false, onEnter, onClose }
       // Draw Coins behind the center dollar coin (z < 0)
       ORBIT_ASSETS.forEach((a) => renderAsset(a, false))
 
-      // 4. 3D Rotating Golden Coin Medallion in Center (steady rotation, zero mouse reaction)
+      // 4. 3D Rotating Chrome Coin Medallion in Center (steady rotation, zero mouse reaction)
       const coinRadius = mob ? 68 : 90
       const coinAngle = time * 1.4
       const cosAngle = Math.cos(coinAngle)
@@ -195,7 +195,7 @@ export default function TheoremIntroGate({ forceOpen = false, onEnter, onClose }
         const edgeOffset = (e / edgeSteps) * coinThickness * (sinAngle > 0 ? 1 : -1)
         ctx.beginPath()
         ctx.ellipse(edgeOffset, 0, coinRadius * Math.abs(cosAngle), coinRadius, 0, 0, Math.PI * 2)
-        ctx.strokeStyle = '#b8860b'
+        ctx.strokeStyle = '#5c6470'
         ctx.lineWidth = 1.5
         ctx.stroke()
       }
@@ -204,24 +204,24 @@ export default function TheoremIntroGate({ forceOpen = false, onEnter, onClose }
       ctx.beginPath()
       ctx.ellipse(0, 0, coinRadius * Math.abs(cosAngle), coinRadius, 0, 0, Math.PI * 2)
 
-      // Dynamic Shifting Metallic Gold Gradient
+      // Dynamic Shifting Metallic Chrome Gradient
       const goldGrad = ctx.createLinearGradient(-coinRadius * cosAngle, -coinRadius, coinRadius * cosAngle, coinRadius)
-      goldGrad.addColorStop(0, '#ffe599')
-      goldGrad.addColorStop(0.3, '#f2b134')
-      goldGrad.addColorStop(0.6, '#d49015')
-      goldGrad.addColorStop(0.85, '#ffe599')
-      goldGrad.addColorStop(1, '#855a00')
+      goldGrad.addColorStop(0, '#ffffff')
+      goldGrad.addColorStop(0.3, '#d8dde3')
+      goldGrad.addColorStop(0.6, '#6b7280')
+      goldGrad.addColorStop(0.85, '#ffffff')
+      goldGrad.addColorStop(1, '#363b43')
       ctx.fillStyle = goldGrad
       ctx.fill()
 
-      ctx.strokeStyle = '#fff0c2'
+      ctx.strokeStyle = '#ffffff'
       ctx.lineWidth = mob ? 2 : 3
       ctx.stroke()
 
       // Inner Coin Milled Ridge
       ctx.beginPath()
       ctx.ellipse(0, 0, (coinRadius - (mob ? 9 : 12)) * Math.abs(cosAngle), coinRadius - (mob ? 9 : 12), 0, 0, Math.PI * 2)
-      ctx.strokeStyle = 'rgba(133, 90, 0, 0.6)'
+      ctx.strokeStyle = 'rgba(90, 97, 107, 0.6)'
       ctx.lineWidth = 1.5
       ctx.stroke()
 
@@ -231,7 +231,7 @@ export default function TheoremIntroGate({ forceOpen = false, onEnter, onClose }
         ctx.scale(cosAngle, 1)
 
         // Emboss Shadow
-        ctx.fillStyle = 'rgba(80, 48, 0, 0.7)'
+        ctx.fillStyle = 'rgba(30, 32, 36, 0.7)'
         ctx.font = `900 ${mob ? 50 : 68}px "Plus Jakarta Sans", sans-serif`
         ctx.textAlign = 'center'
         ctx.textBaseline = 'middle'
@@ -319,7 +319,7 @@ export default function TheoremIntroGate({ forceOpen = false, onEnter, onClose }
         <button
           type="button"
           onClick={handleEnter}
-          className="pointer-events-auto shimmer-button group relative flex items-center gap-3 rounded-full border border-signal/60 bg-gradient-to-r from-[#f2b134] via-[#ffe39c] to-[#f2b134] px-9 py-4 text-sm sm:text-base font-extrabold text-[#082326] transition-all transform hover:scale-105 active:scale-95"
+          className="pointer-events-auto shimmer-button group relative flex items-center gap-3 rounded-full border border-signal/60 bg-gradient-to-r from-[#aab0bb] via-[#ffffff] to-[#aab0bb] px-9 py-4 text-sm sm:text-base font-extrabold text-[#101114] transition-all transform hover:scale-105 active:scale-95"
         >
           <span className="tracking-wider">ENTER THEOREM</span>
           <span className="transition-transform duration-200 group-hover:translate-x-1 font-bold text-lg">→</span>

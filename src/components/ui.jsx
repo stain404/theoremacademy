@@ -48,7 +48,7 @@ export function ScrollProgressBar() {
   return (
     <div className="fixed top-0 left-0 right-0 h-[2.5px] z-50 pointer-events-none bg-transparent" aria-hidden="true">
       <div
-        className="h-full bg-gradient-to-r from-signal via-[#ffd778] to-signal transition-all duration-75 ease-out"
+        className="h-full bg-gradient-to-r from-signal via-[#f4f6f8] to-signal transition-all duration-75 ease-out"
         style={{ width: `${scrollProgress}%` }}
       />
     </div>

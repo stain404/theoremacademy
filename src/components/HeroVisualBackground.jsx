@@ -59,7 +59,7 @@ export default function HeroVisualBackground({ activeScene = 'india' }) {
       <div
         className="absolute inset-0 opacity-[0.05]"
         style={{
-          backgroundImage: `radial-gradient(rgba(255,215,0,0.5) 1px, transparent 1px)`,
+          backgroundImage: `radial-gradient(rgba(199,205,214,0.5) 1px, transparent 1px)`,
           backgroundSize: '32px 32px',
         }}
       />

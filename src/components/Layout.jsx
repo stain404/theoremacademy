@@ -5,11 +5,11 @@ import { useAuth } from '../lib/auth'
 import TheoremIntroGate from './TheoremIntroGate'
 import { ScrollProgressBar } from './ui'
 
-// Wordmark with a single board tile as the mark.
+// Wordmark with the chrome monogram mark.
 export function Wordmark({ className = '', onClick }) {
   return (
     <Link to="/" onClick={onClick} className={`flex items-center gap-2.5 ${className}`}>
-      <span className="flap flap-amber mark-in [--flap-w:1.15rem]" aria-hidden="true">T</span>
+      <img src="/theorem-logo.png" alt="" aria-hidden="true" className="mark-in h-8 w-8 object-contain" />
       <span className="font-display text-[1.7rem] leading-none font-extrabold tracking-tight text-white">{site.name}</span>
     </Link>
   )

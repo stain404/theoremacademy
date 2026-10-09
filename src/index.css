@@ -3,12 +3,12 @@
 /*
   Design system: "the board room".
   Primary: petrol (#0c2e31)
-  Accent: honey amber (#f2b134)
+  Accent: brushed chrome silver (#c7cdd6)
   Neutrals: paper white (#ffffff), mist card (#eef3f2), stone (#dfe8e6), ink (#0b2427)
   Typography: Sofia Sans (Display: Extra Condensed, Headline: Condensed, Body: Sans)
 */
 @theme {
-  /* neutrals: 100% Obsidian & Refined Dark Charcoal Gold palette */
+  /* neutrals: 100% Obsidian & Refined Dark Charcoal Silver palette */
   --color-paper: #09090b;
   --color-card: #1c1c22;
   --color-stone: #26262e;
@@ -22,12 +22,12 @@
   --color-board-edge: #282832;
   --color-board-line: #383844;
 
-  /* accent: bright radiant metallic gold */
-  --color-signal: #ffd700;
-  --color-signal-hover: #ffe066;
-  --color-brand: #e5b80b;
-  --color-brand-deep: #b8860b;
-  --color-brand-soft: #292205;
+  /* accent: bright radiant chrome silver */
+  --color-signal: #d8dde3;
+  --color-signal-hover: #f4f6f8;
+  --color-brand: #aab0bb;
+  --color-brand-deep: #4b515c;
+  --color-brand-soft: #1b1d22;
 
   /* status */
   --color-bull: #10b981;
@@ -197,7 +197,7 @@
   background-color: var(--color-signal);
   color: #000000 !important;
   font-weight: 700;
-  border: 1px solid rgba(255, 215, 0, 0.4);
+  border: 1px solid rgba(216, 221, 227, 0.4);
 }
 .btn-brand:hover {
   background-color: var(--color-signal-hover);
@@ -233,7 +233,7 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 .btn-ghost:hover {
-  border-color: rgba(255, 215, 0, 0.5);
+  border-color: rgba(216, 221, 227, 0.5);
   background-color: #26262e;
   color: var(--color-signal);
 }
@@ -256,7 +256,7 @@
 .btn-outline-light:hover {
   border-color: var(--color-signal);
   color: var(--color-signal);
-  background-color: rgba(255, 215, 0, 0.1);
+  background-color: rgba(216, 221, 227, 0.1);
 }
 
 /* Enforce black text inside any white cards or buttons */
@@ -278,7 +278,7 @@
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 5px;
-  text-decoration-color: rgba(255, 215, 0, 0.4);
+  text-decoration-color: rgba(216, 221, 227, 0.4);
   transition: text-decoration-color 0.15s ease, text-decoration-thickness 0.15s ease;
 }
 .link-line:hover {
@@ -297,12 +297,12 @@
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .field:hover {
-  border-color: rgba(255, 215, 0, 0.4);
+  border-color: rgba(216, 221, 227, 0.4);
 }
 .field:focus {
   border-color: var(--color-signal);
   outline: none;
-  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.3);
+  box-shadow: 0 0 0 3px rgba(216, 221, 227, 0.3);
 }
 
 .label {
@@ -330,25 +330,25 @@
   align-items: center;
   gap: 0.375rem;
   border-radius: 9999px;
-  background-color: rgba(255, 215, 0, 0.18);
+  background-color: rgba(216, 221, 227, 0.18);
   padding: 0.25rem 0.75rem;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #d4af37;
-  border: 1px solid rgba(255, 215, 0, 0.5);
+  color: #c3c9d2;
+  border: 1px solid rgba(216, 221, 227, 0.5);
   letter-spacing: 0.03em;
 }
 
-/* High-contrast vibrant gold badge on dark backgrounds, headers & tickets */
+/* High-contrast vibrant silver badge on dark backgrounds, headers & tickets */
 .text-white .badge-signal,
 [class*="bg-[#0"] .badge-signal,
 [class*="bg-board"] .badge-signal,
 [class*="bg-black"] .badge-signal,
 header .badge-signal,
 .panel.bg-board .badge-signal {
-  color: #ffd700 !important;
-  background-color: rgba(255, 215, 0, 0.2) !important;
-  border: 1px solid rgba(255, 215, 0, 0.7) !important;
+  color: #f4f6f8 !important;
+  background-color: rgba(216, 221, 227, 0.2) !important;
+  border: 1px solid rgba(216, 221, 227, 0.7) !important;
 }
 
 .badge-dark {
@@ -378,17 +378,17 @@ header .badge-signal,
   color: var(--color-ink-soft);
 }
 
-/* Multi-stop Champagne / Metallic Gold Typography & Foil Borders */
+/* Multi-stop Platinum / Brushed Chrome Typography & Foil Borders — banded like a polished metal reflection */
 .gold-text-gradient,
 .gold-foil-text {
-  background: linear-gradient(135deg, #ffffff 0%, #fff4ad 25%, #ffd700 65%, #ffa500 100%);
+  background: linear-gradient(100deg, #747b87 0%, #e8ebf0 18%, #ffffff 32%, #c7cdd6 46%, #868e9c 60%, #ffffff 76%, #d8dde3 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
 }
 
 .gold-bright-text {
-  background: linear-gradient(135deg, #ffffff 0%, #fff9cc 20%, #ffe066 50%, #ffd700 75%, #ffb800 100%);
+  background: linear-gradient(100deg, #828a97 0%, #ffffff 22%, #e8ebf0 38%, #ffffff 52%, #aab0bb 68%, #f4f6f8 84%, #ffffff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
@@ -399,7 +399,7 @@ header .badge-signal,
   border: 1px solid transparent !important;
   background-clip: padding-box, border-box !important;
   background-origin: padding-box, border-box !important;
-  background-image: linear-gradient(#1a1a20, #1a1a20), linear-gradient(135deg, #fff2a3 0%, #ffd700 50%, #b8860b 100%) !important;
+  background-image: linear-gradient(#1a1a20, #1a1a20), linear-gradient(135deg, #ffffff 0%, #d6dae1 20%, #6b7280 50%, #d6dae1 80%, #ffffff 100%) !important;
 }
 
 .gold-foil-border-glow {
@@ -407,15 +407,15 @@ header .badge-signal,
   border: 1px solid transparent !important;
   background-clip: padding-box, border-box !important;
   background-origin: padding-box, border-box !important;
-  background-image: linear-gradient(#1a1a20, #16161c), linear-gradient(135deg, #fff2a3 0%, #ffd700 50%, #b8860b 100%) !important;
+  background-image: linear-gradient(#1a1a20, #16161c), linear-gradient(135deg, #ffffff 0%, #d6dae1 20%, #6b7280 50%, #d6dae1 80%, #ffffff 100%) !important;
   box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
 }
 
 .glass-terminal {
   background: linear-gradient(145deg, rgba(18, 18, 18, 0.96) 0%, rgba(5, 5, 5, 0.99) 100%);
-  border: 1px solid rgba(255, 215, 0, 0.3);
+  border: 1px solid rgba(216, 221, 227, 0.3);
   backdrop-filter: blur(16px);
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 215, 0, 0.15);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(216, 221, 227, 0.15);
 }
 
 @keyframes float-slow {
@@ -441,11 +441,11 @@ header .badge-signal,
 }
 .shimmer-button {
   background-size: 200% auto;
-  background-image: linear-gradient(90deg, #ffd700 0%, #fff5c0 50%, #ffd700 100%);
+  background-image: linear-gradient(90deg, #aab0bb 0%, #d8dde3 35%, #ffffff 50%, #d8dde3 65%, #aab0bb 100%);
   animation: shimmer-sweep 4s linear infinite;
 }
 
-/* Split-flap tiles (Obsidian Gold) */
+/* Split-flap tiles (Obsidian Silver) */
 .flap {
   position: relative;
   display: inline-grid;
@@ -455,7 +455,7 @@ header .badge-signal,
   border-radius: 3px;
   background: linear-gradient(to bottom, #1f1f1f 0 50%, #121212 50% 100%);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.08), 0 1px 0 rgb(0 0 0 / 0.5);
-  color: #ffd700;
+  color: var(--color-signal);
   font-family: var(--font-cond);
   font-weight: 800;
   font-size: calc(var(--flap-w, 1.5rem) * 1.18);
@@ -524,7 +524,7 @@ header .badge-signal,
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(100deg, transparent 30%, rgb(255 215 0 / 0.15) 50%, transparent 70%);
+  background: linear-gradient(100deg, transparent 30%, rgb(216 221 227 / 0.15) 50%, transparent 70%);
   animation: sweep 1.4s ease-in-out 0.9s both;
 }
 
@@ -596,7 +596,7 @@ header .badge-signal,
 }
 .card-hover-glow:hover {
   transform: translateY(-4px);
-  border-color: rgba(255, 215, 0, 0.45);
+  border-color: rgba(216, 221, 227, 0.45);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 18px 38px -10px rgba(0, 0, 0, 0.75);
 }
 
@@ -608,7 +608,7 @@ header .badge-signal,
   animation: page-in 0.3s ease-out both;
 }
 
-/* Site Header & Mobile Navigation Overlay (Pure Obsidian Black & Gold) */
+/* Site Header & Mobile Navigation Overlay (Pure Obsidian Black & Silver) */
 .site-header {
   background-color: #050505;
   background-color: rgba(5, 5, 5, 0.98);
