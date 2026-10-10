@@ -5,12 +5,11 @@ import { useAuth } from '../lib/auth'
 import TheoremIntroGate from './TheoremIntroGate'
 import { ScrollProgressBar } from './ui'
 
-// Wordmark with the chrome monogram mark.
+// Wordmark: the full Theorem logo lockup (mark + name + tagline) as one image.
 export function Wordmark({ className = '', onClick }) {
   return (
-    <Link to="/" onClick={onClick} className={`flex items-center gap-2.5 ${className}`}>
-      <img src="/theorem-logo.png" alt="" aria-hidden="true" className="mark-in h-8 w-8 object-contain" />
-      <span className="font-display text-[1.7rem] leading-none font-extrabold tracking-tight text-white">{site.name}</span>
+    <Link to="/" onClick={onClick} className={`flex items-center ${className}`}>
+      <img src="/theorem-logo.png" alt={site.name} className="mark-in h-9 w-auto object-contain" />
     </Link>
   )
 }
